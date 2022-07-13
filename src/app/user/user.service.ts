@@ -51,4 +51,10 @@ export class UserService {
 
     if (count > 0) throw new DuplicatedNicknameException();
   }
+
+  async readUser(username: string): Promise<UserProfileResponse> {
+    const data = await this.userRepository.findOne({ where: { username } });
+    console.log(data);
+    return new UserProfileResponse(data);
+  }
 }

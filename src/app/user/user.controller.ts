@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 
 import { UserCreateRequest } from '@app/user/dtos/user-create.request';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
@@ -13,5 +13,13 @@ export class UserController {
     @Body() data: UserCreateRequest,
   ): Promise<UserProfileResponse> {
     return this.userService.createUser(data);
+  }
+
+  @Get(':username')
+  async readUser(
+    @Param('username') username: string,
+  ): Promise<UserProfileResponse> {
+    console.log(username);
+    return this.userService.readUser(username);
   }
 }
