@@ -57,7 +57,7 @@ export class UserService {
     return new UserProfileResponse(data);
   }
 
-  async deleteUser(id: string): Promise<boolean> {
+  async withdrawUser(id: string): Promise<boolean> {
     const result = await this.userRepository.softDelete({ id });
     return result.affected > 0;
   }

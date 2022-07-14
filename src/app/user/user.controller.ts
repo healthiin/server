@@ -31,7 +31,7 @@ export class UserController {
   }
 
   @Delete(':id')
-  async deleteUser(@Param('id', ParseUUIDPipe) id: string): Promise<boolean> {
-    return this.userService.deleteUser(id);
+  async withdrawUser(@Param('id', ParseUUIDPipe) id: string): Promise<boolean> {
+    return this.userService.withdrawUser(id);
   }
 }
