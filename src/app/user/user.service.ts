@@ -51,4 +51,14 @@ export class UserService {
 
     if (count > 0) throw new DuplicatedNicknameException();
   }
+
+  async getUserProfile(username: string): Promise<UserProfileResponse> {
+    const data = await this.userRepository.findOne({ where: { username } });
+    return new UserProfileResponse(data);
+  }
+
+  async withdrawUser(id: string): Promise<boolean> {
+    const result = await this.userRepository.softDelete({ id });
+    return result.affected > 0;
+  }
 }
