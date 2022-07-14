@@ -54,7 +54,6 @@ export class UserService {
 
   async getUserProfile(username: string): Promise<UserProfileResponse> {
     const data = await this.userRepository.findOne({ where: { username } });
-    console.log(data);
     return new UserProfileResponse(data);
   }
 
