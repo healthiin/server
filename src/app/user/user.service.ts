@@ -58,14 +58,8 @@ export class UserService {
     return new UserProfileResponse(data);
   }
 
-  async deleteUser(username: string): Promise<void> {
-    this.userRepository.softDelete({ username });
-    return;
+  async deleteUser(id: string): Promise<boolean> {
+    const result = await this.userRepository.softDelete({ id });
+    return result.affected === 1 ? true : false;
   }
-
-  // async updateAvatarImage(
-  //   data: avatarImageRequest,
-  // ): Promise<UserProfileResponse> {
-  //   await this.userRepository.update(data.username);
-  // }
 }
