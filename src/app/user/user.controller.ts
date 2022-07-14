@@ -24,10 +24,10 @@ export class UserController {
   }
 
   @Get(':username')
-  async readUser(
+  async getUserProfile(
     @Param('username') username: string,
   ): Promise<UserProfileResponse> {
-    return this.userService.readUser(username);
+    return this.userService.getUserProfile(username);
   }
 
   @Delete(':id')
