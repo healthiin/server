@@ -3,7 +3,7 @@ import { BadRequestException, ConflictException } from '@nestjs/common';
 export const USER_ERRORS = {
   DUPLICATED_USERNAME: 'DUPLICATED_USERNAME',
   DUPLICATED_NICKNAME: 'DUPLICATED_NICKNAME',
-  BAD_REQ: 'BAD_REQ',
+  USER_NOT_FOUND: 'USER_NOT_FOUND',
 };
 
 export class DuplicatedUsernameException extends ConflictException {
@@ -17,8 +17,8 @@ export class DuplicatedNicknameException extends ConflictException {
     super('이미 사용중인 닉네임입니다.', USER_ERRORS.DUPLICATED_NICKNAME);
   }
 }
-export class ValidationUUIDException extends BadRequestException {
+export class UserNotFoundException extends BadRequestException {
   constructor() {
-    super('사용자를 찾을 수 없습니다.', USER_ERRORS.BAD_REQ);
+    super('사용자를 찾을 수 없습니다.', USER_ERRORS.USER_NOT_FOUND);
   }
 }

@@ -1,23 +1,23 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UserProfileUpdateRequest {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   username!: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   name!: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   nickname!: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   avatarImage!: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   phoneNumber!: string;
 }

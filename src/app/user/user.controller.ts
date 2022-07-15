@@ -25,19 +25,19 @@ export class UserController {
     return this.userService.createUser(data);
   }
 
-  @Get('getUserProfile/:id')
+  @Get('get-users-profile/:id')
   async getUserProfile(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<UserProfileResponse> {
     return this.userService.getUserProfile(id);
   }
 
-  @Delete('withdrawUser/:id')
+  @Delete('withdraw-users/:id')
   async withdrawUser(@Param('id', ParseUUIDPipe) id: string): Promise<boolean> {
     return this.userService.withdrawUser(id);
   }
 
-  @Patch('updateUserProfile/:id')
+  @Patch('update-users-profile/:id')
   async updateUserProfile(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() data: UserProfileUpdateRequest,
@@ -45,7 +45,7 @@ export class UserController {
     return this.userService.updateUserProfile(id, data);
   }
 
-  @Patch('updateUserPassword/:id')
+  @Patch('update-users-password/:id')
   async updateUserPassword(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() data: { password: string },
