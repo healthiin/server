@@ -14,7 +14,7 @@ export class createUsersTable1657701331277 implements MigrationInterface {
                 "avatar_image" character varying,
                 "phone_number" character varying NOT NULL,
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
-                "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
+                "updated_at" TIMESTAMP NOT NULL DEFAULT now(),  
                 "deleted_at" TIMESTAMP,
                 CONSTRAINT "UQ_fe0bb3f6520ee0469504521e710" UNIQUE ("username"),
                 CONSTRAINT "UQ_ad02a1be8707004cb805a4b5023" UNIQUE ("nickname"),

@@ -5,10 +5,12 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
 } from '@nestjs/common';
 
 import { UserCreateRequest } from '@app/user/dtos/user-create.request';
+import { UserProfileUpdateRequest } from '@app/user/dtos/user-profile-update.request';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { UserService } from '@app/user/user.service';
 
@@ -23,15 +25,31 @@ export class UserController {
     return this.userService.createUser(data);
   }
 
-  @Get(':username')
+  @Get('getUserProfile/:id')
   async getUserProfile(
-    @Param('username') username: string,
+    @Param('id', ParseUUIDPipe) id: string,
   ): Promise<UserProfileResponse> {
-    return this.userService.getUserProfile(username);
+    return this.userService.getUserProfile(id);
   }
 
-  @Delete(':id')
+  @Delete('withdrawUser/:id')
   async withdrawUser(@Param('id', ParseUUIDPipe) id: string): Promise<boolean> {
     return this.userService.withdrawUser(id);
+  }
+
+  @Patch('updateUserProfile/:id')
+  async updateUserProfile(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() data: UserProfileUpdateRequest,
+  ): Promise<UserProfileResponse> {
+    return this.userService.updateUserProfile(id, data);
+  }
+
+  @Patch('updateUserPassword/:id')
+  async updateUserPassword(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() data: { password: string },
+  ): Promise<boolean> {
+    return this.userService.updateUserPassword(id, data.password);
   }
 }
