@@ -43,40 +43,41 @@ export class UserService {
   }
 
   protected async validateUsername(username: string): Promise<void> {
+    if (username === '') throw new DuplicatedNicknameException();
+
     const count = await this.userRepository.count({ where: { username } });
 
     if (count > 0) throw new DuplicatedUsernameException();
   }
 
   protected async validateNickname(nickname: string): Promise<void> {
+    if (nickname === '') throw new DuplicatedNicknameException();
+
     const count = await this.userRepository.count({ where: { nickname } });
 
     if (count > 0) throw new DuplicatedNicknameException();
   }
 
   async getUserProfile(id: string): Promise<UserProfileResponse> {
-    await this.userPresenceCheck(id);
-
     const data = await this.userRepository.findOne({ where: { id } });
 
+    if (!data) throw new UserNotFoundException();
     return new UserProfileResponse(data);
   }
 
   async updateUserProfile(
     id: string,
-    updatedData: UserProfileUpdateRequest,
+    data: UserProfileUpdateRequest,
   ): Promise<UserProfileResponse> {
-    const user = await this.userPresenceCheck(id);
+    await this.userPresenceCheck(id);
 
-    if (typeof updatedData.username == 'string')
-      await this.validateUsername(updatedData.username);
+    if (data.username) await this.validateUsername(data.username);
 
-    if (typeof updatedData.nickname == 'string')
-      await this.validateNickname(updatedData.nickname);
+    if (data.nickname) await this.validateNickname(data.nickname);
 
     const updatedUserProfile = await this.userRepository.save({
       id,
-      ...updatedData,
+      ...data,
     });
 
     return new UserProfileResponse(updatedUserProfile);
@@ -94,15 +95,20 @@ export class UserService {
     return true;
   }
 
-  protected async userPresenceCheck(id: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id } });
-    if (!user) throw new UserNotFoundException();
-    return user;
-  }
-
   async withdrawUser(id: string): Promise<boolean> {
+    await this.userPresenceCheck(id);
+
     const result = await this.userRepository.softDelete({ id });
 
     return result.affected > 0;
+  }
+
+  protected async userPresenceCheck(id: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id },
+      select: { id: true },
+    });
+    if (!user) throw new UserNotFoundException();
+    return user;
   }
 }

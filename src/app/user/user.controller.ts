@@ -18,26 +18,26 @@ import { UserService } from '@app/user/user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
+  @Post('users')
   async createUser(
     @Body() data: UserCreateRequest,
   ): Promise<UserProfileResponse> {
     return this.userService.createUser(data);
   }
 
-  @Get('get-users-profile/:id')
+  @Get(':id')
   async getUserProfile(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<UserProfileResponse> {
     return this.userService.getUserProfile(id);
   }
 
-  @Delete('withdraw-users/:id')
+  @Delete(':id')
   async withdrawUser(@Param('id', ParseUUIDPipe) id: string): Promise<boolean> {
     return this.userService.withdrawUser(id);
   }
 
-  @Patch('update-users-profile/:id')
+  @Patch(':id')
   async updateUserProfile(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() data: UserProfileUpdateRequest,
@@ -45,7 +45,7 @@ export class UserController {
     return this.userService.updateUserProfile(id, data);
   }
 
-  @Patch('update-users-password/:id')
+  @Patch(':id/password')
   async updateUserPassword(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() data: { password: string },
