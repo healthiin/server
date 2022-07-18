@@ -11,6 +11,7 @@ import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import {
   DuplicatedNicknameException,
   DuplicatedUsernameException,
+  InvalidNicknameLength,
   UserNotFoundException,
 } from '@app/user/user.errors';
 
@@ -23,6 +24,9 @@ export class UserService {
   ) {}
 
   async createUser(data: UserCreateData): Promise<UserProfileResponse> {
+    if (data.nickname.length < 2 || data.nickname.length > 10)
+      throw new InvalidNicknameLength();
+
     await Promise.all([
       this.validateUsername(data.username),
       this.validateNickname(data.nickname),
@@ -43,16 +47,12 @@ export class UserService {
   }
 
   protected async validateUsername(username: string): Promise<void> {
-    if (username === '') throw new DuplicatedNicknameException();
-
     const count = await this.userRepository.count({ where: { username } });
 
     if (count > 0) throw new DuplicatedUsernameException();
   }
 
   protected async validateNickname(nickname: string): Promise<void> {
-    if (nickname === '') throw new DuplicatedNicknameException();
-
     const count = await this.userRepository.count({ where: { nickname } });
 
     if (count > 0) throw new DuplicatedNicknameException();
@@ -69,7 +69,7 @@ export class UserService {
     id: string,
     data: UserProfileUpdateRequest,
   ): Promise<UserProfileResponse> {
-    await this.userPresenceCheck(id);
+    await this.isUserExist(id);
 
     if (data.username) await this.validateUsername(data.username);
 
@@ -84,7 +84,7 @@ export class UserService {
   }
 
   async updateUserPassword(id: string, password: string): Promise<boolean> {
-    await this.userPresenceCheck(id);
+    await this.isUserExist(id);
 
     const hashedPassword = await argon2.hash(Buffer.from(password), {
       secret: Buffer.from(this.configService.get<string>('APP_SECRET', '')),
@@ -96,14 +96,14 @@ export class UserService {
   }
 
   async withdrawUser(id: string): Promise<boolean> {
-    await this.userPresenceCheck(id);
+    await this.isUserExist(id);
 
     const result = await this.userRepository.softDelete({ id });
 
     return result.affected > 0;
   }
 
-  protected async userPresenceCheck(id: string): Promise<User> {
+  protected async isUserExist(id: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id },
       select: { id: true },
