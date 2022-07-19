@@ -11,7 +11,6 @@ import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import {
   DuplicatedNicknameException,
   DuplicatedUsernameException,
-  InvalidNicknameLength,
   UserNotFoundException,
 } from '@app/user/user.errors';
 
@@ -24,9 +23,6 @@ export class UserService {
   ) {}
 
   async createUser(data: UserCreateData): Promise<UserProfileResponse> {
-    if (data.nickname.length < 2 || data.nickname.length > 10)
-      throw new InvalidNicknameLength();
-
     await Promise.all([
       this.validateUsername(data.username),
       this.validateNickname(data.nickname),
@@ -69,7 +65,7 @@ export class UserService {
     id: string,
     data: UserProfileUpdateRequest,
   ): Promise<UserProfileResponse> {
-    await this.isUserExist(id);
+    await this.findUser(id);
 
     if (data.username) await this.validateUsername(data.username);
 
@@ -84,7 +80,7 @@ export class UserService {
   }
 
   async updateUserPassword(id: string, password: string): Promise<boolean> {
-    await this.isUserExist(id);
+    await this.findUser(id);
 
     const hashedPassword = await argon2.hash(Buffer.from(password), {
       secret: Buffer.from(this.configService.get<string>('APP_SECRET', '')),
@@ -96,14 +92,14 @@ export class UserService {
   }
 
   async withdrawUser(id: string): Promise<boolean> {
-    await this.isUserExist(id);
+    await this.findUser(id);
 
     const result = await this.userRepository.softDelete({ id });
 
     return result.affected > 0;
   }
 
-  protected async isUserExist(id: string): Promise<User> {
+  protected async findUser(id: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id },
       select: { id: true },

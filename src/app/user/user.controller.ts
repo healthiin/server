@@ -18,7 +18,7 @@ import { UserService } from '@app/user/user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('users')
+  @Post()
   async createUser(
     @Body() data: UserCreateRequest,
   ): Promise<UserProfileResponse> {
