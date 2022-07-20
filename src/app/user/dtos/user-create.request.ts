@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-import { NicknameLength } from '../../../domain/user/user.errors';
+import { NicknameLength } from '@domain/user/user.errors';
 
 export class UserCreateRequest {
   @IsNotEmpty()

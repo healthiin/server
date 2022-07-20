@@ -1,4 +1,4 @@
-import { User } from '../../../domain/user/user.entity';
+import { User } from '@domain/user/user.entity';
 
 export class UserProfileResponse {
   private id!: string;
