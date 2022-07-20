@@ -49,7 +49,7 @@ export class UserController {
   async updateUserPassword(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() data: { password: string },
-  ): Promise<boolean> {
+  ): Promise<UserProfileResponse> {
     return this.userService.updateUserPassword(id, data.password);
   }
 }
