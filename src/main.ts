@@ -1,6 +1,7 @@
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
 
 import { MainModule } from './main.module';
 
@@ -8,6 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(MainModule);
 
   app
+    .use(cookieParser(process.env.APP_SECRET))
     .useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)))
     .useGlobalPipes(
       new ValidationPipe({

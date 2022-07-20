@@ -3,16 +3,17 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as argon2 from 'argon2';
 import { Repository } from 'typeorm';
+import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
 import { UserCreateData } from '@app/user/commands/user-create.data';
-import { User } from '@app/user/domain/user.entity';
 import { UserProfileUpdateRequest } from '@app/user/dtos/user-profile-update.request';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
+import { User } from '@domain/user/user.entity';
 import {
   DuplicatedNicknameException,
   DuplicatedUsernameException,
   UserNotFoundException,
-} from '@app/user/user.errors';
+} from '@domain/user/user.errors';
 
 @Injectable()
 export class UserService {
@@ -80,8 +81,23 @@ export class UserService {
     return affected > 0;
   }
 
-  async findById(id: string): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id });
+  async findById(id: string, select?: FindOptionsSelect<User>): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id },
+      select,
+    });
+    if (!user) throw new UserNotFoundException();
+    return user;
+  }
+
+  async findByUsername(
+    username: string,
+    select?: FindOptionsSelect<User>,
+  ): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { username },
+      select,
+    });
     if (!user) throw new UserNotFoundException();
     return user;
   }
