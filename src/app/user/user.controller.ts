@@ -19,7 +19,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  async createUser(
+  async joinUser(
     @Body() data: UserCreateRequest,
   ): Promise<UserProfileResponse> {
     return this.userService.createUser(data);
@@ -30,11 +30,6 @@ export class UserController {
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<UserProfileResponse> {
     return this.userService.getUserProfile(id);
-  }
-
-  @Delete(':id')
-  async withdrawUser(@Param('id', ParseUUIDPipe) id: string): Promise<boolean> {
-    return this.userService.withdrawUser(id);
   }
 
   @Patch(':id')
@@ -51,5 +46,10 @@ export class UserController {
     @Body() data: { password: string },
   ): Promise<UserProfileResponse> {
     return this.userService.updateUserPassword(id, data.password);
+  }
+
+  @Delete(':id')
+  async withdrawUser(@Param('id', ParseUUIDPipe) id: string): Promise<boolean> {
+    return this.userService.withdrawUser(id);
   }
 }
