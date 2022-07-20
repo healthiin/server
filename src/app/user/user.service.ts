@@ -4,15 +4,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as argon2 from 'argon2';
 import { Repository } from 'typeorm';
 
-import { UserCreateData } from '@app/user/commands/user-create.data';
-import { User } from '@app/user/domain/user.entity';
-import { UserProfileUpdateRequest } from '@app/user/dtos/user-profile-update.request';
-import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
+import { User } from '../../domain/user/user.entity';
 import {
   DuplicatedNicknameException,
   DuplicatedUsernameException,
   UserNotFoundException,
-} from '@app/user/user.errors';
+} from '../../domain/user/user.errors';
+
+import { UserCreateData } from '@app/user/commands/user-create.data';
+import { UserProfileUpdateRequest } from '@app/user/dtos/user-profile-update.request';
+import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 
 @Injectable()
 export class UserService {
@@ -82,6 +83,12 @@ export class UserService {
 
   async findById(id: string): Promise<User> {
     const user = await this.userRepository.findOneBy({ id });
+    if (!user) throw new UserNotFoundException();
+    return user;
+  }
+
+  async findByUsername(username: string): Promise<User> {
+    const user = await this.userRepository.findOneBy({ username });
     if (!user) throw new UserNotFoundException();
     return user;
   }
