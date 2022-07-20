@@ -6,10 +6,12 @@ import { Repository } from 'typeorm';
 
 import { UserCreateData } from '@app/user/commands/user-create.data';
 import { User } from '@app/user/domain/user.entity';
+import { UserProfileUpdateRequest } from '@app/user/dtos/user-profile-update.request';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import {
   DuplicatedNicknameException,
   DuplicatedUsernameException,
+  UserNotFoundException,
 } from '@app/user/user.errors';
 
 @Injectable()
@@ -28,37 +30,76 @@ export class UserService {
 
     const { password, ...profile } = data;
 
-    const hashedPassword = await argon2.hash(password, {
-      secret: Buffer.from(this.configService.get<string>('APP_SECRET', '')),
-    });
-
     const user = await this.userRepository.save({
       ...profile,
-      password: hashedPassword,
+      password: await this.hashPassword(password),
     });
 
     return new UserProfileResponse(user);
   }
 
+  async getUserProfile(id: string): Promise<UserProfileResponse> {
+    const user = await this.findById(id);
+    return new UserProfileResponse(user);
+  }
+
+  async updateUserProfile(
+    id: string,
+    data: UserProfileUpdateRequest,
+  ): Promise<UserProfileResponse> {
+    if (data.username) await this.validateUsername(data.username);
+    if (data.nickname) await this.validateNickname(data.nickname);
+
+    const user = await this.findById(id);
+
+    const updatedUser = await this.userRepository.save({
+      ...user,
+      ...data,
+    });
+
+    return new UserProfileResponse(updatedUser);
+  }
+
+  async updateUserPassword(
+    id: string,
+    password: string,
+  ): Promise<UserProfileResponse> {
+    const user = await this.findById(id);
+
+    const updatedUser = await this.userRepository.save({
+      ...user,
+      password: await this.hashPassword(password),
+    });
+
+    return new UserProfileResponse(updatedUser);
+  }
+
+  async withdrawUser(id: string): Promise<boolean> {
+    const user = await this.findById(id);
+    const { affected } = await this.userRepository.softDelete(user);
+    return affected > 0;
+  }
+
+  async findById(id: string): Promise<User> {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) throw new UserNotFoundException();
+    return user;
+  }
+
   protected async validateUsername(username: string): Promise<void> {
     const count = await this.userRepository.count({ where: { username } });
-
     if (count > 0) throw new DuplicatedUsernameException();
   }
 
   protected async validateNickname(nickname: string): Promise<void> {
     const count = await this.userRepository.count({ where: { nickname } });
-
     if (count > 0) throw new DuplicatedNicknameException();
   }
 
-  async getUserProfile(username: string): Promise<UserProfileResponse> {
-    const data = await this.userRepository.findOne({ where: { username } });
-    return new UserProfileResponse(data);
-  }
-
-  async withdrawUser(id: string): Promise<boolean> {
-    const result = await this.userRepository.softDelete({ id });
-    return result.affected > 0;
+  protected async hashPassword(password: string): Promise<string> {
+    const secret = Buffer.from(
+      this.configService.get<string>('APP_SECRET', ''),
+    );
+    return argon2.hash(password, { secret });
   }
 }
