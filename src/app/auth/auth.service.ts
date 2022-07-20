@@ -28,18 +28,18 @@ export class AuthService {
   ) {}
 
   async login(data: LoginRequest, res: Response): Promise<TokenResponse> {
-    const user = await this.userService.findByUsername(data.username);
-
-    const isValidPassword = await this.isValidPassword(
-      data.password,
-      user.password,
+    const { id, password } = await this.userService.findByUsername(
+      data.username,
+      { id: true, password: true },
     );
+
+    const isValidPassword = await this.isValidPassword(data.password, password);
 
     if (!isValidPassword) throw new UserNotFoundException();
 
     const [accessToken, refreshToken] = await Promise.all([
-      this.generateAccessToken(user.id),
-      this.generateRefreshToken(user.id),
+      this.generateAccessToken(id),
+      this.generateRefreshToken(id),
     ]);
 
     res.cookie('refresh_token', refreshToken, {
@@ -103,7 +103,7 @@ export class AuthService {
 
   protected async generateRefreshToken(userId: string): Promise<string> {
     return this.jwtService.signAsync(
-      {},
+      { user_id: userId },
       {
         expiresIn: REFRESH_TOKEN_EXPIRE,
         subject: JwtSubjectType.REFRESH,
