@@ -6,7 +6,7 @@ import { Response } from 'express';
 
 import { ACCESS_TOKEN_EXPIRE, REFRESH_TOKEN_EXPIRE } from '../../constants';
 
-import { SignInRequestData } from '@app/auth/commands/signin-request.data';
+import { LoginRequest } from '@app/auth/commands/login.request';
 import { TokenResponse } from '@app/auth/dtos/token.response';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { UserService } from '@app/user/user.service';
@@ -27,7 +27,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(data: SignInRequestData, res: Response): Promise<TokenResponse> {
+  async login(data: LoginRequest, res: Response): Promise<TokenResponse> {
     const user = await this.userService.findByUsername(data.username);
 
     const isValidPassword = await this.isValidPassword(
