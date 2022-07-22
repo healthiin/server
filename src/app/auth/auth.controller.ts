@@ -8,6 +8,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { AuthService } from '@app/auth/auth.service';
@@ -17,10 +18,12 @@ import { JwtAuthGuard } from '@app/auth/guards/jwt.guard';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { Request } from '@infrastructure/types/request.types';
 
+@ApiTags('AUTH')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @ApiOperation({ summary: '회원 로그인' })
   @Post('login')
   async login(
     @Body() data: LoginRequest,
@@ -29,6 +32,7 @@ export class AuthController {
     return this.authService.login(data, res);
   }
 
+  @ApiOperation({ summary: '회원 로그아웃' })
   @Delete('logout')
   async logout(
     @Req() req: Request,
@@ -37,11 +41,13 @@ export class AuthController {
     return this.authService.logout(req, res);
   }
 
+  @ApiOperation({ summary: '토큰 값 갱신' })
   @Get('refresh')
   async refresh(@Req() req: Request): Promise<TokenResponse> {
     return this.authService.refresh(req);
   }
 
+  @ApiOperation({ summary: '본인 상세 정보 획득' })
   @Get('profile')
   @UseGuards(JwtAuthGuard)
   async getMyProfile(@Req() { user }: Request): Promise<UserProfileResponse> {

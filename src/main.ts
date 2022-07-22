@@ -20,10 +20,9 @@ async function bootstrap() {
     );
 
   const config = new DocumentBuilder()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
+    .setTitle('healthiin API')
+    .setDescription('healthiin 개발을 위한 API 문서')
     .setVersion('1.0')
-    .addTag('cats')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
