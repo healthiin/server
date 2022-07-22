@@ -6,8 +6,8 @@ import { Repository } from 'typeorm';
 import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
 import { UserCreateData } from '@app/user/commands/user-create.data';
+import { UserProfileUpdateRequest } from '@app/user/dtos/user-profile-update.request';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
-import { UserUpdateRequest } from '@app/user/dtos/user-update.request';
 import { User } from '@domain/user/user.entity';
 import {
   DuplicatedNicknameException,
@@ -46,7 +46,7 @@ export class UserService {
 
   async updateUserProfile(
     id: string,
-    data: UserUpdateRequest,
+    data: UserProfileUpdateRequest,
   ): Promise<UserProfileResponse> {
     if (data.username) await this.validateUsername(data.username);
     if (data.nickname) await this.validateNickname(data.nickname);

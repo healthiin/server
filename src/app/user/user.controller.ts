@@ -8,28 +8,30 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiConflictResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { UserCreateRequest } from '@app/user/dtos/user-create.request';
+import { UserProfileUpdateRequest } from '@app/user/dtos/user-profile-update.request';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
-import { UserUpdateRequest } from '@app/user/dtos/user-update.request';
 import { UserService } from '@app/user/user.service';
 
-@ApiTags('USERS')
+@ApiTags('Users')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({ summary: '회원가입' })
-  @ApiResponse({ status: 201, description: '성공', type: UserProfileResponse })
-  @ApiResponse({
-    status: 400,
-    description: '잘못된 프로퍼티',
-  })
-  @ApiResponse({
-    status: 409,
-    description: '이미 있던 회원과의 충돌',
-  })
+  @ApiOkResponse({ description: '성공', type: UserProfileResponse })
+  @ApiBadRequestResponse({ description: '잘못된 프로퍼티' })
+  @ApiConflictResponse({ description: '이미 있던 회원과의 충돌' })
   @Post()
   async joinUser(
     @Body() data: UserCreateRequest,
@@ -44,8 +46,8 @@ export class UserController {
     description: '회원의 id(uuid형태)',
     example: '94eb7e95-47b2-49c1-a121-b2919ddc983c',
   })
-  @ApiResponse({ status: 200, description: '성공', type: UserProfileResponse })
-  @ApiResponse({ status: 400, description: '회원을 찾지 못함' })
+  @ApiOkResponse({ description: '성공', type: UserProfileResponse })
+  @ApiBadRequestResponse({ description: '회원을 찾지 못함' })
   @Get(':id')
   async getUserProfile(
     @Param('id', ParseUUIDPipe) id: string,
@@ -60,19 +62,13 @@ export class UserController {
     description: '회원의 id(uuid형태)',
     example: '94eb7e95-47b2-49c1-a121-b2919ddc983c',
   })
-  @ApiResponse({ status: 200, description: '성공', type: UserProfileResponse })
-  @ApiResponse({
-    status: 400,
-    description: '잘못된 프로퍼티',
-  })
-  @ApiResponse({
-    status: 409,
-    description: '이미 있던 회원과의 충돌',
-  })
+  @ApiOkResponse({ description: '성공', type: UserProfileResponse })
+  @ApiBadRequestResponse({ description: '잘못된 프로퍼티' })
+  @ApiConflictResponse({ description: '이미 있던 회원과의 충돌' })
   @Patch(':id')
   async updateUserProfile(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() data: UserUpdateRequest,
+    @Body() data: UserProfileUpdateRequest,
   ): Promise<UserProfileResponse> {
     return this.userService.updateUserProfile(id, data);
   }
@@ -84,7 +80,7 @@ export class UserController {
     description: '회원의 id(uuid형태)',
     example: '94eb7e95-47b2-49c1-a121-b2919ddc983c',
   })
-  @ApiResponse({ status: 200, description: '성공', type: UserProfileResponse })
+  @ApiOkResponse({ description: '성공', type: UserProfileResponse })
   @Patch(':id/password')
   async updateUserPassword(
     @Param('id', ParseUUIDPipe) id: string,
@@ -100,8 +96,8 @@ export class UserController {
     description: '회원의 id(uuid형태)',
     example: '94eb7e95-47b2-49c1-a121-b2919ddc983c',
   })
-  @ApiResponse({ status: 200, description: '성공', type: Boolean })
-  @ApiResponse({ status: 400, description: '잘못된 프로퍼티' })
+  @ApiOkResponse({ description: '성공', type: Boolean })
+  @ApiBadRequestResponse({ description: '잘못된 프로퍼티' })
   @Delete(':id')
   async withdrawUser(@Param('id', ParseUUIDPipe) id: string): Promise<boolean> {
     return this.userService.withdrawUser(id);

@@ -18,7 +18,7 @@ import { JwtAuthGuard } from '@app/auth/guards/jwt.guard';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { Request } from '@infrastructure/types/request.types';
 
-@ApiTags('AUTH')
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
