@@ -23,12 +23,14 @@
     "migration:generate": "yarn typeorm migration:generate -d ./src/data-source.ts -p true"
   },
   "dependencies": {
+    "@fastify/static": "^6.4.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/jwt": "^9.0.0",
     "@nestjs/passport": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/platform-fastify": "^9.0.5",
     "@nestjs/swagger": "^6.0.4",
     "@nestjs/typeorm": "^9.0.0",
     "argon2": "^0.28.7",

@@ -1,12 +1,21 @@
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify';
+import { SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 
 import { MainModule } from './main.module';
 
-async function bootstrap() {
-  const app = await NestFactory.create(MainModule);
+import generateSwaggerDocument from '@infrastructure/swagger/swagger.generator';
+
+(async () => {
+  const app = await NestFactory.create<NestFastifyApplication>(
+    MainModule,
+    new FastifyAdapter(),
+  );
 
   app
     .use(cookieParser(process.env.APP_SECRET))
@@ -19,15 +28,11 @@ async function bootstrap() {
       }),
     );
 
-  const config = new DocumentBuilder()
-    .setTitle('healthiin API')
-    .setDescription('healthiin 개발을 위한 API 문서')
-    .setVersion('1.0')
-    .build();
+  app.enableCors({ origin: true, credentials: true });
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('docs', app, generateSwaggerDocument(app), {
+    swaggerOptions: { persistAuthorization: true },
+  });
 
-  await app.listen(3000);
-}
-bootstrap();
+  await app.listen(process.env.APP_PORT || 3000);
+})();
