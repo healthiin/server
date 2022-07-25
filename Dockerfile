@@ -1,4 +1,4 @@
-FROM node:16 as base
+FROM node:16-alpine as base
 WORKDIR /app
 COPY . .
 ARG APP_PORT
