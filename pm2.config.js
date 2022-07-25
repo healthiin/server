@@ -3,8 +3,7 @@ module.exports = {
     {
       name: 'app',
       script: 'dist/main.js',
-      instances: 1,
-      exec_mode: 'cluster',
+      exec_mode: 'fork',
     },
   ],
 };

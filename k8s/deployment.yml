@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: healthin-api
+  namespace: healthin
+  labels:
+    app: healthin-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: healthin-api
+  template:
+    metadata:
+      labels:
+        app: healthin-api
+    spec:
+      containers:
+        - name: healthin-api
+          image: harbor.adrinerdp.co/healthin/healthin-api:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: APP_URL
+              valueFrom:
+                secretKeyRef:
+                  name: healthin-api
+                  key: APP_URL
+            - name: APP_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: healthin-api
+                  key: APP_PORT
+            - name: APP_ENV
+              valueFrom:
+                secretKeyRef:
+                  name: healthin-api
+                  key: APP_ENV
+            - name: APP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: healthin-api
+                  key: APP_SECRET
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: healthin-api
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: healthin-api
+                  key: DB_PORT
+            - name: DB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: healthin-api
+                  key: DB_DATABASE
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: healthin-api
+                  key: DB_USERNAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: healthin-api
+                  key: DB_PASSWORD
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: healthin-api
+  namespace: healthin
+spec:
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+      name: http
+  selector:
+    app: healthin-api
