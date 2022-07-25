@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: healthin-api
-          image: harbor.adrinerdp.co/healthin/healthin-api:latest
+          image: harbor.adrinerdp.co/healthin/api:latest
           ports:
             - containerPort: 3000
           env:
