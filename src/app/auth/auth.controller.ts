@@ -3,12 +3,13 @@ import {
   Controller,
   Delete,
   Get,
+  Patch,
   Post,
   Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { AuthService } from '@app/auth/auth.service';
@@ -18,13 +19,13 @@ import { JwtAuthGuard } from '@app/auth/guards/jwt.guard';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { Request } from '@infrastructure/types/request.types';
 
-@ApiTags('Auth')
+@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @ApiOperation({ summary: '회원 로그인' })
   @Post('login')
+  @ApiOperation({ summary: '액세스 토큰을 발급합니다.' })
   async login(
     @Body() data: LoginRequest,
     @Res({ passthrough: true }) res: Response,
@@ -32,8 +33,14 @@ export class AuthController {
     return this.authService.login(data, res);
   }
 
-  @ApiOperation({ summary: '회원 로그아웃' })
+  @Patch('refresh')
+  @ApiOperation({ summary: '액세스 토큰을 갱신합니다.' })
+  async refresh(@Req() req: Request): Promise<TokenResponse> {
+    return this.authService.refresh(req);
+  }
+
   @Delete('logout')
+  @ApiOperation({ summary: '토큰을 만료 처리합니다.' })
   async logout(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
@@ -41,15 +48,10 @@ export class AuthController {
     return this.authService.logout(req, res);
   }
 
-  @ApiOperation({ summary: '토큰 값 갱신' })
-  @Get('refresh')
-  async refresh(@Req() req: Request): Promise<TokenResponse> {
-    return this.authService.refresh(req);
-  }
-
-  @ApiOperation({ summary: '본인 상세 정보 획득' })
   @Get('profile')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: '프로필 정보를 조회합니다.' })
+  @ApiBearerAuth()
   async getMyProfile(@Req() { user }: Request): Promise<UserProfileResponse> {
     return this.authService.getMyProfile(user);
   }
