@@ -77,7 +77,7 @@ export class UserService {
 
   async withdrawUser(id: string): Promise<boolean> {
     const user = await this.findById(id);
-    const { affected } = await this.userRepository.softDelete(user);
+    const { affected } = await this.userRepository.softDelete(user.id);
     return affected > 0;
   }
 
