@@ -2,10 +2,12 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
+  Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
+@Entity('boards')
 export class Board {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
@@ -16,7 +18,7 @@ export class Board {
   @Column({ type: String, nullable: true })
   description!: string | null;
 
-  @Column({ type: String, nullable: true })
+  @Column({ type: String, nullable: true, unique: true })
   slug!: string | null;
 
   @CreateDateColumn()
