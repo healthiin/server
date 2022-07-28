@@ -10,10 +10,10 @@ export class BoardUpdateRequest {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  description?: string;
+  description?: string | null;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  slug?: string;
+  slug?: string | null;
 }
