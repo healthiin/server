@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
-
-import { NicknameLength } from '@domain/user/user.errors';
+import { IsNotEmpty, IsString, Length } from 'class-validator';
 
 export class UserCreateRequest {
   @ApiProperty()
@@ -22,7 +20,7 @@ export class UserCreateRequest {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  @NicknameLength({ message: `닉네임 길이가 올바르지 않습니다.` })
+  @Length(2, 10)
   nickname!: string;
 
   @ApiProperty()
