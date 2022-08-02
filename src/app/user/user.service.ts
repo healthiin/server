@@ -9,6 +9,7 @@ import { AuthenticatedUserData } from '@app/auth/authentication/commands/authent
 import { UserCreateData } from '@app/user/commands/user-create.data';
 import { UserProfileUpdateRequest } from '@app/user/dtos/user-profile-update.request';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
+import { Gym } from '@domain/gym/gym.entity';
 import { User } from '@domain/user/user.entity';
 import {
   DuplicatedNicknameException,
@@ -21,6 +22,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly gymRepository: Repository<Gym>,
     private readonly configService: ConfigService,
   ) {}
 
@@ -38,6 +40,14 @@ export class UserService {
     });
 
     return new UserProfileResponse(user);
+  }
+
+  async joinGym(gymId: string, userId: string): Promise<boolean> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const gym = await this.userRepository.findOne({ where: { id: gymId } });
+    user['registeredGym'] = gym;
+    await this.userRepository.save({ user });
+    return true;
   }
 
   async getUserProfile(id: string): Promise<UserProfileResponse> {

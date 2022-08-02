@@ -49,6 +49,14 @@ export class UserController {
     return this.userService.createUser(data);
   }
 
+  @Post('join/:gymId')
+  async joinGym(
+    @Param('id', ParseUUIDPipe) gymId: string,
+    @Body() data: { id: string },
+  ): Promise<boolean> {
+    return this.userService.joinGym(gymId, data.id);
+  }
+
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: '회원 상세 정보를 조회합니다.' })
