@@ -23,19 +23,19 @@ export class ManualController {
     return this.manualService.getAllManuals();
   }
 
-  @Get(':category')
+  @Get('/:id')
+  async getManualById(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<ManualResponse> {
+    return this.manualService.getManualById(id);
+  }
+
+  @Get('category/:category')
   async getManualsByType(
     @Param('category')
     type: 'back' | 'shoulder' | 'chest' | 'arm' | 'lef' | 'abs',
   ): Promise<ManualPreviewResponse[]> {
     return this.manualService.getManualsByType(type);
-  }
-
-  @Get(':id')
-  async getManualById(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ManualResponse> {
-    return this.manualService.getManualById(id);
   }
 
   @Post()
@@ -45,7 +45,7 @@ export class ManualController {
     return this.manualService.createManual(manualCreateRequest);
   }
 
-  @Patch(':id')
+  @Patch('/:id')
   async updateManual(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() manualCreateRequest: ManualCreateRequest,
@@ -53,7 +53,7 @@ export class ManualController {
     return this.manualService.updateManual(id, manualCreateRequest);
   }
 
-  @Delete(':id')
+  @Delete('/:id')
   async withdrawManual(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<boolean> {
