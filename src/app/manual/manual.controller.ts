@@ -37,8 +37,6 @@ export class ManualController {
   ): Promise<ManualPreviewResponse[]> {
     return this.manualService.getManualsByType(type);
   }
-
-  @Post()
   async createManual(
     @Body() manualCreateRequest: ManualCreateRequest,
   ): Promise<string> {
