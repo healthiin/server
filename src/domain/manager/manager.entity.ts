@@ -1,10 +1,10 @@
 import { Entity, ManyToOne } from 'typeorm';
 
+import { UserAbstract } from '@domain/abstract/user.abstract.entity';
 import { Gym } from '@domain/gym/gym.entity';
-import { User } from '@domain/user/user.entity';
 
 @Entity('managers')
-export class Manager extends User {
+export class Manager extends UserAbstract {
   @ManyToOne(() => Gym, (gym) => gym.id)
-  ManagingGyms: Gym;
+  ManagingGyms: Gym | null;
 }

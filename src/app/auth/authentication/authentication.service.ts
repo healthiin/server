@@ -85,9 +85,7 @@ export class AuthenticationService {
     password: string,
     hashedPassword: string,
   ): Promise<boolean> {
-    const secret = Buffer.from(
-      this.configService.get<string>('APP_SECRET', ''),
-    );
+    const secret = Buffer.from(this.configService.get<string>('APP_SECRET'));
     return argon2.verify(hashedPassword, password, { secret });
   }
 

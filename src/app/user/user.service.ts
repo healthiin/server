@@ -7,6 +7,7 @@ import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
 import { AuthenticatedUserData } from '@app/auth/authentication/commands/authenticated-user.data';
 import { UserCreateData } from '@app/user/commands/user-create.data';
+import { UserJoinToGymRequest } from '@app/user/dtos/user-join-to-gym.request';
 import { UserProfileUpdateRequest } from '@app/user/dtos/user-profile-update.request';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { Gym } from '@domain/gym/gym.entity';
@@ -22,6 +23,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Gym)
     private readonly gymRepository: Repository<Gym>,
     private readonly configService: ConfigService,
   ) {}
@@ -42,11 +44,15 @@ export class UserService {
     return new UserProfileResponse(user);
   }
 
-  async joinGym(gymId: string, userId: string): Promise<boolean> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    const gym = await this.userRepository.findOne({ where: { id: gymId } });
-    user['registeredGym'] = gym;
-    await this.userRepository.save({ user });
+  async joinGym(data: UserJoinToGymRequest): Promise<boolean> {
+    const user = await this.userRepository.findOne({
+      where: { id: data.userId },
+    });
+    user.registeredGym = await this.gymRepository.findOne({
+      where: { id: data.gymId },
+    });
+    await this.userRepository.save(user);
+    // await this.gymRepository.save();
     return true;
   }
 

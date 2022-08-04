@@ -2,17 +2,11 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  OneToMany,
 } from 'typeorm';
 
-import { GymNotice } from '@domain/gym/entities/gym-notice.entity';
-import { GymUser } from '@domain/gym/entities/gym-user.entity';
-
-@Entity('users')
-export class User {
+export abstract class UserAbstract {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
@@ -33,12 +27,6 @@ export class User {
 
   @Column()
   phoneNumber!: string;
-
-  @OneToMany(() => GymUser, ({ user }) => user)
-  gyms!: GymUser[];
-
-  @OneToMany(() => GymNotice, ({ author }) => author)
-  gymNotices: GymNotice[];
 
   @CreateDateColumn()
   createdAt!: Date;
