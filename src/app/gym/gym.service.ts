@@ -75,8 +75,11 @@ export class GymService {
 
   async deleteGym(id: string): Promise<boolean> {
     const gym = await this.findById(id);
-    const { affected } = await this.gymRepository.softDelete({ id: gym.id });
-    return affected > 0;
+
+    await this.gymUserRepository.softDelete({ gym: { id: gym.id } });
+    const { deletedAt } = await this.gymRepository.softRemove({ id: gym.id });
+
+    return !!deletedAt;
   }
 
   async findById(id: string, select?: FindOptionsSelect<Gym>): Promise<Gym> {
