@@ -43,6 +43,7 @@ export class GymNoticeController {
   @ApiQuery({ name: 'page', required: false, example: 1 })
   @ApiQuery({ name: 'limit', required: false, example: 20 })
   async searchNotice(
+    @Param('gymId', ParseUUIDPipe) gymId: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
   ): Promise<Pagination<GymNoticeProfileResponse>> {
@@ -54,6 +55,7 @@ export class GymNoticeController {
   @ApiOkResponse({ type: GymProfileResponse })
   @ApiNotFoundResponse({ description: GYM_ERRORS.NOT_FOUND })
   async getNoticeProfile(
+    @Param('gymId', ParseUUIDPipe) gymId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<GymNoticeProfileResponse> {
     return this.gymNoticeService.getNoticeProfile(id);
@@ -65,6 +67,7 @@ export class GymNoticeController {
   @ApiOkResponse({ type: GymProfileResponse })
   @ApiBearerAuth()
   async createNotice(
+    @Param('gymId', ParseUUIDPipe) gymId: string,
     @Body() data: CreateGymNoticeRequest,
     @Req() { user }: Request,
   ): Promise<GymNoticeProfileResponse> {
@@ -76,6 +79,7 @@ export class GymNoticeController {
   @ApiOkResponse({ type: GymProfileResponse })
   @ApiNotFoundResponse({ description: GYM_ERRORS.NOT_FOUND })
   async updateNoticeProfile(
+    @Param('gymId', ParseUUIDPipe) gymId: string,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() data: UpdateGymNoticeRequest,
   ): Promise<GymNoticeProfileResponse> {
@@ -86,7 +90,10 @@ export class GymNoticeController {
   @ApiOperation({ summary: '헬스장 공지를 삭제합니다.' })
   @ApiOkResponse({ type: Boolean })
   @ApiNotFoundResponse({ description: GYM_ERRORS.NOT_FOUND })
-  async deleteNotice(@Param('id', ParseUUIDPipe) id: string): Promise<boolean> {
+  async deleteNotice(
+    @Param('gymId', ParseUUIDPipe) gymId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<boolean> {
     return this.gymNoticeService.deleteNotice(id);
   }
 }

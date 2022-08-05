@@ -25,6 +25,8 @@ export class GymNoticeService {
   ): Promise<Pagination<GymNoticeProfileResponse>> {
     const queryBuilder = this.gymNoticeRepository.createQueryBuilder('notice');
 
+    queryBuilder.where('notice.');
+
     const { items, meta } = await paginate(queryBuilder, {
       page,
       limit,
