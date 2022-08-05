@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { paginate } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
@@ -7,10 +8,12 @@ import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 import { CreateGymData } from '@app/gym/gym-core/commands/create-gym.data';
 import { UpdateGymData } from '@app/gym/gym-core/commands/update-gym.data';
 import { GymProfileResponse } from '@app/gym/gym-core/dtos/gym-profile.response';
-import { GymUser, GymUserRole } from '@domain/gym/entities/gym-user.entity';
 import { Gym } from '@domain/gym/entities/gym.entity';
+import { GymCreatedEvent } from '@domain/gym/events/gym-created.event';
+import { GymDeletedEvent } from '@domain/gym/events/gym-deleted.event';
 import { GymNotFoundException } from '@domain/gym/gym.errors';
 import { User } from '@domain/user/user.entity';
+import { Events } from '@infrastructure/events';
 import { Pagination } from '@infrastructure/types/pagination.types';
 
 @Injectable()
@@ -18,8 +21,7 @@ export class GymCoreService {
   constructor(
     @InjectRepository(Gym)
     private readonly gymRepository: Repository<Gym>,
-    @InjectRepository(GymUser)
-    private readonly gymUserRepository: Repository<GymUser>,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async searchGym(
@@ -50,11 +52,13 @@ export class GymCoreService {
   ): Promise<GymProfileResponse> {
     const gym = await this.gymRepository.save(data);
 
-    await this.gymUserRepository.save({
-      gym: { id: gym.id },
-      user: { id: user.id },
-      role: GymUserRole.OWNER,
-    });
+    this.eventEmitter.emit(
+      Events.GYM_CREATED,
+      new GymCreatedEvent({
+        gymId: gym.id,
+        ownerId: user.id,
+      }),
+    );
 
     return new GymProfileResponse(gym);
   }
@@ -76,10 +80,18 @@ export class GymCoreService {
   async deleteGym(id: string): Promise<boolean> {
     const gym = await this.findById(id);
 
-    await this.gymUserRepository.softDelete({ gym: { id: gym.id } });
     const { deletedAt } = await this.gymRepository.softRemove({ id: gym.id });
 
-    return !!deletedAt;
+    if (!!deletedAt) {
+      this.eventEmitter.emit(
+        Events.GYM_DELETED,
+        new GymDeletedEvent({ gymId: id }),
+      );
+
+      return true;
+    }
+
+    return false;
   }
 
   async findById(id: string, select?: FindOptionsSelect<Gym>): Promise<Gym> {
