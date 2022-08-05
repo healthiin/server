@@ -23,18 +23,18 @@ import {
 } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from '@app/auth/guards/jwt.guard';
-import { CreateGymRequest } from '@app/gym/dtos/create-gym.request';
-import { GymProfileResponse } from '@app/gym/dtos/gym-profile.response';
-import { UpdateGymProfileRequest } from '@app/gym/dtos/update-gym-profile.request';
-import { GymService } from '@app/gym/gym.service';
+import { CreateGymRequest } from '@app/gym/gym-core/dtos/create-gym.request';
+import { GymProfileResponse } from '@app/gym/gym-core/dtos/gym-profile.response';
+import { UpdateGymProfileRequest } from '@app/gym/gym-core/dtos/update-gym-profile.request';
+import { GymCoreService } from '@app/gym/gym-core/gym-core.service';
 import { GYM_ERRORS } from '@domain/gym/gym.errors';
 import { Pagination } from '@infrastructure/types/pagination.types';
 import { Request } from '@infrastructure/types/request.types';
 
 @Controller('gyms')
 @ApiTags('Gym')
-export class GymController {
-  constructor(private readonly gymService: GymService) {}
+export class GymCoreController {
+  constructor(private readonly gymCoreService: GymCoreService) {}
 
   @Get()
   @ApiOperation({ summary: '헬스장을 검색합니다.' })
@@ -45,7 +45,7 @@ export class GymController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
   ): Promise<Pagination<GymProfileResponse>> {
-    return this.gymService.searchGym(page, limit);
+    return this.gymCoreService.searchGym(page, limit);
   }
 
   @Get(':id')
@@ -55,7 +55,7 @@ export class GymController {
   async getGymProfile(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<GymProfileResponse> {
-    return this.gymService.getGymProfile(id);
+    return this.gymCoreService.getGymProfile(id);
   }
 
   @Post()
@@ -67,7 +67,7 @@ export class GymController {
     @Body() data: CreateGymRequest,
     @Req() { user }: Request,
   ): Promise<GymProfileResponse> {
-    return this.gymService.createGym(data, user);
+    return this.gymCoreService.createGym(data, user);
   }
 
   @Patch(':id')
@@ -78,7 +78,7 @@ export class GymController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() data: UpdateGymProfileRequest,
   ): Promise<GymProfileResponse> {
-    return this.gymService.updateGymProfile(id, data);
+    return this.gymCoreService.updateGymProfile(id, data);
   }
 
   @Delete(':id')
@@ -86,6 +86,6 @@ export class GymController {
   @ApiOkResponse({ type: Boolean })
   @ApiNotFoundResponse({ description: GYM_ERRORS.NOT_FOUND })
   async deleteGym(@Param('id', ParseUUIDPipe) id: string): Promise<boolean> {
-    return this.gymService.deleteGym(id);
+    return this.gymCoreService.deleteGym(id);
   }
 }
