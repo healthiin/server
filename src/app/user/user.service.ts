@@ -5,6 +5,7 @@ import * as argon2 from 'argon2';
 import { Repository } from 'typeorm';
 import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
+import { AuthenticatedUserData } from '@app/auth/authentication/commands/authenticated-user.data';
 import { UserCreateData } from '@app/user/commands/user-create.data';
 import { UserProfileUpdateRequest } from '@app/user/dtos/user-profile-update.request';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
@@ -100,6 +101,15 @@ export class UserService {
     });
     if (!user) throw new UserNotFoundException();
     return user;
+  }
+
+  async getUserForAuthentication(id: string): Promise<AuthenticatedUserData> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id })
+      .leftJoinAndSelect('user.gyms', 'gyms')
+      .leftJoinAndSelect('gyms.gym', 'gym')
+      .getOne();
   }
 
   protected async validateUsername(username: string): Promise<void> {

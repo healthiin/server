@@ -19,7 +19,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { JwtAuthGuard } from '@app/auth/guards/jwt.guard';
+import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
 import { GymUserProfileResponse } from '@app/gym/gym-user/dtos/gym-user-profile.response';
 import { GymUserService } from '@app/gym/gym-user/gym-user.service';
 import { GYM_ERRORS } from '@domain/gym/gym.errors';

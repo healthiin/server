@@ -22,7 +22,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { JwtAuthGuard } from '@app/auth/guards/jwt.guard';
+import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
 import { CreateGymRequest } from '@app/gym/gym-core/dtos/create-gym.request';
 import { GymProfileResponse } from '@app/gym/gym-core/dtos/gym-profile.response';
 import { UpdateGymProfileRequest } from '@app/gym/gym-core/dtos/update-gym-profile.request';

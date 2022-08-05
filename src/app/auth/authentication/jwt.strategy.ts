@@ -3,9 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
+import { AuthenticatedUserData } from '@app/auth/authentication/commands/authenticated-user.data';
 import { UserService } from '@app/user/user.service';
 import { NeedAuthenticationException } from '@domain/auth/auth.errors';
-import { User } from '@domain/user/user.entity';
 import {
   JwtDecodedData,
   JwtSubjectType,
@@ -24,11 +24,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(data: JwtDecodedData): Promise<User> {
+  async validate(data: JwtDecodedData): Promise<AuthenticatedUserData> {
     if (data.sub !== JwtSubjectType.ACCESS) {
       throw new NeedAuthenticationException();
     }
 
-    return this.userService.findById(data.user_id);
+    return this.userService.getUserForAuthentication(data.user_id);
   }
 }
