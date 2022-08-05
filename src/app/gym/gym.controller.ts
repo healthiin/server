@@ -86,6 +86,6 @@ export class GymController {
   @ApiOkResponse({ type: Boolean })
   @ApiNotFoundResponse({ description: GYM_ERRORS.NOT_FOUND })
   async deleteGym(@Param('id', ParseUUIDPipe) id: string): Promise<boolean> {
-    return this.deleteGym(id);
+    return this.gymService.deleteGym(id);
   }
 }

@@ -1,6 +1,7 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -31,6 +32,9 @@ export class GymUser {
 
   @CreateDateColumn()
   createdAt!: Date;
+
+  @DeleteDateColumn()
+  deletedAt!: Date | null;
 
   isAdmin(): boolean {
     return [GymUserRole.OWNER, GymUserRole.MANAGER].includes(this.role);
