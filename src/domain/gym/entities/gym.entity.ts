@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { GymNotice } from '@domain/gym/entities/gym-notice.entity';
 import { GymUser } from '@domain/gym/entities/gym-user.entity';
 
 @Entity('gyms')
@@ -29,6 +30,9 @@ export class Gym {
 
   @OneToMany(() => GymUser, ({ gym }) => gym)
   users!: GymUser[];
+
+  @OneToMany(() => GymNotice, ({ gym }) => gym)
+  notices!: GymNotice[];
 
   @CreateDateColumn()
   createdAt!: Date;
