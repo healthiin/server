@@ -10,31 +10,25 @@ import {
 
 import { GymUser } from '@domain/gym/entities/gym-user.entity';
 
-@Entity('users')
-export class User {
+@Entity('gyms')
+export class Gym {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
-
-  @Column({ unique: true })
-  username!: string;
-
-  @Column()
-  password!: string;
 
   @Column()
   name!: string;
 
-  @Column({ unique: true })
-  nickname!: string;
+  @Column({ type: String, nullable: true })
+  description!: string | null;
 
-  @Column({ nullable: true })
-  avatarImage!: string | null;
+  @Column({ type: String, nullable: true })
+  location!: string | null;
 
-  @Column()
-  phoneNumber!: string;
+  @Column({ type: String, nullable: true })
+  contact!: string | null;
 
-  @OneToMany(() => GymUser, ({ user }) => user)
-  gyms!: GymUser[];
+  @OneToMany(() => GymUser, ({ gym }) => gym)
+  users!: GymUser[];
 
   @CreateDateColumn()
   createdAt!: Date;
@@ -43,5 +37,5 @@ export class User {
   updatedAt!: Date;
 
   @DeleteDateColumn()
-  deletedAt!: Date;
+  deletedAt!: Date | null;
 }
