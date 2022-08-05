@@ -8,8 +8,6 @@ export class GymProfileResponse {
   @ApiProperty({ nullable: true }) private description!: string | null;
   @ApiProperty({ nullable: true }) private location!: string | null;
   @ApiProperty({ nullable: true }) private contact!: string | null;
-  @ApiProperty() private createdAt!: Date;
-  @ApiProperty() private updatedAt!: Date;
 
   constructor(data: Gym) {
     this.id = data.id;
@@ -17,7 +15,5 @@ export class GymProfileResponse {
     this.description = data.description;
     this.location = data.location;
     this.contact = data.contact;
-    this.createdAt = data.createdAt;
-    this.updatedAt = data.updatedAt;
   }
 }
