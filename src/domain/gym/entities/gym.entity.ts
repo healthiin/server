@@ -34,6 +34,9 @@ export class Gym {
   @OneToMany(() => GymNotice, ({ gym }) => gym)
   notices!: GymNotice[];
 
+  @Column({ enum: String, nullable: true })
+  equipments: string[] | null;
+
   @CreateDateColumn()
   createdAt!: Date;
 
