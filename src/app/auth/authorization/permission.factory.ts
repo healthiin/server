@@ -8,7 +8,6 @@ import { Injectable } from '@nestjs/common';
 
 import { AuthenticatedUserData } from '@app/auth/authentication/commands/authenticated-user.data';
 import { Action, Subjects } from '@app/auth/authorization/types';
-import { GymUserRole } from '@domain/gym/entities/gym-user.entity';
 import { Gym } from '@domain/gym/entities/gym.entity';
 import { User } from '@domain/user/user.entity';
 
@@ -43,14 +42,8 @@ export class PermissionFactory {
     this.builder.can([Action.Create], Gym);
 
     if (user.gyms.length > 0) {
-      user.gyms.forEach(({ id, role }) => {
-        if (role === GymUserRole.OWNER) {
-          this.builder.can([Action.Manage], Gym, { id });
-        } else {
-          this.builder.can([Action.Update, Action.ReadDetail], Gym, {
-            id,
-          });
-        }
+      user.gyms.forEach(({ id, isAdmin }) => {
+        if (isAdmin()) this.builder.can([Action.Manage], Gym, { id });
       });
     }
 
