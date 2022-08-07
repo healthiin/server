@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
+  Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -9,6 +10,7 @@ import {
 
 import { Equipment } from '@domain/equipment/entities/equipment.entity';
 
+@Entity('manuals')
 export class Manual {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

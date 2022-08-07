@@ -23,16 +23,17 @@ export class EquipmentCoreController {
   constructor(private readonly equipmentCoreService: EquipmentCoreService) {}
 
   @Get()
-  async getEquipmentList(
-    @Param('equipmentId', ParseUUIDPipe) equipmentId: string,
+  async searchEquipment(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
   ): Promise<Pagination<EquipmentProfileResponse>> {
-    return this.equipmentCoreService.getEquipmentList(equipmentId, page, limit);
+    return this.equipmentCoreService.searchEquipment(page, limit);
   }
 
   @Post()
-  async postEquipment(@Body() data: CreateEquipmentRequest): Promise<boolean> {
+  async postEquipment(
+    @Body() data: CreateEquipmentRequest,
+  ): Promise<EquipmentProfileResponse> {
     return this.equipmentCoreService.postEquipment(data);
   }
 
@@ -40,7 +41,7 @@ export class EquipmentCoreController {
   async updateEquipment(
     @Param('equipmentId', ParseUUIDPipe) equipmentId: string,
     @Body() data: UpdateEquipmentRequest,
-  ): Promise<boolean> {
+  ): Promise<EquipmentProfileResponse> {
     return this.equipmentCoreService.updateEquipment(equipmentId, data);
   }
 

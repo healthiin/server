@@ -19,8 +19,7 @@ export class EquipmentCoreService {
     private readonly equipmentRepository: Repository<Equipment>,
   ) {}
 
-  async getEquipmentList(
-    equipmentId: string,
+  async searchEquipment(
     page: number,
     limit: number,
   ): Promise<Pagination<EquipmentProfileResponse>> {
@@ -30,7 +29,7 @@ export class EquipmentCoreService {
     const { items, meta } = await paginate(queryBuilder, { page, limit });
 
     return {
-      items: items.map((equipment) => new EquipmentProfileResponse(equipment)),
+      items: items.map((manual) => new EquipmentProfileResponse(manual)),
       meta,
     };
   }

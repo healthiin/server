@@ -9,5 +9,6 @@ import { Equipment } from '@domain/equipment/entities/equipment.entity';
   imports: [TypeOrmModule.forFeature([Equipment])],
   controllers: [EquipmentCoreController],
   providers: [EquipmentCoreService],
+  exports: [EquipmentCoreService],
 })
 export class EquipmentCoreModule {}
