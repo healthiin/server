@@ -10,22 +10,22 @@ import {
 
 import { Equipment } from '@domain/equipment/entities/equipment.entity';
 
-@Entity('manuals')
-export class Manual {
+@Entity('equipment_manuals')
+export class EquipmentManual {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ nullable: true })
+  @Column({ unique: true })
   title!: string;
 
-  @Column({ nullable: true })
+  @Column({ unique: true })
   enTitle!: string;
 
   @Column()
-  type: '등' | '팔' | '다리' | '가슴' | '복근' | '유산소' | '어깨' | '하체';
+  type!: '등' | '팔' | '다리' | '가슴' | '복근' | '유산소' | '어깨' | '하체';
 
   @Column()
-  difficulty: number;
+  difficulty!: number;
 
   @Column({ type: String, nullable: true })
   description!: string | null;

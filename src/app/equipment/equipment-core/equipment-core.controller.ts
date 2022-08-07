@@ -34,6 +34,7 @@ export class EquipmentCoreController {
   async postEquipment(
     @Body() data: CreateEquipmentRequest,
   ): Promise<EquipmentProfileResponse> {
+    console.log('테슽트1');
     return this.equipmentCoreService.postEquipment(data);
   }
 

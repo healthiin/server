@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Manual } from '@domain/equipment/entities/manual.entity';
+import { EquipmentManual } from '@domain/equipment/entities/equipment-manual.entity';
 import { GymEquipment } from '@domain/gym/entities/gym-equipment.entity';
 
 @Entity('equipments')
@@ -24,10 +24,10 @@ export class Equipment {
   enTitle!: string;
 
   @Column({ type: String, nullable: true })
-  description!: string | null;
+  description?: string | null;
 
-  @OneToMany(() => Manual, ({ equipment }) => equipment)
-  manuals!: Manual[];
+  @OneToMany(() => EquipmentManual, ({ equipment }) => equipment)
+  manuals!: EquipmentManual[];
 
   @ManyToOne(() => GymEquipment, ({ equipment }) => equipment)
   gymEquipment: GymEquipment;

@@ -3,7 +3,7 @@ import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
-import { CreateEquipmentRequest } from '@app/equipment/equipment-core/dtos/create-equipment.request';
+import { CreateEquipmentData } from '@app/equipment/equipment-core/commands/create-equipment.data';
 import { EquipmentProfileResponse } from '@app/equipment/equipment-core/dtos/equipment-profile.response';
 import { UpdateEquipmentRequest } from '@app/equipment/equipment-core/dtos/update-equipment.request';
 import { Equipment } from '@domain/equipment/entities/equipment.entity';
@@ -35,12 +35,15 @@ export class EquipmentCoreService {
   }
 
   async postEquipment(
-    data: CreateEquipmentRequest,
+    data: CreateEquipmentData,
   ): Promise<EquipmentProfileResponse> {
     await this.validationTitles(data.title, data.enTitle);
-
-    const equipment = await this.equipmentRepository.save({ ...data });
-
+    console.log('data', data);
+    const equipment = await this.equipmentRepository.save({
+      title: data.title,
+      enTitle: data.enTitle,
+    });
+    console.log('equipment', equipment);
     return new EquipmentProfileResponse(equipment);
   }
 
