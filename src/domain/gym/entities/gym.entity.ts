@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { GymEquipment } from '@domain/gym/entities/gym-equipment.entity';
 import { GymNotice } from '@domain/gym/entities/gym-notice.entity';
 import { GymUser } from '@domain/gym/entities/gym-user.entity';
 
@@ -34,8 +35,8 @@ export class Gym {
   @OneToMany(() => GymNotice, ({ gym }) => gym)
   notices!: GymNotice[];
 
-  @Column({ enum: String, nullable: true })
-  equipments: string[] | null;
+  @OneToMany(() => GymEquipment, ({ gym }) => gym)
+  equipments: GymEquipment[];
 
   @CreateDateColumn()
   createdAt!: Date;
