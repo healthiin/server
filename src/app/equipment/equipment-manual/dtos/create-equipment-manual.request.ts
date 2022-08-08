@@ -1,5 +1,7 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
+import { EquipmentManualType } from '@domain/equipment/entities/equipment-manual.entity';
+
 export class CreateEquipmentManualRequest {
   @IsNotEmpty()
   @IsString()
@@ -11,7 +13,7 @@ export class CreateEquipmentManualRequest {
 
   @IsNotEmpty()
   @IsString()
-  type!: '등' | '팔' | '다리' | '가슴' | '복근' | '유산소' | '어깨' | '하체';
+  type!: EquipmentManualType;
 
   @IsNotEmpty()
   @IsNumber()

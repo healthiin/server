@@ -23,6 +23,7 @@ export class EquipmentManualController {
   constructor(
     private readonly equipmentManualService: EquipmentManualService,
   ) {}
+
   @Get()
   async searchManual(
     @Param('equipmentId', ParseUUIDPipe) equipmentId: string,

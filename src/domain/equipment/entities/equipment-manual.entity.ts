@@ -10,6 +10,17 @@ import {
 
 import { Equipment } from '@domain/equipment/entities/equipment.entity';
 
+export const enum EquipmentManualType {
+  back = '등',
+  arm = '팔',
+  legs = '다리',
+  chest = '가슴',
+  abs = '복근',
+  cardio = '유산소',
+  shoulder = '어깨',
+  lower = '하체',
+}
+
 @Entity('equipment_manuals')
 export class EquipmentManual {
   @PrimaryGeneratedColumn('uuid')
@@ -22,7 +33,7 @@ export class EquipmentManual {
   enTitle!: string;
 
   @Column()
-  type!: '등' | '팔' | '다리' | '가슴' | '복근' | '유산소' | '어깨' | '하체';
+  type!: EquipmentManualType;
 
   @Column()
   difficulty!: number;
