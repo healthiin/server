@@ -20,7 +20,7 @@ export class GymEquipment {
   gym!: Gym;
 
   @OneToMany(() => Equipment, ({ gymEquipment }) => gymEquipment)
-  equipment!: Equipment[];
+  equipments!: Equipment[];
 
   @CreateDateColumn()
   createdAt!: Date;

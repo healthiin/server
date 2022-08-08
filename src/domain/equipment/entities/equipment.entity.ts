@@ -17,20 +17,20 @@ export class Equipment {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ unique: true })
+  @Column()
   title!: string;
 
-  @Column({ unique: true })
+  @Column()
   enTitle!: string;
 
   @Column({ type: String, nullable: true })
-  description?: string | null;
+  description!: string | null;
 
-  @OneToMany(() => EquipmentManual, ({ equipment }) => equipment)
+  @OneToMany(() => EquipmentManual, ({ equipments }) => equipments)
   manuals!: EquipmentManual[];
 
-  @ManyToOne(() => GymEquipment, ({ equipment }) => equipment)
-  gymEquipment: GymEquipment;
+  @ManyToOne(() => GymEquipment, ({ equipments }) => equipments)
+  gymEquipment!: GymEquipment;
 
   @CreateDateColumn()
   createdAt!: Date;
@@ -39,5 +39,5 @@ export class Equipment {
   updatedAt!: Date;
 
   @DeleteDateColumn()
-  deletedAt!: Date;
+  deletedAt!: Date | null;
 }

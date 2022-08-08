@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateEquipmentRequest {
@@ -12,7 +12,7 @@ export class CreateEquipmentRequest {
   @IsString()
   enTitle!: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   description?: string;

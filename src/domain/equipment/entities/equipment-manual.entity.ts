@@ -38,7 +38,7 @@ export class EquipmentManual {
   precautions: string | null;
 
   @ManyToOne(() => Equipment, ({ manuals }) => manuals)
-  equipment!: Equipment;
+  equipments!: Equipment;
 
   @CreateDateColumn()
   createdAt!: Date;
@@ -47,5 +47,5 @@ export class EquipmentManual {
   updatedAt!: Date;
 
   @DeleteDateColumn()
-  deletedAt!: Date;
+  deletedAt!: Date | null;
 }

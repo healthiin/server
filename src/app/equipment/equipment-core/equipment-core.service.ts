@@ -4,8 +4,8 @@ import { Repository } from 'typeorm';
 import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
 import { CreateEquipmentData } from '@app/equipment/equipment-core/commands/create-equipment.data';
+import { UpdateEquipmentData } from '@app/equipment/equipment-core/commands/update-equipment.data';
 import { EquipmentProfileResponse } from '@app/equipment/equipment-core/dtos/equipment-profile.response';
-import { UpdateEquipmentRequest } from '@app/equipment/equipment-core/dtos/update-equipment.request';
 import { Equipment } from '@domain/equipment/entities/equipment.entity';
 import {
   DuplicatedEnTitleException,
@@ -37,21 +37,16 @@ export class EquipmentCoreService {
   async postEquipment(
     data: CreateEquipmentData,
   ): Promise<EquipmentProfileResponse> {
-    await this.validationTitles(data.title, data.enTitle);
-    console.log('data', data);
-    const equipment = await this.equipmentRepository.save({
-      title: data.title,
-      enTitle: data.enTitle,
-    });
-    console.log('equipment', equipment);
+    await this.validateTitles(data.title, data.enTitle);
+    const equipment = await this.equipmentRepository.save({ ...data });
     return new EquipmentProfileResponse(equipment);
   }
 
   async updateEquipment(
     id: string,
-    data: UpdateEquipmentRequest,
+    data: UpdateEquipmentData,
   ): Promise<EquipmentProfileResponse> {
-    await this.validationTitles(data.title, data.enTitle);
+    await this.validateTitles(data.title, data.enTitle);
 
     const equipment = await this.equipmentRepository.findOne({ where: { id } });
 
@@ -85,18 +80,17 @@ export class EquipmentCoreService {
     return equipment;
   }
 
-  protected async validationTitles(
+  protected async validateTitles(
     title: string,
     enTitle: string,
   ): Promise<void> {
-    const titleCount = await this.equipmentRepository.count({
-      where: { title },
-    });
-    if (titleCount > 0) throw new DuplicatedTitleException();
-
-    const enTitleCount = await this.equipmentRepository.count({
-      where: { enTitle },
-    });
-    if (enTitleCount > 0) throw new DuplicatedEnTitleException();
+    await Promise.all([
+      this.equipmentRepository.count({ where: { title } }).then((count) => {
+        if (count > 0) throw new DuplicatedTitleException();
+      }),
+      this.equipmentRepository.count({ where: { enTitle } }).then((count) => {
+        if (count > 0) throw new DuplicatedEnTitleException();
+      }),
+    ]);
   }
 }

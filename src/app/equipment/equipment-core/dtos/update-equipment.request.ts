@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UpdateEquipmentRequest {
@@ -12,8 +12,8 @@ export class UpdateEquipmentRequest {
   @IsString()
   enTitle!: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  description?: string;
+  description?: string | null;
 }
