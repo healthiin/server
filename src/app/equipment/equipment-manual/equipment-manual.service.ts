@@ -3,6 +3,8 @@ import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
+import { CreateEquipmentManualData } from '@app/equipment/equipment-manual/commands/create-equipment-manual.data';
+import { UpdateEquipmentManualData } from '@app/equipment/equipment-manual/commands/update-equipment-manual.data';
 import { CreateEquipmentManualRequest } from '@app/equipment/equipment-manual/dtos/create-equipment-manual.request';
 import { EquipmentManualProfileResponse } from '@app/equipment/equipment-manual/dtos/equipment-manual-profile.response';
 import { UpdateEquipmentManualRequest } from '@app/equipment/equipment-manual/dtos/update-equipment-manual.request';
@@ -37,7 +39,7 @@ export class EquipmentManualService {
 
   async createManual(
     equipmentId: string,
-    data: CreateEquipmentManualRequest,
+    data: CreateEquipmentManualData,
   ): Promise<EquipmentManualProfileResponse> {
     const manual = await this.equipmentManualRepository.save({
       equipment: { id: equipmentId },
@@ -48,7 +50,7 @@ export class EquipmentManualService {
 
   async updateManual(
     manualId: string,
-    data: UpdateEquipmentManualRequest,
+    data: UpdateEquipmentManualData,
   ): Promise<EquipmentManualProfileResponse> {
     const manual = await this.findById(manualId);
 
