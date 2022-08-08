@@ -1,10 +1,13 @@
-import { EquipmentManual } from '@domain/equipment/entities/equipment-manual.entity';
+import {
+  EquipmentManual,
+  EquipmentManualType,
+} from '@domain/equipment/entities/equipment-manual.entity';
 
 export class EquipmentManualProfileResponse {
   id!: string;
   title!: string;
   enTitle!: string;
-  type!: '등' | '팔' | '다리' | '가슴' | '복근' | '유산소' | '어깨' | '하체';
+  type!: EquipmentManualType;
   difficulty!: number;
   description!: string | null;
   precautions!: string | null;
