@@ -1,5 +1,5 @@
 export type CreateEquipmentData = {
   title: string;
   enTitle: string;
-  description?: string;
+  description?: string | null;
 };
