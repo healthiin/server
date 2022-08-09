@@ -4,7 +4,7 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -13,11 +13,12 @@ import { Gym } from '@domain/gym/entities/gym.entity';
 
 @Entity('gyms_equipment')
 export class GymEquipment {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
+
   @ManyToOne(() => Gym, ({ equipments }) => equipments)
   gym!: Gym;
 
-  @PrimaryColumn()
   @OneToMany(() => Equipment, ({ gymEquipment }) => gymEquipment)
   equipments!: Equipment[];
 
