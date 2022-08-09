@@ -49,12 +49,13 @@
     "rxjs": "^7.5.6",
     "swagger": "^0.7.5",
     "typeorm": "^0.3.7",
-    "typeorm-naming-strategies": "^4.1.0"
+    "typeorm-naming-strategies": "^4.1.0",
+    "typeorm-seeding": "^1.6.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
-    "@nestjs/testing": "^9.0.0",
+    "@nestjs/testing": "^9.0.8",
     "@types/cookie-parser": "^1.4.3",
     "@types/jest": "28.1.4",
     "@types/node": "^16.0.0",
