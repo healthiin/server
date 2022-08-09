@@ -21,7 +21,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "npx typeorm-ts-node-esm",
     "migration:generate": "yarn typeorm migration:generate -d ./src/data-source.ts -p true",
-    "migration:run": "yarn typeorm migration:run -d ./src/data-source.ts"
+    "migration:run": "yarn typeorm migration:run -d ./src/data-source.ts",
+    "clear_jest": "jest --clearCache"
   },
   "dependencies": {
     "@casl/ability": "^6.0.0",
@@ -34,6 +35,7 @@
     "@nestjs/jwt": "^9.0.0",
     "@nestjs/passport": "^9.0.0",
     "@nestjs/platform-fastify": "^9.0.5",
+    "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^6.0.4",
     "@nestjs/typeorm": "^9.0.0",
     "argon2": "^0.28.7",
@@ -93,6 +95,10 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "@app/(.*)$": "<rootDir>/app/$1",
+      "@infrastructure/(.*)$": "<rootDir>/infrastructure/$1"
+    }
   }
 }

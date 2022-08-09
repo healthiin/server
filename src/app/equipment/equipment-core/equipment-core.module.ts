@@ -7,5 +7,6 @@ import { EquipmentCoreService } from '@app/equipment/equipment-core/equipment-co
   imports: [],
   providers: [EquipmentCoreService],
   controllers: [EquipmentCoreController],
+  exports: [EquipmentCoreService],
 })
 export class EquipmentCoreModule {}

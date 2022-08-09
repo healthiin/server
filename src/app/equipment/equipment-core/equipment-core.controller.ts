@@ -4,7 +4,7 @@ import { CreateEquipmentCoreRequest } from '@app/equipment/equipment-core/dtos/c
 import { UpdateEquipmentCoreRequest } from '@app/equipment/equipment-core/dtos/update-equipment-core.request';
 import { EquipmentCoreService } from '@app/equipment/equipment-core/equipment-core.service';
 
-@Controller('equipment')
+@Controller('equipments')
 export class EquipmentCoreController {
   constructor(private readonly equipmentCoreService: EquipmentCoreService) {}
 
