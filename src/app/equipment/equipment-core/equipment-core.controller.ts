@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post } from '@nestjs/common';
 
 import { CreateEquipmentCoreRequest } from '@app/equipment/equipment-core/dtos/create-equipment-core.request';
+import { UpdateEquipmentCoreRequest } from '@app/equipment/equipment-core/dtos/update-equipment-core.request';
 import { EquipmentCoreService } from '@app/equipment/equipment-core/equipment-core.service';
 
 @Controller('equipment')
@@ -18,6 +19,15 @@ export class EquipmentCoreController {
   ): Promise<object> {
     return await this.equipmentCoreService.createEquipment(
       createEquipmentCoreRequest,
+    );
+  }
+
+  @Patch()
+  async updateEquipment(
+    @Body() updateEquipmentCoreRequest: UpdateEquipmentCoreRequest,
+  ): Promise<object> {
+    return await this.equipmentCoreService.updateEquipment(
+      updateEquipmentCoreRequest,
     );
   }
 }
