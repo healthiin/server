@@ -36,4 +36,7 @@ export class EquipmentCoreService {
       description: updateEquipmentCoreRequest.description,
     };
   }
+  async deleteEquipment(id: string): Promise<boolean> {
+    return true;
+  }
 }

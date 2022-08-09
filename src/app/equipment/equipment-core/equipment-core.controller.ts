@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
 
 import { CreateEquipmentCoreRequest } from '@app/equipment/equipment-core/dtos/create-equipment-core.request';
 import { UpdateEquipmentCoreRequest } from '@app/equipment/equipment-core/dtos/update-equipment-core.request';
@@ -29,5 +29,10 @@ export class EquipmentCoreController {
     return await this.equipmentCoreService.updateEquipment(
       updateEquipmentCoreRequest,
     );
+  }
+
+  @Delete(':id')
+  async deleteEquipment(id: string): Promise<boolean> {
+    return await this.equipmentCoreService.deleteEquipment(id);
   }
 }
