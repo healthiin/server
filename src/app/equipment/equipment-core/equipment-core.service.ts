@@ -1,9 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
-import { CreateEquipmentCoreRequest } from '@app/equipment/equipment-core/dtos/create-equipment-core.request';
+import { CreateEquipmentCoreData } from '@app/equipment/equipment-core/commands/create-equipment-core.data';
+import { UpdateEquipmentCoreData } from '@app/equipment/equipment-core/commands/update-equipment-core.data';
 import { EquipmentCoreResponse } from '@app/equipment/equipment-core/dtos/equipment-core.response';
-import { UpdateEquipmentCoreRequest } from '@app/equipment/equipment-core/dtos/update-equipment-core.request';
 import { Equipment } from '@domain/equipment/entities/equipment.entity';
 
 export class EquipmentCoreService {
@@ -13,40 +14,50 @@ export class EquipmentCoreService {
   ) {}
 
   async getEquipments(): Promise<EquipmentCoreResponse[]> {
-    return [
-      {
-        id: '1',
-        name: 'Equipment 1',
-        description: 'Description 1',
-      },
-      {
-        id: '2',
-        name: 'Equipment 2',
-        description: 'Description 2',
-      },
-    ];
+    const equipments = await this.equipmentRepository.find();
+
+    return equipments.map((equipment) => new EquipmentCoreResponse(equipment));
   }
 
   async createEquipment(
-    createEquipmentCoreRequest: CreateEquipmentCoreRequest,
+    createEquipmentCoreData: CreateEquipmentCoreData,
   ): Promise<EquipmentCoreResponse> {
-    return {
-      id: '3',
-      name: createEquipmentCoreRequest.name,
-      description: createEquipmentCoreRequest.description,
-    };
+    const equipment = await this.equipmentRepository.save(
+      createEquipmentCoreData,
+    );
+    return new EquipmentCoreResponse(equipment);
   }
 
   async updateEquipment(
-    updateEquipmentCoreRequest: UpdateEquipmentCoreRequest,
+    id: string,
+    updateEquipmentCoreData: UpdateEquipmentCoreData,
   ): Promise<EquipmentCoreResponse> {
-    return {
-      id: '3',
-      name: updateEquipmentCoreRequest.name,
-      description: updateEquipmentCoreRequest.description,
-    };
+    const equipment = await this.findById(id);
+
+    const updatedEquipment = await this.equipmentRepository.save({
+      ...equipment,
+      ...updateEquipmentCoreData,
+    });
+    return new EquipmentCoreResponse(updatedEquipment);
   }
+
   async deleteEquipment(id: string): Promise<boolean> {
-    return true;
+    const equipment = await this.findById(id);
+    console.log(equipment);
+    const { affected } = await this.equipmentRepository.softDelete({
+      id: equipment.id,
+    });
+    return affected > 0;
+  }
+
+  async findById(
+    id: string,
+    select?: FindOptionsSelect<Equipment>,
+  ): Promise<Equipment> {
+    const equipment = await this.equipmentRepository.findOne({
+      where: { id },
+      select,
+    });
+    return equipment;
   }
 }

@@ -1,4 +1,11 @@
+import { IsOptional, IsString } from 'class-validator';
+
 export class UpdateEquipmentCoreRequest {
-  name: string;
-  description: string;
+  @IsOptional()
+  @IsString()
+  name?: string | null;
+
+  @IsOptional()
+  @IsString()
+  description?: string | null;
 }

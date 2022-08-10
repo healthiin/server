@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 
 import { CreateEquipmentCoreRequest } from '@app/equipment/equipment-core/dtos/create-equipment-core.request';
 import { EquipmentCoreResponse } from '@app/equipment/equipment-core/dtos/equipment-core.response';
@@ -25,15 +34,19 @@ export class EquipmentCoreController {
 
   @Patch(':id')
   async updateEquipment(
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateEquipmentCoreRequest: UpdateEquipmentCoreRequest,
   ): Promise<EquipmentCoreResponse> {
     return await this.equipmentCoreService.updateEquipment(
+      id,
       updateEquipmentCoreRequest,
     );
   }
 
   @Delete(':id')
-  async deleteEquipment(id: string): Promise<boolean> {
+  async deleteEquipment(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<boolean> {
     return await this.equipmentCoreService.deleteEquipment(id);
   }
 }
