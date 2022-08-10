@@ -1,8 +1,18 @@
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
 import { CreateEquipmentCoreRequest } from '@app/equipment/equipment-core/dtos/create-equipment-core.request';
+import { EquipmentCoreResponse } from '@app/equipment/equipment-core/dtos/equipment-core.response';
 import { UpdateEquipmentCoreRequest } from '@app/equipment/equipment-core/dtos/update-equipment-core.request';
+import { Equipment } from '@domain/equipment/entities/equipment.entity';
 
 export class EquipmentCoreService {
-  async getEquipments(): Promise<object[]> {
+  constructor(
+    @InjectRepository(Equipment)
+    private readonly equipmentRepository: Repository<Equipment>,
+  ) {}
+
+  async getEquipments(): Promise<EquipmentCoreResponse[]> {
     return [
       {
         id: '1',
@@ -19,7 +29,7 @@ export class EquipmentCoreService {
 
   async createEquipment(
     createEquipmentCoreRequest: CreateEquipmentCoreRequest,
-  ): Promise<object> {
+  ): Promise<EquipmentCoreResponse> {
     return {
       id: '3',
       name: createEquipmentCoreRequest.name,
@@ -29,7 +39,7 @@ export class EquipmentCoreService {
 
   async updateEquipment(
     updateEquipmentCoreRequest: UpdateEquipmentCoreRequest,
-  ): Promise<object> {
+  ): Promise<EquipmentCoreResponse> {
     return {
       id: '3',
       name: updateEquipmentCoreRequest.name,
