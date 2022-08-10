@@ -22,7 +22,7 @@ export class EquipmentCoreController {
     );
   }
 
-  @Patch()
+  @Patch(':id')
   async updateEquipment(
     @Body() updateEquipmentCoreRequest: UpdateEquipmentCoreRequest,
   ): Promise<object> {
