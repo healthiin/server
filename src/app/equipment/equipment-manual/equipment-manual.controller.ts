@@ -44,8 +44,6 @@ export class EquipmentManualController {
     @Param('equipmentId', ParseUUIDPipe) equipmentId: string,
     @Body() data: CreateManualRequest,
   ): Promise<ManualProfileResponse> {
-    console.log('11');
-    console.log(data);
     return this.equipmentManualService.createManual(equipmentId, data);
   }
 

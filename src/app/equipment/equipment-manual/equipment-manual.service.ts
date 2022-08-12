@@ -5,6 +5,7 @@ import { CreateManualData } from '@app/equipment/equipment-manual/commands/creat
 import { UpdateManualData } from '@app/equipment/equipment-manual/commands/update-manual.data';
 import { ManualProfileResponse } from '@app/equipment/equipment-manual/dtos/manual-profile.response';
 import { Manual } from '@domain/equipment/entities/manual.entity';
+import { ManualNotFoundException } from '@domain/equipment/manual.errors';
 
 export class EquipmentManualService {
   constructor(
@@ -72,6 +73,8 @@ export class EquipmentManualService {
         id: manualId,
       },
     });
+    if (!manual) throw new ManualNotFoundException();
+
     return manual;
   }
 }
