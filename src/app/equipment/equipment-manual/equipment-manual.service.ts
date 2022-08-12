@@ -60,4 +60,17 @@ export class EquipmentManualService {
     });
     return new ManualProfileResponse(updatedManual);
   }
+
+  async deleteManual(
+    equipmentId: string,
+    manualId: string,
+  ): Promise<ManualProfileResponse> {
+    const manual = await this.manualRepository.findOne({
+      where: {
+        id: manualId,
+      },
+    });
+    await this.manualRepository.softDelete(manual);
+    return new ManualProfileResponse(manual);
+  }
 }

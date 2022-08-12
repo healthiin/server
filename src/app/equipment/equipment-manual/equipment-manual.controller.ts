@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
@@ -59,5 +60,12 @@ export class EquipmentManualController {
       manualId,
       data,
     );
+  }
+  @Delete(':equipmentId/:manualId')
+  async deleteManual(
+    @Param('equipmentId', ParseUUIDPipe) equipmentId: string,
+    @Param('manualId', ParseUUIDPipe) manualId: string,
+  ): Promise<ManualProfileResponse> {
+    return this.equipmentManualService.deleteManual(equipmentId, manualId);
   }
 }
