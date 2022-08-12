@@ -18,6 +18,11 @@ export class EquipmentManualController {
   constructor(
     private readonly equipmentManualService: EquipmentManualService,
   ) {}
+  @Get()
+  async getAllManuals(): Promise<ManualProfileResponse[]> {
+    return this.equipmentManualService.getAllManuals();
+  }
+
   @Get(':equipmentId')
   async getManuals(
     @Param('equipmentId', ParseUUIDPipe) equipmentId: string,

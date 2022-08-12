@@ -11,25 +11,24 @@ export class EquipmentManualService {
     @InjectRepository(Manual)
     private readonly manualRepository: Repository<Manual>,
   ) {}
+
+  async getAllManuals(): Promise<ManualProfileResponse[]> {
+    const manuals = await this.manualRepository.find();
+    return manuals.map((manual) => new ManualProfileResponse(manual));
+  }
+
   async getManuals(equipmentId: string): Promise<ManualProfileResponse[]> {
-    return [
-      {
-        id: '1',
-        name: 'Manual 1',
-        description: 'Manual 1 description',
-      },
-      {
-        id: '2',
-        name: 'Manual 2',
-        description: 'Manual 2 description',
-      },
-    ];
+    const manuals = await this.manualRepository.find({
+      where: { id: equipmentId },
+    });
+    return manuals.map((manual) => new ManualProfileResponse(manual));
   }
 
   async getManual(
     equipmentId: string,
     manualId: string,
   ): Promise<ManualProfileResponse> {
+    // 기구랑 연동이 필요.
     return {
       id: '1',
       name: 'Manual 1',
