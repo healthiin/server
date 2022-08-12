@@ -3,9 +3,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { Manual } from '@domain/equipment/entities/manual.entity';
 
 @Entity('equipments')
 export class Equipment {
@@ -17,6 +20,9 @@ export class Equipment {
 
   @Column({ nullable: true })
   description?: string | null;
+
+  @OneToMany(() => Manual, (manual) => manual)
+  manuals!: Manual[];
 
   @CreateDateColumn()
   createdAt!: Date;

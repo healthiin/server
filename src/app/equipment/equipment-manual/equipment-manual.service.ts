@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateManualData } from '@app/equipment/equipment-manual/commands/create-manual.data';
 import { UpdateManualData } from '@app/equipment/equipment-manual/commands/update-manual.data';
 import { ManualProfileResponse } from '@app/equipment/equipment-manual/dtos/manual-profile.response';
+import { Equipment } from '@domain/equipment/entities/equipment.entity';
 import { Manual } from '@domain/equipment/entities/manual.entity';
 import { ManualNotFoundException } from '@domain/equipment/manual.errors';
 
@@ -11,6 +12,8 @@ export class EquipmentManualService {
   constructor(
     @InjectRepository(Manual)
     private readonly manualRepository: Repository<Manual>,
+    @InjectRepository(Equipment)
+    private readonly equipmentRepository: Repository<Equipment>,
   ) {}
 
   async getAllManuals(): Promise<ManualProfileResponse[]> {
@@ -18,30 +21,35 @@ export class EquipmentManualService {
     return manuals.map((manual) => new ManualProfileResponse(manual));
   }
 
-  async getManuals(equipmentId: string): Promise<ManualProfileResponse[]> {
+  async getManualsByEquipment(
+    equipmentId: string,
+  ): Promise<ManualProfileResponse[]> {
     const manuals = await this.manualRepository.find({
-      where: { id: equipmentId },
+      where: { equipment: { id: equipmentId } },
     });
+
     return manuals.map((manual) => new ManualProfileResponse(manual));
   }
 
-  async getManual(
-    equipmentId: string,
-    manualId: string,
-  ): Promise<ManualProfileResponse> {
-    // 기구랑 연동이 필요.
-    return {
-      id: '1',
-      name: 'Manual 1',
-      description: 'Manual 1 description',
-    };
+  async getManual(manualId: string): Promise<ManualProfileResponse> {
+    const manual = await this.findManualById(manualId);
+
+    return new ManualProfileResponse(manual);
   }
 
   async createManual(
     equipmentId: string,
     createManualData: CreateManualData,
   ): Promise<ManualProfileResponse> {
-    const manual = await this.manualRepository.save(createManualData);
+    const equipment = await this.equipmentRepository.findOne({
+      where: { id: equipmentId },
+    });
+
+    const manual = await this.manualRepository.save({
+      ...createManualData,
+      equipment,
+    });
+
     return new ManualProfileResponse(manual);
   }
 

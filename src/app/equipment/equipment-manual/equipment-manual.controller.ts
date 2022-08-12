@@ -24,19 +24,18 @@ export class EquipmentManualController {
     return this.equipmentManualService.getAllManuals();
   }
 
-  @Get(':equipmentId')
-  async getManuals(
+  @Get('equipment/:equipmentId')
+  async getManualsByEquipments(
     @Param('equipmentId', ParseUUIDPipe) equipmentId: string,
   ): Promise<ManualProfileResponse[]> {
-    return this.equipmentManualService.getManuals(equipmentId);
+    return this.equipmentManualService.getManualsByEquipment(equipmentId);
   }
 
-  @Get(':equipmentId/:manualId')
+  @Get(':manualId')
   async getManual(
-    @Param('equipmentId', ParseUUIDPipe) equipmentId: string,
     @Param('manualId', ParseUUIDPipe) manualId: string,
   ): Promise<ManualProfileResponse> {
-    return this.equipmentManualService.getManual(equipmentId, manualId);
+    return this.equipmentManualService.getManual(manualId);
   }
 
   @Post(':equipmentId')
