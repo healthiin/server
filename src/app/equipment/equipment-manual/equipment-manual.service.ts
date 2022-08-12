@@ -49,11 +49,7 @@ export class EquipmentManualService {
     manualId: string,
     createManualData: UpdateManualData,
   ): Promise<ManualProfileResponse> {
-    const manual = await this.manualRepository.findOne({
-      where: {
-        id: manualId,
-      },
-    });
+    const manual = await this.findManualById(manualId);
     const updatedManual = await this.manualRepository.save({
       ...manual,
       ...createManualData,
@@ -65,12 +61,17 @@ export class EquipmentManualService {
     equipmentId: string,
     manualId: string,
   ): Promise<ManualProfileResponse> {
+    const manual = await this.findManualById(manualId);
+    await this.manualRepository.softDelete(manual);
+    return new ManualProfileResponse(manual);
+  }
+
+  async findManualById(manualId: string): Promise<Manual> {
     const manual = await this.manualRepository.findOne({
       where: {
         id: manualId,
       },
     });
-    await this.manualRepository.softDelete(manual);
-    return new ManualProfileResponse(manual);
+    return manual;
   }
 }
