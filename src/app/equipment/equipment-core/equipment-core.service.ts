@@ -6,6 +6,10 @@ import { CreateEquipmentCoreData } from '@app/equipment/equipment-core/commands/
 import { UpdateEquipmentCoreData } from '@app/equipment/equipment-core/commands/update-equipment-core.data';
 import { EquipmentCoreResponse } from '@app/equipment/equipment-core/dtos/equipment-core.response';
 import { Equipment } from '@domain/equipment/entities/equipment.entity';
+import {
+  DuplicatedEquipmentNameException,
+  EquipmentNotFoundException,
+} from '@domain/equipment/equipment.errors';
 
 export class EquipmentCoreService {
   constructor(
@@ -22,6 +26,12 @@ export class EquipmentCoreService {
   async createEquipment(
     createEquipmentCoreData: CreateEquipmentCoreData,
   ): Promise<EquipmentCoreResponse> {
+    const equipmentName = await this.equipmentRepository.findOne({
+      where: { name: createEquipmentCoreData.name },
+    });
+    if (equipmentName) {
+      throw new DuplicatedEquipmentNameException();
+    }
     const equipment = await this.equipmentRepository.save(
       createEquipmentCoreData,
     );
@@ -58,6 +68,9 @@ export class EquipmentCoreService {
       where: { id },
       select,
     });
+    if (!equipment) {
+      throw new EquipmentNotFoundException();
+    }
     return equipment;
   }
 }
