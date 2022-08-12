@@ -3,11 +3,14 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('equipments')
+import { Equipment } from '@domain/equipment/entities/equipment.entity';
+
+@Entity('manuals')
 export class Manual {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -17,6 +20,9 @@ export class Manual {
 
   @Column({ nullable: true })
   description: string | null;
+
+  @ManyToOne(() => Equipment, (equipment) => equipment)
+  equipment: Equipment;
 
   @CreateDateColumn()
   createdAt: Date;
