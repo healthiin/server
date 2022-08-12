@@ -1,7 +1,16 @@
-import { EquipmentProfileResponse } from '@app/equipment/equipment-manual/dtos/equipment-profile.response';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { CreateManualData } from '@app/equipment/equipment-manual/commands/create-manual.data';
+import { ManualProfileResponse } from '@app/equipment/equipment-manual/dtos/manual-profile.response';
+import { Manual } from '@domain/equipment/entities/manual.entity';
 
 export class EquipmentManualService {
-  async getManuals(equipmentId: string): Promise<EquipmentProfileResponse[]> {
+  constructor(
+    @InjectRepository(Manual)
+    private readonly manualRepository: Repository<Manual>,
+  ) {}
+  async getManuals(equipmentId: string): Promise<ManualProfileResponse[]> {
     return [
       {
         id: '1',
@@ -14,22 +23,24 @@ export class EquipmentManualService {
         description: 'Manual 2 description',
       },
     ];
-
-    // return this.manualRepository.find({ where: { equipmentId } });
   }
 
   async getManual(
     equipmentId: string,
     manualId: string,
-  ): Promise<EquipmentProfileResponse> {
+  ): Promise<ManualProfileResponse> {
     return {
       id: '1',
       name: 'Manual 1',
       description: 'Manual 1 description',
     };
+  }
 
-    // return this.manualRepository.findOne({
-    //   where: { equipmentId, id: manualId },
-    // });
+  async createManual(
+    equipmentId: string,
+    createManualData: CreateManualData,
+  ): Promise<ManualProfileResponse> {
+    const manual = this.manualRepository.save(createManualData);
+    return manual;
   }
 }
