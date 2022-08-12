@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { CreateManualData } from '@app/equipment/equipment-manual/commands/create-manual.data';
+import { UpdateManualData } from '@app/equipment/equipment-manual/commands/update-manual.data';
 import { ManualProfileResponse } from '@app/equipment/equipment-manual/dtos/manual-profile.response';
 import { Manual } from '@domain/equipment/entities/manual.entity';
 
@@ -40,7 +41,24 @@ export class EquipmentManualService {
     equipmentId: string,
     createManualData: CreateManualData,
   ): Promise<ManualProfileResponse> {
-    const manual = this.manualRepository.save(createManualData);
-    return manual;
+    const manual = await this.manualRepository.save(createManualData);
+    return new ManualProfileResponse(manual);
+  }
+
+  async updateManual(
+    equipmentId: string,
+    manualId: string,
+    createManualData: UpdateManualData,
+  ): Promise<ManualProfileResponse> {
+    const manual = await this.manualRepository.findOne({
+      where: {
+        id: manualId,
+      },
+    });
+    const updatedManual = await this.manualRepository.save({
+      ...manual,
+      ...createManualData,
+    });
+    return new ManualProfileResponse(updatedManual);
   }
 }
