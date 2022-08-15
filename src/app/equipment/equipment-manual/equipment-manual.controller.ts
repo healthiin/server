@@ -46,23 +46,17 @@ export class EquipmentManualController {
     return this.equipmentManualService.createManual(equipmentId, data);
   }
 
-  @Patch(':equipmentId/:manualId')
+  @Patch(':manualId')
   async updateManual(
-    @Param('equipmentId', ParseUUIDPipe) equipmentId: string,
     @Param('manualId', ParseUUIDPipe) manualId: string,
     @Body() data: UpdateManualRequest,
   ): Promise<ManualProfileResponse> {
-    return this.equipmentManualService.updateManual(
-      equipmentId,
-      manualId,
-      data,
-    );
+    return this.equipmentManualService.updateManual(manualId, data);
   }
-  @Delete(':equipmentId/:manualId')
+  @Delete(':manualId')
   async deleteManual(
-    @Param('equipmentId', ParseUUIDPipe) equipmentId: string,
     @Param('manualId', ParseUUIDPipe) manualId: string,
   ): Promise<ManualProfileResponse> {
-    return this.equipmentManualService.deleteManual(equipmentId, manualId);
+    return this.equipmentManualService.deleteManual(manualId);
   }
 }

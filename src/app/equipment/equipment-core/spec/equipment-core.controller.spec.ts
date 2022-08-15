@@ -1,15 +1,29 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import * as request from 'supertest';
 
 import { EquipmentCoreModule } from '@app/equipment/equipment-core/equipment-core.module';
+import { Equipment } from '@domain/equipment/entities/equipment.entity';
 
 describe('Equipments', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [EquipmentCoreModule],
+      imports: [
+        EquipmentCoreModule,
+        TypeOrmModule.forRoot({
+          type: 'postgres',
+          host: 'localhost',
+          port: 5432,
+          username: 'healthin',
+          password: 'secret',
+          database: 'healthin_server',
+          entities: [Equipment],
+          synchronize: true,
+        }),
+      ],
     }).compile();
 
     app = moduleRef.createNestApplication();
@@ -17,21 +31,7 @@ describe('Equipments', () => {
   });
 
   it(`/GET `, () => {
-    return request(app.getHttpServer())
-      .get('/equipments')
-      .expect(200)
-      .expect([
-        {
-          id: '1',
-          name: 'Equipment 1',
-          description: 'Description 1',
-        },
-        {
-          id: '2',
-          name: 'Equipment 2',
-          description: 'Description 2',
-        },
-      ]);
+    return request(app.getHttpServer()).get('/equipments').expect(200);
   });
 
   it(`/POST `, () => {
@@ -43,7 +43,7 @@ describe('Equipments', () => {
       })
       .expect(201)
       .expect({
-        id: '3',
+        id: expect.any(String),
         name: 'Equipment 3',
         description: 'Description 3',
       });

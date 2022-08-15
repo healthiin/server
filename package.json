@@ -81,12 +81,16 @@
     "typescript": "^4.7.4"
   },
   "jest": {
+    "moduleDirectories": [
+      "node_modules",
+      "src"
+    ],
     "moduleFileExtensions": [
       "js",
       "json",
-      "ts"
+        "ts"
     ],
-    "rootDir": "src",
+    "roots": ["<rootDir>","src"],
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
@@ -97,8 +101,10 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
     "moduleNameMapper": {
-      "@app/(.*)$": "<rootDir>/app/$1",
-      "@infrastructure/(.*)$": "<rootDir>/infrastructure/$1"
+      "^src/(.*)$": "<rootDir>/src/$1",
+      "^@app/(.*)$": "<rootDir>/src/app/$1",
+      "@domain/(.*)$": "<rootDir>/src/domain/$1",
+      "@infrastructure/(.*)$": "<rootDir>/src/infrastructure/$1"
     }
   }
 }

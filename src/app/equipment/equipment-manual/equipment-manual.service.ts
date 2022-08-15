@@ -54,7 +54,6 @@ export class EquipmentManualService {
   }
 
   async updateManual(
-    equipmentId: string,
     manualId: string,
     createManualData: UpdateManualData,
   ): Promise<ManualProfileResponse> {
@@ -66,10 +65,7 @@ export class EquipmentManualService {
     return new ManualProfileResponse(updatedManual);
   }
 
-  async deleteManual(
-    equipmentId: string,
-    manualId: string,
-  ): Promise<ManualProfileResponse> {
+  async deleteManual(manualId: string): Promise<ManualProfileResponse> {
     const manual = await this.findManualById(manualId);
     await this.manualRepository.softDelete(manual);
     return new ManualProfileResponse(manual);
