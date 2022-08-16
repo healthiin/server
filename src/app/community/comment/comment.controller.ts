@@ -1,33 +1,51 @@
-import { Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 
 import { CommentService } from '@app/community/comment/comment.service';
 
-@Controller('comments/:boardId')
+@Controller('comments/:PostId')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
   @Get()
-  async getComments(): Promise<object> {
-    return this.commentService.getComments();
+  async getComments(
+    @Param('PostId', ParseUUIDPipe) PostId: string,
+  ): Promise<object> {
+    return this.commentService.getComments(PostId);
   }
 
   @Post()
-  async createComment(): Promise<object> {
-    return this.commentService.createComment();
+  async createComment(
+    @Param('PostId', ParseUUIDPipe) PostId: string,
+  ): Promise<object> {
+    return this.commentService.createComment(PostId);
   }
 
   @Post('/:commentId')
-  async createReComment(): Promise<object> {
-    return this.commentService.createReComment();
+  async createReComment(
+    @Param('PostId', ParseUUIDPipe) PostId: string,
+  ): Promise<object> {
+    return this.commentService.createReComment(PostId);
   }
 
   @Patch()
-  async updateComment(): Promise<object> {
-    return this.commentService.updateComment();
+  async updateComment(
+    @Param('PostId', ParseUUIDPipe) PostId: string,
+  ): Promise<object> {
+    return this.commentService.updateComment(PostId);
   }
 
   @Delete()
-  async deleteComment(): Promise<object> {
-    return this.commentService.deleteComment();
+  async deleteComment(
+    @Param('PostId', ParseUUIDPipe) PostId: string,
+  ): Promise<object> {
+    return this.commentService.deleteComment(PostId);
   }
 }
