@@ -1,11 +1,4 @@
 import { BadRequestException, ConflictException } from '@nestjs/common';
-import {
-  registerDecorator,
-  ValidationOptions,
-  ValidatorConstraint,
-  ValidatorConstraintInterface,
-  ValidationArguments,
-} from 'class-validator';
 
 export const USER_ERRORS = {
   DUPLICATED_USERNAME: 'DUPLICATED_USERNAME',
