@@ -3,9 +3,10 @@ import { Test } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as request from 'supertest';
 
+import { CreateEquipmentCoreRequest } from '@app/equipment/equipment-core/dtos/create-equipment-core.request';
 import { EquipmentCoreModule } from '@app/equipment/equipment-core/equipment-core.module';
 import { Equipment } from '@domain/equipment/entities/equipment.entity';
-
+import { Manual } from '@domain/equipment/entities/manual.entity';
 describe('Equipments', () => {
   let app: INestApplication;
 
@@ -20,7 +21,7 @@ describe('Equipments', () => {
           username: 'healthin',
           password: 'secret',
           database: 'healthin_server',
-          entities: [Equipment],
+          entities: [Equipment, Manual],
           synchronize: true,
         }),
       ],
@@ -30,45 +31,71 @@ describe('Equipments', () => {
     await app.init();
   });
 
-  it(`/GET `, () => {
-    return request(app.getHttpServer()).get('/equipments').expect(200);
-  });
+  describe('Equipment Story', () => {
+    const equipmentPayload: CreateEquipmentCoreRequest = {
+      name: 'Equipment 1',
+      description: 'Description 1',
+    };
 
-  it(`/POST `, () => {
-    return request(app.getHttpServer())
-      .post('/equipments')
-      .send({
-        name: 'Equipment 3',
-        description: 'Description 3',
-      })
-      .expect(201)
-      .expect({
-        id: expect.any(String),
-        name: 'Equipment 3',
-        description: 'Description 3',
-      });
-  });
+    const equipmentUpdatePayload: CreateEquipmentCoreRequest = {
+      name: 'Equipment 1 Updated',
+      description: 'Description 1 Updated',
+    };
 
-  it(`/PATCH `, () => {
-    return request(app.getHttpServer())
-      .patch('/equipments/3')
-      .send({
-        name: 'Equipment 3 - Updated',
-        description: 'Description 3 - Updated',
-      })
-      .expect(200)
-      .expect({
-        id: '3',
-        name: 'Equipment 3 - Updated',
-        description: 'Description 3 - Updated',
-      });
-  });
+    it('should create a equipment', async () => {
+      const equipmentResponse = await request(app.getHttpServer())
+        .post('/equipments')
+        .send(equipmentPayload);
 
-  it(`/DELETE `, () => {
-    return request(app.getHttpServer())
-      .delete('/equipments/3')
-      .expect(200)
-      .expect('true');
+      expect(equipmentResponse.status).toBe(201);
+    });
+
+    it('should get every equipments', async () => {
+      await request(app.getHttpServer())
+        .post('/equipments')
+        .send(equipmentPayload)
+        .expect(201);
+      await request(app.getHttpServer())
+        .post('/equipments')
+        .send(equipmentPayload)
+        .expect(201);
+
+      const response = await request(app.getHttpServer()).get(`/equipments`);
+
+      expect(response.status).toBe(200);
+    });
+
+    it('should update a equipment', async () => {
+      const equipmentResponse = await request(app.getHttpServer())
+        .post('/equipments')
+        .send(equipmentPayload);
+
+      expect(equipmentResponse.status).toBe(201);
+
+      const equipmentId = equipmentResponse.body.id;
+
+      const response = await request(app.getHttpServer())
+        .patch(`/equipments/${equipmentId}`)
+        .send(equipmentUpdatePayload);
+
+      expect(response.status).toBe(200);
+    });
+
+    it('should delete a equipment', async () => {
+      const equipmentResponse = await request(app.getHttpServer())
+        .post('/equipments')
+        .send(equipmentPayload);
+
+      expect(equipmentResponse.status).toBe(201);
+
+      const equipmentId = equipmentResponse.body.id;
+
+      const response = await request(app.getHttpServer()).delete(
+        `/equipments/${equipmentId}`,
+      );
+
+      expect(response.status).toBe(200);
+    });
   });
 
   afterAll(async () => {
