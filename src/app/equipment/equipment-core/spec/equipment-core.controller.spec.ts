@@ -7,7 +7,6 @@ import { CreateEquipmentCoreRequest } from '@app/equipment/equipment-core/dtos/c
 import { EquipmentCoreModule } from '@app/equipment/equipment-core/equipment-core.module';
 import { Equipment } from '@domain/equipment/entities/equipment.entity';
 import { Manual } from '@domain/equipment/entities/manual.entity';
-
 describe('Equipments', () => {
   let app: INestApplication;
 
