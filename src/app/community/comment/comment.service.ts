@@ -38,19 +38,52 @@ export class CommentService {
   }
 
   async createComment(): Promise<object> {
-    return {};
+    return {
+      id: '1',
+      content: '댓글1',
+      User: {
+        id: '1',
+        nickname: '유저1',
+      },
+      createdAt: '2020-01-01',
+      parentComment: {
+        id: null,
+      },
+    };
   }
 
   async createReComment(): Promise<object> {
-    return {};
+    return {
+      id: '2',
+      content: '댓글1',
+      User: {
+        id: '2',
+        nickname: '유저2',
+      },
+      createdAt: '2020-01-01',
+      parentComment: {
+        id: '1',
+      },
+    };
   }
 
   async updateComment(): Promise<object> {
-    return {};
+    return {
+      id: '1',
+      content: '업데이트된 댓글1',
+      User: {
+        id: '1',
+        nickname: '유저1',
+      },
+      createdAt: '2020-01-01',
+      parentComment: {
+        id: null,
+      },
+    };
   }
 
-  async deleteComment(): Promise<object> {
-    return {};
+  async deleteComment(): Promise<boolean> {
+    return true;
   }
 
   async findById(

@@ -45,7 +45,7 @@ export class CommentController {
   @Delete()
   async deleteComment(
     @Param('PostId', ParseUUIDPipe) PostId: string,
-  ): Promise<object> {
+  ): Promise<boolean> {
     return this.commentService.deleteComment(PostId);
   }
 }
