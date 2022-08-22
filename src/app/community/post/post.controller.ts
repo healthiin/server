@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
 } from '@nestjs/common';
@@ -24,19 +25,21 @@ export class PostController {
 
   @Get('/board/:boardId')
   async getPostsByBoardId(
-    @Param('boardId') boardId: string,
+    @Param('boardId', ParseUUIDPipe) boardId: string,
   ): Promise<PostProfileResponse[]> {
     return await this.postService.getPostsByBoardId(boardId);
   }
 
   @Get('/:postId')
-  async getPostById(@Param('postId') postId: string): Promise<object> {
+  async getPostById(
+    @Param('postId', ParseUUIDPipe) postId: string,
+  ): Promise<object> {
     return await this.postService.getPostById(postId);
   }
 
   @Post('/board/:boardId')
   async createPost(
-    @Param('boardId') boardId: string,
+    @Param('boardId', ParseUUIDPipe) boardId: string,
     @Body() data: PostCreateRequest,
   ): Promise<object> {
     return await this.postService.createPost(boardId, data);
@@ -44,7 +47,7 @@ export class PostController {
 
   @Patch('/:postId')
   async updatePost(
-    @Param('postId') postId: string,
+    @Param('postId', ParseUUIDPipe) postId: string,
     @Body() data: PostProfileUpdateRequest,
   ): Promise<object> {
     return await this.postService.updatePost(postId, data);
