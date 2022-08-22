@@ -45,11 +45,11 @@ export class PostService {
   }
 
   async createPost(
-    baordId: string,
+    boardId: string,
     data: CreatePostData,
   ): Promise<PostProfileResponse> {
     const board = await this.boardRepository.findOne({
-      where: { id: baordId },
+      where: { id: boardId },
     });
     const post = await this.postRepository.save({ ...data, boardId: board });
 
