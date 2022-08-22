@@ -3,7 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  OneToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -21,7 +21,7 @@ export class Post {
   @Column()
   content!: string;
 
-  @OneToMany(() => Board, (board) => board.id)
+  @ManyToOne(() => Board, (board) => board.posts)
   boardId!: Board;
 
   @CreateDateColumn()

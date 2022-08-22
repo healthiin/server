@@ -1,34 +1,56 @@
-import { Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 
+import { PostCreateRequest } from '@app/community/post/dtos/post-create.request';
+import { PostProfileUpdateRequest } from '@app/community/post/dtos/post-profile-update.request';
+import { PostProfileResponse } from '@app/community/post/dtos/post-profile.response';
 import { PostService } from '@app/community/post/post.service';
 
-@Controller('post')
+@Controller('posts')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Get()
-  async getPosts(): Promise<object[]> {
+  async getPosts(): Promise<PostProfileResponse[]> {
     return await this.postService.getPosts();
   }
 
-  @Get('/:boardId')
-  async getPostsByBoardId(boardId: string): Promise<object[]> {
+  @Get('/board/:boardId')
+  async getPostsByBoardId(
+    @Param('boardId', ParseUUIDPipe) boardId: string,
+  ): Promise<PostProfileResponse[]> {
     return await this.postService.getPostsByBoardId(boardId);
   }
 
   @Get('/:postId')
-  async getPostById(postId: string): Promise<object> {
+  async getPostById(
+    @Param('postId', ParseUUIDPipe) postId: string,
+  ): Promise<object> {
     return await this.postService.getPostById(postId);
   }
 
-  @Post()
-  async createPost(): Promise<object> {
-    return await this.postService.createPost();
+  @Post('/board/:boardId')
+  async createPost(
+    @Param('boardId', ParseUUIDPipe) boardId: string,
+    @Body() data: PostCreateRequest,
+  ): Promise<object> {
+    return await this.postService.createPost(boardId, data);
   }
 
   @Patch('/:postId')
-  async updatePost(postId: string): Promise<object> {
-    return await this.postService.updatePost(postId);
+  async updatePost(
+    @Param('postId', ParseUUIDPipe) postId: string,
+    @Body() data: PostProfileUpdateRequest,
+  ): Promise<object> {
+    return await this.postService.updatePost(postId, data);
   }
 
   @Delete('/:postId')
