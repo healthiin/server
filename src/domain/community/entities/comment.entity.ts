@@ -6,9 +6,10 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
-import { Board } from '@domain/community/entities/board.entity';
+import { Post } from '@domain/community/entities/post.entity';
 import { User } from '@domain/user/user.entity';
 
 @Entity('comments')
@@ -19,17 +20,20 @@ export class Comment {
   @Column()
   content: string;
 
-  @ManyToOne(() => Comment, (comment) => comment.id)
+  @ManyToOne(() => Comment, (comment) => comment.id, { nullable: true })
   parentCommentId: Comment;
 
   @OneToOne(() => User)
   user: User;
 
-  @ManyToOne(() => Post, (board) => board.id)
-  board: Post;
+  @ManyToOne(() => Post, (post) => post.comments)
+  postId: Post;
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @DeleteDateColumn({ nullable: true })
   deletedAt: Date | null;

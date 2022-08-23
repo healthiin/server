@@ -1,7 +1,7 @@
 import { Post } from '@domain/community/entities/post.entity';
 
 export class PostProfileResponse {
-  private id!: string;
+  id!: string;
   private title!: string;
   private content!: string;
   private createdAt!: Date;

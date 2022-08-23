@@ -1,9 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
 import { CreatePostData } from '@app/community/post/commands/create-post.data';
 import { UpdatePostData } from '@app/community/post/commands/update-post.data';
 import { PostProfileResponse } from '@app/community/post/dtos/post-profile.response';
+import { PostNotFoundException } from '@domain/community/community.errors';
 import { Board } from '@domain/community/entities/board.entity';
 import { Post } from '@domain/community/entities/post.entity';
 
@@ -34,12 +36,8 @@ export class PostService {
   }
 
   async getPostById(postId: string): Promise<PostProfileResponse> {
-    const post = await this.postRepository.findOne({
-      where: { id: postId },
-    });
-    if (!post) {
-      throw new Error('존재하지 않는 게시물입니다.');
-    }
+    const post = await this.findById(postId);
+    if (!post) throw new PostNotFoundException();
 
     return new PostProfileResponse(post);
   }
@@ -60,12 +58,8 @@ export class PostService {
     postId: string,
     data: UpdatePostData,
   ): Promise<PostProfileResponse> {
-    const post = await this.postRepository.findOne({
-      where: { id: postId },
-    });
-    if (!post) {
-      throw new Error('존재하지 않는 게시물입니다.');
-    }
+    const post = await this.findById(postId);
+    if (!post) throw new PostNotFoundException();
 
     const updatedPost = await this.postRepository.save({ ...post, ...data });
 
@@ -73,15 +67,20 @@ export class PostService {
   }
 
   async deletePost(postId: string): Promise<boolean> {
-    const post = await this.postRepository.findOne({
-      where: { id: postId },
-    });
+    const post = await this.findById(postId);
+    if (!post) throw new PostNotFoundException();
 
-    if (!post) {
-      throw new Error('존재하지 않는 게시물입니다.');
-    }
-
-    const { affected } = await this.postRepository.softDelete(post);
+    const { affected } = await this.postRepository.softDelete({ id: post.id });
     return affected > 0;
+  }
+
+  async findById(id: string, select?: FindOptionsSelect<Post>): Promise<Post> {
+    const post = await this.postRepository.findOne({
+      where: { id },
+      select,
+    });
+    if (!post) throw new PostNotFoundException();
+
+    return post;
   }
 }
