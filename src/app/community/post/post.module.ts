@@ -10,5 +10,6 @@ import { Post } from '@domain/community/entities/post.entity';
   imports: [TypeOrmModule.forFeature([Post, Board])],
   controllers: [PostController],
   providers: [PostService],
+  exports: [PostService],
 })
 export class PostModule {}
