@@ -1,43 +1,44 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class gymsTable1661266981098 implements MigrationInterface {
-  name = 'gymsTable1661266981098';
+export class releaseV1Beta1661267738746 implements MigrationInterface {
+  name = 'releaseV1Beta1661267738746';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-            CREATE TABLE "equipments" (
+            CREATE TABLE "gym_users" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-                "name" character varying NOT NULL,
-                "description" character varying,
+                "role" character varying NOT NULL DEFAULT 'CUSTOMER',
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
-                "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "deleted_at" TIMESTAMP,
-                CONSTRAINT "PK_250348d5d9ae4946bcd634f3e61" PRIMARY KEY ("id")
+                "gym_id" uuid,
+                "user_id" uuid,
+                CONSTRAINT "PK_b39512ec408c47f6ae6711fbdf1" PRIMARY KEY ("id")
             )
         `);
     await queryRunner.query(`
-            CREATE TABLE "manuals" (
+            CREATE TABLE "gyms" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "name" character varying NOT NULL,
                 "description" character varying,
+                "location" character varying,
+                "contact" character varying,
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "deleted_at" TIMESTAMP,
-                "equipment_id" uuid,
-                CONSTRAINT "PK_ff041e52910af133b601ce3c707" PRIMARY KEY ("id")
+                CONSTRAINT "PK_fe765086496cf3c8475652cddcb" PRIMARY KEY ("id")
             )
         `);
     await queryRunner.query(`
-            CREATE TABLE "boards" (
+            CREATE TABLE "gym_notices" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "title" character varying NOT NULL,
-                "description" character varying,
-                "slug" character varying,
+                "body" character varying NOT NULL,
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "deleted_at" TIMESTAMP,
-                CONSTRAINT "UQ_9a01141982175d5633687bcb47d" UNIQUE ("slug"),
-                CONSTRAINT "PK_606923b0b068ef262dfdcd18f44" PRIMARY KEY ("id")
+                "author_id" uuid,
+                "gym_id" uuid,
+                CONSTRAINT "PK_0d1fba3f41e541759a7233e0512" PRIMARY KEY ("id")
             )
         `);
     await queryRunner.query(`
@@ -58,45 +59,48 @@ export class gymsTable1661266981098 implements MigrationInterface {
             )
         `);
     await queryRunner.query(`
-            CREATE TABLE "gym_notices" (
-                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-                "title" character varying NOT NULL,
-                "body" character varying NOT NULL,
-                "created_at" TIMESTAMP NOT NULL DEFAULT now(),
-                "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
-                "deleted_at" TIMESTAMP,
-                "author_id" uuid,
-                "gym_id" uuid,
-                CONSTRAINT "PK_0d1fba3f41e541759a7233e0512" PRIMARY KEY ("id")
-            )
-        `);
-    await queryRunner.query(`
-            CREATE TABLE "gyms" (
+            CREATE TABLE "manuals" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "name" character varying NOT NULL,
                 "description" character varying,
-                "location" character varying,
-                "contact" character varying,
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "deleted_at" TIMESTAMP,
-                CONSTRAINT "PK_fe765086496cf3c8475652cddcb" PRIMARY KEY ("id")
+                "equipment_id" uuid,
+                CONSTRAINT "PK_ff041e52910af133b601ce3c707" PRIMARY KEY ("id")
             )
         `);
     await queryRunner.query(`
-            CREATE TABLE "gym_users" (
+            CREATE TABLE "equipments" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-                "role" character varying NOT NULL DEFAULT 'CUSTOMER',
+                "name" character varying NOT NULL,
+                "description" character varying,
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
+                "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "deleted_at" TIMESTAMP,
-                "gym_id" uuid,
-                "user_id" uuid,
-                CONSTRAINT "PK_b39512ec408c47f6ae6711fbdf1" PRIMARY KEY ("id")
+                CONSTRAINT "PK_250348d5d9ae4946bcd634f3e61" PRIMARY KEY ("id")
             )
         `);
     await queryRunner.query(`
-            ALTER TABLE "manuals"
-            ADD CONSTRAINT "FK_d9b5d8ce004e262cc970ab6be9b" FOREIGN KEY ("equipment_id") REFERENCES "equipments"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+            CREATE TABLE "boards" (
+                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+                "title" character varying NOT NULL,
+                "description" character varying,
+                "slug" character varying,
+                "created_at" TIMESTAMP NOT NULL DEFAULT now(),
+                "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
+                "deleted_at" TIMESTAMP,
+                CONSTRAINT "UQ_9a01141982175d5633687bcb47d" UNIQUE ("slug"),
+                CONSTRAINT "PK_606923b0b068ef262dfdcd18f44" PRIMARY KEY ("id")
+            )
+        `);
+    await queryRunner.query(`
+            ALTER TABLE "gym_users"
+            ADD CONSTRAINT "FK_1858ce57d02ba1da15fcfb48fc3" FOREIGN KEY ("gym_id") REFERENCES "gyms"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+    await queryRunner.query(`
+            ALTER TABLE "gym_users"
+            ADD CONSTRAINT "FK_f02a538a1946df483eb05d693e2" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
     await queryRunner.query(`
             ALTER TABLE "gym_notices"
@@ -107,21 +111,14 @@ export class gymsTable1661266981098 implements MigrationInterface {
             ADD CONSTRAINT "FK_60fd9bbcdd20224aba703ffbaf4" FOREIGN KEY ("gym_id") REFERENCES "gyms"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
     await queryRunner.query(`
-            ALTER TABLE "gym_users"
-            ADD CONSTRAINT "FK_1858ce57d02ba1da15fcfb48fc3" FOREIGN KEY ("gym_id") REFERENCES "gyms"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
-    await queryRunner.query(`
-            ALTER TABLE "gym_users"
-            ADD CONSTRAINT "FK_f02a538a1946df483eb05d693e2" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+            ALTER TABLE "manuals"
+            ADD CONSTRAINT "FK_d9b5d8ce004e262cc970ab6be9b" FOREIGN KEY ("equipment_id") REFERENCES "equipments"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-            ALTER TABLE "gym_users" DROP CONSTRAINT "FK_f02a538a1946df483eb05d693e2"
-        `);
-    await queryRunner.query(`
-            ALTER TABLE "gym_users" DROP CONSTRAINT "FK_1858ce57d02ba1da15fcfb48fc3"
+            ALTER TABLE "manuals" DROP CONSTRAINT "FK_d9b5d8ce004e262cc970ab6be9b"
         `);
     await queryRunner.query(`
             ALTER TABLE "gym_notices" DROP CONSTRAINT "FK_60fd9bbcdd20224aba703ffbaf4"
@@ -130,28 +127,31 @@ export class gymsTable1661266981098 implements MigrationInterface {
             ALTER TABLE "gym_notices" DROP CONSTRAINT "FK_15d0e8e3b02cb2d340c2b15730f"
         `);
     await queryRunner.query(`
-            ALTER TABLE "manuals" DROP CONSTRAINT "FK_d9b5d8ce004e262cc970ab6be9b"
+            ALTER TABLE "gym_users" DROP CONSTRAINT "FK_f02a538a1946df483eb05d693e2"
         `);
     await queryRunner.query(`
-            DROP TABLE "gym_users"
-        `);
-    await queryRunner.query(`
-            DROP TABLE "gyms"
-        `);
-    await queryRunner.query(`
-            DROP TABLE "gym_notices"
-        `);
-    await queryRunner.query(`
-            DROP TABLE "users"
+            ALTER TABLE "gym_users" DROP CONSTRAINT "FK_1858ce57d02ba1da15fcfb48fc3"
         `);
     await queryRunner.query(`
             DROP TABLE "boards"
         `);
     await queryRunner.query(`
+            DROP TABLE "equipments"
+        `);
+    await queryRunner.query(`
             DROP TABLE "manuals"
         `);
     await queryRunner.query(`
-            DROP TABLE "equipments"
+            DROP TABLE "users"
+        `);
+    await queryRunner.query(`
+            DROP TABLE "gym_notices"
+        `);
+    await queryRunner.query(`
+            DROP TABLE "gyms"
+        `);
+    await queryRunner.query(`
+            DROP TABLE "gym_users"
         `);
   }
 }
