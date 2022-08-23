@@ -2,20 +2,17 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
 
 export class UserProfileUpdateRequest {
-  @ApiProperty({
-    example: 'id123123',
-    description: '아이디',
-  })
+  @ApiProperty()
   @IsOptional()
   @IsString()
   username!: string;
 
-  @ApiProperty({ example: '파이팅하는 무지', description: '닉네임' })
+  @ApiProperty()
   @IsOptional()
   @IsString()
   nickname!: string;
 
-  @ApiProperty({ description: '프로필 이미지' })
+  @ApiProperty()
   @IsOptional()
   @IsString()
   avatarImage!: string;

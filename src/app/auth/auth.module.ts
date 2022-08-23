@@ -1,32 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
 
-import { AuthController } from '@app/auth/auth.controller';
-import { AuthService } from '@app/auth/auth.service';
-import { JwtStrategy } from '@app/auth/strategies/jwt.strategy';
-import { UserModule } from '@app/user/user.module';
+import { AuthenticationModule } from '@app/auth/authentication/authentication.module';
+import { AuthorizationModule } from '@app/auth/authorization/authorization.module';
 
 @Module({
-  imports: [
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        const issuer = configService.get<string>(
-          'APP_URL',
-          'https://api.be-healthy.life',
-        );
-        return {
-          secret: configService.get<string>('APP_SECRET', ''),
-          verifyOptions: { issuer },
-          signOptions: { issuer, notBefore: 0 },
-        };
-      },
-    }),
-    UserModule,
-  ],
-  controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  imports: [AuthenticationModule, AuthorizationModule],
 })
 export class AuthModule {}

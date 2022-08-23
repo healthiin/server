@@ -2,12 +2,11 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
-import { Response } from 'express';
 
-import { ACCESS_TOKEN_EXPIRE, REFRESH_TOKEN_EXPIRE } from '../../constants';
+import { ACCESS_TOKEN_EXPIRE, REFRESH_TOKEN_EXPIRE } from '../../../constants';
 
-import { LoginRequest } from '@app/auth/commands/login.request';
-import { TokenResponse } from '@app/auth/dtos/token.response';
+import { LoginRequest } from '@app/auth/authentication/commands/login.request';
+import { TokenResponse } from '@app/auth/authentication/dtos/token.response';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { UserService } from '@app/user/user.service';
 import { InvalidTokenException } from '@domain/auth/auth.errors';
@@ -20,14 +19,14 @@ import {
 import { Request } from '@infrastructure/types/request.types';
 
 @Injectable()
-export class AuthService {
+export class AuthenticationService {
   constructor(
     private readonly userService: UserService,
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(data: LoginRequest, res: Response): Promise<TokenResponse> {
+  async login(data: LoginRequest, res): Promise<TokenResponse> {
     const { id, password } = await this.userService.findByUsername(
       data.username,
       { id: true, password: true },
@@ -66,7 +65,7 @@ export class AuthService {
     return new TokenResponse({ accessToken });
   }
 
-  async logout(req: Request, res: Response): Promise<boolean> {
+  async logout(req: Request, res): Promise<boolean> {
     const refreshToken = req.cookies['refresh_token'];
     if (!refreshToken) throw new UnauthorizedException();
 
@@ -74,6 +73,7 @@ export class AuthService {
       path: '/auth',
       httpOnly: true,
     });
+
     return true;
   }
 

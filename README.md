@@ -1,73 +1,104 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 헬신 API 서버
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 0. Information
+### 0-1. API Documents
+- Production API: https://api.be-healthy.life/docs
+- Development API: https://api.dev.be-healthy.life/docs
+### 0-2. Maintainers
+- 이준수 | [@adrinerDP](https://github.com/adrinerDP)
+- 임채성 | [@puleugo](https://github.com/puleugo)
+### 0-3. Technical Specs
+- Node.js 16 (with Yarn)
+- PostgreSQL 14
+- Nest.js 9
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 1. Prerequisites
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### 1-1. Setup Environment Variables
+Copy example environment variables.
+```shell
+$ cp .env.example .env
+```
+Change values below accordingly.
+```dotenv
+# Application
+APP_URL=http://localhost:3000
+APP_PORT=3000
+APP_SECRET=xxxxxxxxxx
 
-## Installation
-
-```bash
-$ npm install
+# Database
+DB_HOST=k8s.adrinerdp.co
+DB_PORT=5432
+DB_DATABASE=xxxxxxxxxx
+DB_USERNAME=xxxxxxxxxx
+DB_PASSWORD=xxxxxxxxxx
 ```
 
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+### 1-2. Install Dependencies
+This project uses **yarn** as a package manager.
+```shell
+$ yarn
 ```
 
-## Test
+---
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+## 2. Run Project
+### 2-1. Run Server
+You can start development server with this command.
+```shell
+$ yarn start:dev
 ```
 
-## Support
+### 2-2. Migrate Database
+> The migrations will **run automatically** when the server is started. 
+> When it doesn't work, you can migrate manually with this command.
+```shell
+$ yarn migration:run
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### 2-3. Generate New Migration
+```shell
+$ yarn migration:generate src/migrations/{migration_name}
+``` 
+#### Examples of Migration names
+- `create_users_table`
+- `add_social_vendor_id_to_users_table`
+- `drop_password_from_users_table`
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## 3. Deployment
+This project uses Github Actions to do CI/CD.
 
-## License
+### 3-0. Action Runner Secrets
+- **KUBE_CONFIG**: Kubernetes Configurations to use cluster's API.
+- **HARBOR_USERNAME**: Docker Registry username.
+- **HARBOR_ACCESS_TOKEN**: Docker Registry password.
+- **DISCORD_WEBHOOK**: Discord Webhook endpoint to send deployment logs.
 
-Nest is [MIT licensed](LICENSE).
+### 3-1. Build and Push to Docker Registry
+```yaml
+- name: Build and push
+  uses: docker/build-push-action@v3
+  with:
+    context: .
+    target: production
+    push: true
+    platforms:
+      linux/amd64
+    tags: harbor.adrinerdp.co/healthin/api:latest, harbor.adrinerdp.co/healthin/api:${{ steps.version.outputs.code }}
+    cache-from: type=gha
+    cache-to: type=gha,mode=max
+```
+
+### 3-2. Update Image Tag
+```yaml
+- name: Deploy to cluster
+  uses: actions-hub/kubectl@master
+  env:
+    KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+    with:
+      args: set image deployment healthin-api healthin-api=harbor.adrinerdp.co/healthin/api:${{ steps.version.outputs.code }}
+```
