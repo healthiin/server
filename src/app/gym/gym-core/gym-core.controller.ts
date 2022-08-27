@@ -23,16 +23,22 @@ import {
 } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
+import { CheckPolicies } from '@app/auth/authorization/policy.decorator';
+import { PoliciesGuard } from '@app/auth/authorization/policy.guard';
+import { Action } from '@app/auth/authorization/types';
 import { CreateGymRequest } from '@app/gym/gym-core/dtos/create-gym.request';
 import { GymProfileResponse } from '@app/gym/gym-core/dtos/gym-profile.response';
 import { UpdateGymProfileRequest } from '@app/gym/gym-core/dtos/update-gym-profile.request';
 import { GymCoreService } from '@app/gym/gym-core/gym-core.service';
+import { Gym } from '@domain/gym/entities/gym.entity';
 import { GYM_ERRORS } from '@domain/gym/gym.errors';
 import { Pagination } from '@infrastructure/types/pagination.types';
 import { Request } from '@infrastructure/types/request.types';
 
 @Controller('gyms')
+@UseGuards(JwtAuthGuard)
 @ApiTags('Gym')
+@ApiBearerAuth()
 export class GymCoreController {
   constructor(private readonly gymCoreService: GymCoreService) {}
 
@@ -59,10 +65,8 @@ export class GymCoreController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: '새로운 헬스장을 추가합니다.' })
   @ApiOkResponse({ type: GymProfileResponse })
-  @ApiBearerAuth()
   async createGym(
     @Body() data: CreateGymRequest,
     @Req() { user }: Request,
@@ -71,6 +75,8 @@ export class GymCoreController {
   }
 
   @Patch(':id')
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability) => ability.can(Action.Manage, Gym))
   @ApiOperation({ summary: '헬스장 정보를 수정합니다.' })
   @ApiOkResponse({ type: GymProfileResponse })
   @ApiNotFoundResponse({ description: GYM_ERRORS.NOT_FOUND })
@@ -82,6 +88,8 @@ export class GymCoreController {
   }
 
   @Delete(':id')
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability) => ability.can(Action.Manage, Gym))
   @ApiOperation({ summary: '헬스장을 삭제합니다.' })
   @ApiOkResponse({ type: Boolean })
   @ApiNotFoundResponse({ description: GYM_ERRORS.NOT_FOUND })
