@@ -3,9 +3,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { Post } from '@domain/community/entities/post.entity';
 
 @Entity('boards')
 export class Board {
@@ -20,6 +23,9 @@ export class Board {
 
   @Column({ type: String, nullable: true, unique: true })
   slug!: string | null;
+
+  @OneToMany(() => Post, (post) => post.boardId, { nullable: true })
+  posts!: Post[] | null;
 
   @CreateDateColumn()
   createdAt!: Date;
