@@ -20,8 +20,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { JwtAuthGuard } from '@app/auth/guards/jwt.guard';
+import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
 import { UserCreateRequest } from '@app/user/dtos/user-create.request';
+import { UserJoinToGymRequest } from '@app/user/dtos/user-join-to-gym.request';
 import { UserProfileUpdateRequest } from '@app/user/dtos/user-profile-update.request';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { UserService } from '@app/user/user.service';
@@ -47,6 +48,11 @@ export class UserController {
     @Body() data: UserCreateRequest,
   ): Promise<UserProfileResponse> {
     return this.userService.createUser(data);
+  }
+
+  @Post('/join')
+  async joinGym(@Body() data: UserJoinToGymRequest): Promise<boolean> {
+    return this.userService.joinGym(data);
   }
 
   @Get(':id')
