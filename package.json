@@ -42,6 +42,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "cookie-parser": "^1.4.6",
+    "find-my-way": "^7.0.1",
     "nestjs-typeorm-paginate": "^4.0.1",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
