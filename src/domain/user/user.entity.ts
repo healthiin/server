@@ -8,6 +8,7 @@ import {
   OneToMany,
 } from 'typeorm';
 
+import { Post } from '@domain/community/post.entity';
 import { GymNotice } from '@domain/gym/entities/gym-notice.entity';
 import { GymUser } from '@domain/gym/entities/gym-user.entity';
 
@@ -48,4 +49,7 @@ export class User {
 
   @DeleteDateColumn()
   deletedAt!: Date;
+
+  @OneToMany(() => Post, ({ author }) => author)
+  posts: Post[];
 }

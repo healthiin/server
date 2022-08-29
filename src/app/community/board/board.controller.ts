@@ -28,7 +28,7 @@ import { COMMUNITY_ERRORS } from '@domain/community/community.errors';
 import { Pagination } from '@infrastructure/types/pagination.types';
 
 @Controller('boards')
-@ApiTags('Board')
+@ApiTags('[커뮤니티] 게시판')
 export class BoardController {
   constructor(private readonly boardService: BoardService) {}
 
@@ -44,14 +44,14 @@ export class BoardController {
     return this.boardService.searchBoards(page, limit);
   }
 
-  @Get(':id')
+  @Get(':boardId')
   @ApiOperation({ summary: '게시판 정보를 조회합니다.' })
   @ApiOkResponse({ type: BoardProfileResponse })
   @ApiNotFoundResponse({ description: COMMUNITY_ERRORS.BOARD_NOT_FOUND })
   async getBoardProfile(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('boardId', ParseUUIDPipe) boardId: string,
   ): Promise<BoardProfileResponse> {
-    const board = await this.boardService.getBoardById(id);
+    const board = await this.boardService.getBoardById(boardId);
     return new BoardProfileResponse(board);
   }
 
@@ -66,24 +66,26 @@ export class BoardController {
     return new BoardProfileResponse(board);
   }
 
-  @Patch(':id')
+  @Patch(':boardId')
   @ApiOperation({ summary: '게시판 정보를 수정합니다.' })
   @ApiOkResponse({ type: BoardProfileResponse })
   @ApiNotFoundResponse({ description: COMMUNITY_ERRORS.BOARD_NOT_FOUND })
   @ApiConflictResponse({ description: COMMUNITY_ERRORS.BOARD_SLUG_DUPLICATED })
   async editBoardProfile(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('boardId', ParseUUIDPipe) boardId: string,
     @Body() data: BoardUpdateRequest,
   ): Promise<BoardProfileResponse> {
-    const board = await this.boardService.updateBoard(id, data);
+    const board = await this.boardService.updateBoard(boardId, data);
     return new BoardProfileResponse(board);
   }
 
-  @Delete(':id')
+  @Delete(':boardId')
   @ApiOperation({ summary: '게시판을 삭제합니다.' })
   @ApiOkResponse({ type: BoardProfileResponse })
   @ApiNotFoundResponse({ description: COMMUNITY_ERRORS.BOARD_NOT_FOUND })
-  async deleteBoard(@Param('id', ParseUUIDPipe) id: string): Promise<boolean> {
-    return this.boardService.deleteBoard(id);
+  async deleteBoard(
+    @Param('boardId', ParseUUIDPipe) boardId: string,
+  ): Promise<boolean> {
+    return this.boardService.deleteBoard(boardId);
   }
 }

@@ -10,13 +10,13 @@ import {
 import { Equipment } from '@domain/equipment/entities/equipment.entity';
 import { Gym } from '@domain/gym/entities/gym.entity';
 
-@Entity('gyms_equipment')
+@Entity('gym_equipments')
 export class GymEquipment {
   @PrimaryColumn('uuid')
   @ManyToOne(() => Gym, ({ equipments }) => equipments)
   gym!: Gym;
 
-  @PrimaryColumn()
+  @PrimaryColumn('uuid')
   @ManyToOne(() => Equipment, ({ gymEquipment }) => gymEquipment)
   equipment!: Equipment;
 
