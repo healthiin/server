@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { Board } from '@domain/community/entities/board.entity';
+import { Board } from '@domain/community/board.entity';
 
 export class BoardProfileResponse {
   @ApiProperty()

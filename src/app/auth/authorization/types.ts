@@ -1,7 +1,7 @@
 import { InferSubjects } from '@casl/ability';
 
 import { AppAbility } from '@app/auth/authorization/permission.factory';
-import { Board } from '@domain/community/entities/board.entity';
+import { Board } from '@domain/community/board.entity';
 import { GymNotice } from '@domain/gym/entities/gym-notice.entity';
 import { GymUser } from '@domain/gym/entities/gym-user.entity';
 import { Gym } from '@domain/gym/entities/gym.entity';

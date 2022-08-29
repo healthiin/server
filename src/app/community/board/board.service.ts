@@ -9,11 +9,11 @@ import {
   BoardUpdateCommand,
 } from '@app/community/board/board.command';
 import { BoardProfileResponse } from '@app/community/board/dtos/board-profile.response';
+import { Board } from '@domain/community/board.entity';
 import {
   BoardNotFoundException,
   BoardSlugDuplicatedException,
 } from '@domain/community/community.errors';
-import { Board } from '@domain/community/entities/board.entity';
 import { Pagination } from '@infrastructure/types/pagination.types';
 
 @Injectable()

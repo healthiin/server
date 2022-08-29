@@ -1,6 +1,6 @@
 import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
-import { Board } from '@domain/community/entities/board.entity';
+import { Board } from '@domain/community/board.entity';
 
 export class CommentService {
   async getComments(id: string): Promise<object> {
