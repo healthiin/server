@@ -60,11 +60,4 @@ export class EquipmentManualController {
   ): Promise<ManualProfileResponse> {
     return this.equipmentManualService.deleteManual(manualId);
   }
-  @Delete(':equipmentId/:manualId')
-  async deleteManual(
-    @Param('equipmentId', ParseUUIDPipe) equipmentId: string,
-    @Param('manualId', ParseUUIDPipe) manualId: string,
-  ): Promise<ManualProfileResponse> {
-    return this.equipmentManualService.deleteManual(equipmentId, manualId);
-  }
 }

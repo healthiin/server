@@ -48,9 +48,9 @@ export class UserService {
     const user = await this.userRepository.findOne({
       where: { id: data.userId },
     });
-    user.registeredGym = await this.gymRepository.findOne({
-      where: { id: data.gymId },
-    });
+    // user.gyms = await this.gymRepository.findOne({
+    //   where: { id: data.gymId },
+    // });
     await this.userRepository.save(user);
     // await this.gymRepository.save();
     return true;

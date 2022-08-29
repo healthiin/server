@@ -1,11 +1,8 @@
 import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
-import { BoardNotFoundException } from '@domain/community/community.errors';
 import { Board } from '@domain/community/entities/board.entity';
 
 export class CommentService {
-  // constructor() {}
-
   async getComments(id: string): Promise<object> {
     return {
       comments: [
@@ -86,15 +83,7 @@ export class CommentService {
     return true;
   }
 
-  async findById(
-    id: string,
-    select?: FindOptionsSelect<Board>,
-  ): Promise<Board> {
-    const board = await this.boardRepository.findOne({
-      where: { id },
-      select,
-    });
-    if (!board) throw new BoardNotFoundException();
-    return board;
+  async findById(id: string, select?: FindOptionsSelect<Board>) {
+    //
   }
 }

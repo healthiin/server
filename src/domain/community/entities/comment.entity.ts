@@ -8,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { Board } from '@domain/community/entities/board.entity';
 import { User } from '@domain/user/user.entity';
 
 @Entity('comments')
@@ -25,8 +24,8 @@ export class Comment {
   @OneToOne(() => User)
   user: User;
 
-  @ManyToOne(() => Post, (board) => board.id)
-  board: Post;
+  // @ManyToOne(() => Post, (board) => board.id)
+  // post: Post;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -8,7 +8,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Manual } from '@domain/equipment/entities/manual.entity';
+import { GymEquipment } from '@domain/gym/entities/gym-equipment.entity';
+import { Manual } from '@domain/manual/manual.entity';
 
 @Entity('equipments')
 export class Equipment {
@@ -24,10 +25,15 @@ export class Equipment {
   @OneToMany(() => Manual, (manual) => manual)
   manuals!: Manual[];
 
+  @OneToMany(() => GymEquipment, ({ equipment }) => equipment)
+  gymEquipment!: GymEquipment[];
+
   @CreateDateColumn()
   createdAt!: Date;
+
   @UpdateDateColumn()
   updatedAt!: Date;
+
   @DeleteDateColumn()
   deletedAt!: Date | null;
 }

@@ -33,7 +33,7 @@ export class Gym {
   @OneToMany(() => Manual, (manual) => manual.id, { nullable: true })
   equipments!: Manual[];
 
-  @OneToMany(() => User, (user) => user.registeredGym, {
+  @OneToMany(() => User, (user) => user.gyms, {
     nullable: true,
     cascade: true,
   })

@@ -15,37 +15,32 @@ export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
   @Get()
-  async getComments(
-    @Param('PostId', ParseUUIDPipe) PostId: string,
-  ): Promise<object> {
-    return this.commentService.getComments(PostId);
+  async getComments(@Param('PostId', ParseUUIDPipe) PostId: string) {
+    return undefined;
+    // return this.commentService.getComments(PostId);
   }
 
   @Post()
-  async createComment(
-    @Param('PostId', ParseUUIDPipe) PostId: string,
-  ): Promise<object> {
-    return this.commentService.createComment(PostId);
+  async createComment(@Param('PostId', ParseUUIDPipe) PostId: string) {
+    return undefined;
+    // return this.commentService.createComment(PostId);
   }
 
   @Post('/:commentId')
-  async createReComment(
-    @Param('PostId', ParseUUIDPipe) PostId: string,
-  ): Promise<object> {
-    return this.commentService.createReComment(PostId);
+  async createReComment(@Param('PostId', ParseUUIDPipe) PostId: string) {
+    return undefined;
+    // return this.commentService.createReComment(PostId);
   }
 
   @Patch()
-  async updateComment(
-    @Param('PostId', ParseUUIDPipe) PostId: string,
-  ): Promise<object> {
-    return this.commentService.updateComment(PostId);
+  async updateComment(@Param('PostId', ParseUUIDPipe) PostId: string) {
+    return undefined;
+    // return this.commentService.updateComment(PostId);
   }
 
   @Delete()
-  async deleteComment(
-    @Param('PostId', ParseUUIDPipe) PostId: string,
-  ): Promise<boolean> {
-    return this.commentService.deleteComment(PostId);
+  async deleteComment(@Param('PostId', ParseUUIDPipe) PostId: string) {
+    return undefined;
+    // return this.commentService.deleteComment(PostId);
   }
 }

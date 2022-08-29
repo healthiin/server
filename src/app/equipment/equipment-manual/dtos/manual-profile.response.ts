@@ -1,4 +1,4 @@
-import { Manual } from '@domain/equipment/entities/manual.entity';
+import { Manual } from '@domain/equipment/entities/equipment-manual.entity';
 
 export class ManualProfileResponse {
   id: string;

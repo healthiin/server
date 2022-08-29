@@ -64,7 +64,4 @@ export class EquipmentCoreService {
     }
     return equipment;
   }
-  async deleteEquipment(id: string): Promise<boolean> {
-    return true;
-  }
 }

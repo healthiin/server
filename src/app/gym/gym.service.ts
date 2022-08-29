@@ -30,7 +30,7 @@ export class GymService {
 
   async noticeToMembers(id, data: NoticeCreateRequest): Promise<boolean> {
     const users = await this.userRepository.findBy({
-      registeredGym: { id },
+      // registeredGym: { id },
     });
     await this.noticeRepository.save({
       reader: users,
