@@ -43,7 +43,9 @@ export class PermissionFactory {
 
     if (user.gyms.length > 0) {
       user.gyms.forEach(({ id, isAdmin }) => {
-        if (isAdmin()) this.builder.can([Action.Manage], Gym, { id });
+        if (isAdmin()) {
+          this.builder.can([Action.Manage], Gym, { id });
+        }
       });
     }
 

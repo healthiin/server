@@ -32,7 +32,9 @@ export class PoliciesGuard implements CanActivate {
   }
 
   protected execPolicyHandler(handler: PolicyHandler, ability: AppAbility) {
-    if (typeof handler === 'function') return handler(ability);
+    if (typeof handler === 'function') {
+      return handler(ability);
+    }
     return handler.handle(ability);
   }
 }
