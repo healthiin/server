@@ -1,7 +1,9 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
 
-export class BoardUpdateRequest {
+import { BoardUpdateCommand } from '@app/community/board/board.command';
+
+export class BoardUpdateRequest implements BoardUpdateCommand {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()

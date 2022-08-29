@@ -7,8 +7,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { BoardProperties } from '@domain/community/board';
+
 @Entity('boards')
-export class Board {
+export class Board implements BoardProperties {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 

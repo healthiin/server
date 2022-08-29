@@ -1,19 +1,21 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class BoardCreateRequest {
+import { BoardCreateCommand } from '@app/community/board/board.command';
+
+export class BoardCreateRequest implements BoardCreateCommand {
   @ApiProperty()
-  @IsString()
   @IsNotEmpty()
-  title: string;
+  @IsString()
+  title!: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  description: string;
+  description?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  slug: string;
+  slug?: string;
 }

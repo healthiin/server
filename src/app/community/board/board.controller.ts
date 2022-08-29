@@ -41,7 +41,7 @@ export class BoardController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
   ): Promise<Pagination<BoardProfileResponse>> {
-    return this.boardService.searchBoard(page, limit);
+    return this.boardService.searchBoards(page, limit);
   }
 
   @Get(':id')
@@ -51,7 +51,8 @@ export class BoardController {
   async getBoardProfile(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<BoardProfileResponse> {
-    return this.boardService.getBoardProfile(id);
+    const board = await this.boardService.getBoardById(id);
+    return new BoardProfileResponse(board);
   }
 
   @Post()
@@ -61,7 +62,8 @@ export class BoardController {
   async createBoard(
     @Body() data: BoardCreateRequest,
   ): Promise<BoardProfileResponse> {
-    return this.boardService.createBoard(data);
+    const board = await this.boardService.createBoard(data);
+    return new BoardProfileResponse(board);
   }
 
   @Patch(':id')
@@ -73,7 +75,8 @@ export class BoardController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() data: BoardUpdateRequest,
   ): Promise<BoardProfileResponse> {
-    return this.boardService.editBoardProfile(id, data);
+    const board = await this.boardService.updateBoard(id, data);
+    return new BoardProfileResponse(board);
   }
 
   @Delete(':id')
