@@ -4,32 +4,34 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
+import { CommentProperties } from '@domain/community/comment';
+import { Post } from '@domain/community/post.entity';
 import { User } from '@domain/user/user.entity';
 
 @Entity('comments')
-export class Comment {
+export class Comment implements CommentProperties {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  content: string;
+  content!: string;
 
-  @ManyToOne(() => Comment, (comment) => comment.id)
-  parentCommentId: Comment;
+  @ManyToOne(() => Post, ({ comments }) => comments)
+  post!: Post;
 
-  @OneToOne(() => User)
-  user: User;
-
-  // @ManyToOne(() => Post, (board) => board.id)
-  // post: Post;
+  @ManyToOne(() => User, ({ comments }) => comments)
+  author!: User;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
-  @DeleteDateColumn({ nullable: true })
-  deletedAt: Date | null;
+  @UpdateDateColumn()
+  updatedAt!: Date;
+
+  @DeleteDateColumn()
+  deletedAt!: Date | null;
 }

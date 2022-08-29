@@ -4,6 +4,7 @@ export const COMMUNITY_ERRORS = {
   BOARD_NOT_FOUND: 'BOARD_NOT_FOUND',
   BOARD_SLUG_DUPLICATED: 'BOARD_SLUG_DUPLICATED',
   POST_NOT_FOUND: 'POST_NOT_FOUND',
+  COMMENT_NOT_FOUND: 'COMMENT_NOT_FOUND',
 };
 
 export class BoardNotFoundException extends NotFoundException {
@@ -24,5 +25,11 @@ export class BoardSlugDuplicatedException extends NotFoundException {
 export class PostNotFoundException extends NotFoundException {
   constructor() {
     super('존재하지 않는 게시글입니다.', COMMUNITY_ERRORS.POST_NOT_FOUND);
+  }
+}
+
+export class CommentNotFoundException extends NotFoundException {
+  constructor() {
+    super('존재하지 않는 댓글입니다.', COMMUNITY_ERRORS.COMMENT_NOT_FOUND);
   }
 }

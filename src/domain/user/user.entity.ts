@@ -8,6 +8,7 @@ import {
   OneToMany,
 } from 'typeorm';
 
+import { Comment } from '@domain/community/comment.entity';
 import { Post } from '@domain/community/post.entity';
 import { GymNotice } from '@domain/gym/entities/gym-notice.entity';
 import { GymUser } from '@domain/gym/entities/gym-user.entity';
@@ -52,4 +53,7 @@ export class User {
 
   @OneToMany(() => Post, ({ author }) => author)
   posts: Post[];
+
+  @OneToMany(() => Comment, ({ author }) => author)
+  comments!: Comment[];
 }

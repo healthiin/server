@@ -4,37 +4,42 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { Board } from '@domain/community/board.entity';
+import { Comment } from '@domain/community/comment.entity';
 import { PostProperties } from '@domain/community/post';
 import { User } from '@domain/user/user.entity';
 
 @Entity('posts')
 export class Post implements PostProperties {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  title: string;
+  title!: string;
 
   @Column()
-  content: string;
+  content!: string;
 
   @ManyToOne(() => Board, ({ posts }) => posts)
   board!: Board;
 
   @ManyToOne(() => User, ({ posts }) => posts)
-  author: User;
+  author!: User;
+
+  @OneToMany(() => Comment, ({ post }) => post)
+  comments!: Comment[];
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @DeleteDateColumn()
-  deletedAt: Date | null;
+  deletedAt!: Date | null;
 }
