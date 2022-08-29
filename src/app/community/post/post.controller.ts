@@ -1,12 +1,15 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   Req,
 } from '@nestjs/common';
 import {
@@ -22,12 +25,24 @@ import { PostProfileResponse } from '@app/community/post/dtos/post-profile.respo
 import { PostUpdateRequest } from '@app/community/post/dtos/post-update.request';
 import { PostService } from '@app/community/post/post.service';
 import { COMMUNITY_ERRORS } from '@domain/community/community.errors';
+import { Pagination } from '@infrastructure/types/pagination.types';
 import { Request } from '@infrastructure/types/request.types';
 
 @Controller('boards/:boardId/posts')
 @ApiTags('[커뮤니티] 게시글')
 export class PostController {
   constructor(private readonly postService: PostService) {}
+
+  @Get()
+  @ApiOperation({ summary: '게시글 목록을 조회합니다' })
+  @ApiOkResponse({ type: [PostProfileResponse] })
+  async getPostsByBoardId(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
+    @Param('boardId', ParseUUIDPipe) boardId: string,
+  ): Promise<Pagination<PostProfileResponse>> {
+    return this.postService.getPostsByBoardId({ page, limit, boardId });
+  }
 
   @Get(':postId')
   @ApiOperation({ summary: '게시글 내용을 조회합니다' })

@@ -1,16 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { paginate } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 
 import { BoardService } from '@app/community/board/board.service';
+import { PostProfileResponse } from '@app/community/post/dtos/post-profile.response';
 import {
   PostCreateCommand,
   PostDeleteCommand,
+  PostListQuery,
   PostQuery,
   PostUpdateCommand,
 } from '@app/community/post/post.command';
 import { PostNotFoundException } from '@domain/community/community.errors';
 import { Post } from '@domain/community/post.entity';
+import { Pagination } from '@infrastructure/types/pagination.types';
 
 @Injectable()
 export class PostService {
@@ -19,6 +23,31 @@ export class PostService {
     private readonly postRepository: Repository<Post>,
     private readonly boardService: BoardService,
   ) {}
+
+  /**
+   * 게시글 목록읋 조회합니다.
+   */
+  async getPostsByBoardId(
+    data: PostListQuery,
+  ): Promise<Pagination<PostProfileResponse>> {
+    const { items, meta } = await paginate(
+      this.postRepository,
+      {
+        page: data.page,
+        limit: data.page,
+      },
+      {
+        where: {
+          board: { id: data.boardId },
+        },
+      },
+    );
+
+    return {
+      items: items.map((item) => new PostProfileResponse(item)),
+      meta,
+    };
+  }
 
   /**
    * 게시글을 ID로 조회합니다.

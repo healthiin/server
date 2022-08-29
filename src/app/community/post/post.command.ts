@@ -6,6 +6,12 @@ type UserInfo = { userId: string };
 
 export type PostQuery = BoardInfo & PostInfo;
 
+export type PostListQuery = {
+  page: number;
+  limit: number;
+  boardId: string;
+};
+
 export type PostCreateCommand = UserInfo &
   BoardInfo &
   Pick<PostProperties, 'title' | 'content'>;
