@@ -9,18 +9,21 @@ import { AuthenticatedUserData } from '@app/auth/authentication/commands/authent
 import { UserCreateData } from '@app/user/commands/user-create.data';
 import { UserProfileUpdateRequest } from '@app/user/dtos/user-profile-update.request';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
-import { User } from '@domain/user/user.entity';
 import {
   DuplicatedNicknameException,
   DuplicatedUsernameException,
   UserNotFoundException,
-} from '@domain/user/user.errors';
+} from '@domain/errors/user.errors';
+import { Gym } from '@domain/gym/entities/gym.entity';
+import { User } from '@domain/user/user.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Gym)
+    private readonly gymRepository: Repository<Gym>,
     private readonly configService: ConfigService,
   ) {}
 

@@ -4,8 +4,8 @@ import { Repository } from 'typeorm';
 import { CreateManualData } from '@app/equipment/equipment-manual/commands/create-manual.data';
 import { UpdateManualData } from '@app/equipment/equipment-manual/commands/update-manual.data';
 import { ManualProfileResponse } from '@app/equipment/equipment-manual/dtos/manual-profile.response';
+import { Manual } from '@domain/equipment/entities/equipment-manual.entity';
 import { Equipment } from '@domain/equipment/entities/equipment.entity';
-import { Manual } from '@domain/equipment/entities/manual.entity';
 import { ManualNotFoundException } from '@domain/equipment/manual.errors';
 
 export class EquipmentManualService {
@@ -67,7 +67,7 @@ export class EquipmentManualService {
 
   async deleteManual(manualId: string): Promise<ManualProfileResponse> {
     const manual = await this.findManualById(manualId);
-    await this.manualRepository.softDelete(manual);
+    await this.manualRepository.softDelete({ id: manual.id });
     return new ManualProfileResponse(manual);
   }
 

@@ -23,17 +23,23 @@ import {
 } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
+import { CheckPolicies } from '@app/auth/authorization/policy.decorator';
+import { PoliciesGuard } from '@app/auth/authorization/policy.guard';
+import { Action } from '@app/auth/authorization/types';
 import { GymProfileResponse } from '@app/gym/gym-core/dtos/gym-profile.response';
 import { CreateGymNoticeRequest } from '@app/gym/gym-notice/dtos/create-gym-notice.request';
 import { GymNoticeProfileResponse } from '@app/gym/gym-notice/dtos/gym-notice-profile.response';
 import { UpdateGymNoticeRequest } from '@app/gym/gym-notice/dtos/update-gym-notice.request';
 import { GymNoticeService } from '@app/gym/gym-notice/gym-notice.service';
+import { Gym } from '@domain/gym/entities/gym.entity';
 import { GYM_ERRORS } from '@domain/gym/gym.errors';
 import { Pagination } from '@infrastructure/types/pagination.types';
 import { Request } from '@infrastructure/types/request.types';
 
 @Controller('gyms/:gymId/notices')
+@UseGuards(JwtAuthGuard)
 @ApiTags('Gym Notice')
+@ApiBearerAuth()
 export class GymNoticeController {
   constructor(private readonly gymNoticeService: GymNoticeService) {}
 
@@ -62,10 +68,10 @@ export class GymNoticeController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability) => ability.can(Action.Manage, Gym))
   @ApiOperation({ summary: '새로운 공지를 작성합니다.' })
   @ApiOkResponse({ type: GymProfileResponse })
-  @ApiBearerAuth()
   async createNotice(
     @Param('gymId', ParseUUIDPipe) gymId: string,
     @Body() data: CreateGymNoticeRequest,
@@ -75,6 +81,8 @@ export class GymNoticeController {
   }
 
   @Patch(':id')
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability) => ability.can(Action.Manage, Gym))
   @ApiOperation({ summary: '헬스장 공지를 수정합니다.' })
   @ApiOkResponse({ type: GymProfileResponse })
   @ApiNotFoundResponse({ description: GYM_ERRORS.NOT_FOUND })
@@ -87,6 +95,8 @@ export class GymNoticeController {
   }
 
   @Delete(':id')
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability) => ability.can(Action.Manage, Gym))
   @ApiOperation({ summary: '헬스장 공지를 삭제합니다.' })
   @ApiOkResponse({ type: Boolean })
   @ApiNotFoundResponse({ description: GYM_ERRORS.NOT_FOUND })
