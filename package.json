@@ -22,6 +22,7 @@
     "typeorm": "npx typeorm-ts-node-esm",
     "migration:generate": "yarn typeorm migration:generate -d ./src/data-source.ts -p true",
     "migration:run": "yarn typeorm migration:run -d ./src/data-source.ts",
+    "migration:rollback": "yarn typeorm migration:revert -d ./src/data-source.ts",
     "clear_jest": "jest --clearCache"
   },
   "dependencies": {
