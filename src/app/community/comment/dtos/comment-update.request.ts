@@ -6,7 +6,7 @@ import { CommentUpdateCommand } from '@app/community/comment/comment.command';
 export class CommentUpdateRequest
   implements Pick<CommentUpdateCommand, 'content'>
 {
-  @ApiProperty()
+  @ApiProperty({ description: '댓글 내용' })
   @IsNotEmpty()
   @IsString()
   content!: string;

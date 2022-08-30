@@ -9,19 +9,19 @@ export class PostProfileResponse
   @ApiProperty()
   id!: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: '게시글 제목' })
   title!: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: '게시글 내용' })
   content!: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: '게시글 작성자 닉네임' })
   author!: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: '게시글 작성 일시' })
   createdAt!: Date;
 
-  @ApiProperty()
+  @ApiProperty({ description: '게시글 수정 일시' })
   updatedAt!: Date;
 
   constructor(data: Post) {

@@ -9,16 +9,16 @@ export class CommentProfileResponse
   @ApiProperty()
   id: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: '댓글 내용' })
   content: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: '댓글 작성자 닉네임' })
   author: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: '댓글 작성일시' })
   createdAt: Date;
 
-  @ApiProperty()
+  @ApiProperty({ description: '댓글 수정일시' })
   updatedAt: Date;
 
   constructor(data: Comment) {

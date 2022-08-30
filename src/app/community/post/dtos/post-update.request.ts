@@ -6,12 +6,12 @@ import { PostUpdateCommand } from '@app/community/post/post.command';
 export class PostUpdateRequest
   implements Omit<PostUpdateCommand, 'boardId' | 'postId'>
 {
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ description: '게시글 제목' })
   @IsOptional()
   @IsString()
   title?: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ description: '게시글 내용' })
   @IsOptional()
   @IsString()
   content?: string;
