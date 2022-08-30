@@ -8,6 +8,7 @@ import { Injectable } from '@nestjs/common';
 
 import { AuthenticatedUserData } from '@app/auth/authentication/commands/authenticated-user.data';
 import { Action, Subjects } from '@app/auth/authorization/types';
+import { Board } from '@domain/community/board.entity';
 import { Comment } from '@domain/community/comment.entity';
 import { Post } from '@domain/community/post.entity';
 import { Gym } from '@domain/gym/entities/gym.entity';
@@ -49,6 +50,10 @@ export class PermissionFactory {
           this.builder.can([Action.Manage], Gym, { id });
         }
       });
+    }
+
+    if (user.isAdmin) {
+      this.builder.can([Action.Create, Action.Update, Action.Delete], Board);
     }
 
     this.builder.can(Action.Create, Post, 'all');

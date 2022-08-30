@@ -20,10 +20,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { CheckPolicies } from '@app/auth/authorization/policy.decorator';
+import { Action } from '@app/auth/authorization/types';
 import { CommentService } from '@app/community/comment/comment.service';
 import { CommentCreateRequest } from '@app/community/comment/dtos/comment-create.request';
 import { CommentProfileResponse } from '@app/community/comment/dtos/comment-profile.response';
 import { CommentUpdateRequest } from '@app/community/comment/dtos/comment-update.request';
+import { Comment } from '@domain/community/comment.entity';
 import { COMMUNITY_ERRORS } from '@domain/community/community.errors';
 import { Pagination } from '@infrastructure/types/pagination.types';
 import { Request } from '@infrastructure/types/request.types';
@@ -64,6 +67,7 @@ export class CommentController {
   }
 
   @Patch(':commentId')
+  @CheckPolicies((ability) => ability.can(Action.Update, Comment))
   @ApiOperation({ summary: '댓글을 수정합니다' })
   @ApiOkResponse({ type: CommentProfileResponse })
   @ApiNotFoundResponse({ description: COMMUNITY_ERRORS.COMMENT_NOT_FOUND })
@@ -84,6 +88,7 @@ export class CommentController {
   }
 
   @Delete(':commentId')
+  @CheckPolicies((ability) => ability.can(Action.Delete, Comment))
   @ApiOperation({ summary: '댓글을 삭제합니다' })
   @ApiOkResponse({ type: Boolean })
   @ApiNotFoundResponse({ description: COMMUNITY_ERRORS.COMMENT_NOT_FOUND })

@@ -33,14 +33,11 @@ export class User {
   @Column({ nullable: true })
   avatarImage!: string | null;
 
+  @Column({ default: false })
+  isAdmin!: boolean;
+
   @Column()
   phoneNumber!: string;
-
-  @OneToMany(() => GymUser, ({ user }) => user)
-  gyms!: GymUser[];
-
-  @OneToMany(() => GymNotice, ({ author }) => author)
-  gymNotices: GymNotice[];
 
   @CreateDateColumn()
   createdAt!: Date;
@@ -50,6 +47,12 @@ export class User {
 
   @DeleteDateColumn()
   deletedAt!: Date;
+
+  @OneToMany(() => GymUser, ({ user }) => user)
+  gyms!: GymUser[];
+
+  @OneToMany(() => GymNotice, ({ author }) => author)
+  gymNotices: GymNotice[];
 
   @OneToMany(() => Post, ({ author }) => author)
   posts: Post[];

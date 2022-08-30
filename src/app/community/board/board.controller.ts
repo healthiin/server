@@ -20,10 +20,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { CheckPolicies } from '@app/auth/authorization/policy.decorator';
+import { Action } from '@app/auth/authorization/types';
 import { BoardService } from '@app/community/board/board.service';
 import { BoardCreateRequest } from '@app/community/board/dtos/board-create.request';
 import { BoardProfileResponse } from '@app/community/board/dtos/board-profile.response';
 import { BoardUpdateRequest } from '@app/community/board/dtos/board-update.request';
+import { Board } from '@domain/community/board.entity';
 import { COMMUNITY_ERRORS } from '@domain/community/community.errors';
 import { Pagination } from '@infrastructure/types/pagination.types';
 
@@ -56,6 +59,7 @@ export class BoardController {
   }
 
   @Post()
+  @CheckPolicies((ability) => ability.can(Action.Create, Board))
   @ApiOperation({ summary: '게시판을 생성합니다.' })
   @ApiOkResponse({ type: BoardProfileResponse })
   @ApiConflictResponse({ description: COMMUNITY_ERRORS.BOARD_SLUG_DUPLICATED })
@@ -67,6 +71,7 @@ export class BoardController {
   }
 
   @Patch(':boardId')
+  @CheckPolicies((ability) => ability.can(Action.Update, Board))
   @ApiOperation({ summary: '게시판 정보를 수정합니다.' })
   @ApiOkResponse({ type: BoardProfileResponse })
   @ApiNotFoundResponse({ description: COMMUNITY_ERRORS.BOARD_NOT_FOUND })
@@ -80,6 +85,7 @@ export class BoardController {
   }
 
   @Delete(':boardId')
+  @CheckPolicies((ability) => ability.can(Action.Delete, Board))
   @ApiOperation({ summary: '게시판을 삭제합니다.' })
   @ApiOkResponse({ type: BoardProfileResponse })
   @ApiNotFoundResponse({ description: COMMUNITY_ERRORS.BOARD_NOT_FOUND })

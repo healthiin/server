@@ -20,11 +20,14 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { CheckPolicies } from '@app/auth/authorization/policy.decorator';
+import { Action } from '@app/auth/authorization/types';
 import { PostCreateRequest } from '@app/community/post/dtos/post-create.request';
 import { PostProfileResponse } from '@app/community/post/dtos/post-profile.response';
 import { PostUpdateRequest } from '@app/community/post/dtos/post-update.request';
 import { PostService } from '@app/community/post/post.service';
 import { COMMUNITY_ERRORS } from '@domain/community/community.errors';
+import { Post as PostEntity } from '@domain/community/post.entity';
 import { Pagination } from '@infrastructure/types/pagination.types';
 import { Request } from '@infrastructure/types/request.types';
 
@@ -72,6 +75,7 @@ export class PostController {
   }
 
   @Patch(':postId')
+  @CheckPolicies((ability) => ability.can(Action.Update, PostEntity))
   @ApiOperation({ summary: '게시글을 수정합니다' })
   @ApiOkResponse({ type: PostProfileResponse })
   @ApiNotFoundResponse({ description: COMMUNITY_ERRORS.POST_NOT_FOUND })
@@ -89,6 +93,7 @@ export class PostController {
   }
 
   @Delete(':postId')
+  @CheckPolicies((ability) => ability.can(Action.Delete, PostEntity))
   @ApiOperation({ summary: '게시글을 삭제합니다' })
   @ApiOkResponse({ type: Boolean })
   @ApiNotFoundResponse({ description: COMMUNITY_ERRORS.POST_NOT_FOUND })
