@@ -13,7 +13,7 @@ import { Board } from '@domain/community/board.entity';
 import {
   BoardNotFoundException,
   BoardSlugDuplicatedException,
-} from '@domain/community/community.errors';
+} from '@domain/errors/community.errors';
 import { Pagination } from '@infrastructure/types/pagination.types';
 
 @Injectable()

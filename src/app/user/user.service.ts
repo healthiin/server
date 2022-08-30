@@ -7,16 +7,15 @@ import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
 import { AuthenticatedUserData } from '@app/auth/authentication/commands/authenticated-user.data';
 import { UserCreateData } from '@app/user/commands/user-create.data';
-import { UserJoinToGymRequest } from '@app/user/dtos/user-join-to-gym.request';
 import { UserProfileUpdateRequest } from '@app/user/dtos/user-profile-update.request';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
-import { Gym } from '@domain/gym/gym.entity';
-import { User } from '@domain/user/user.entity';
 import {
   DuplicatedNicknameException,
   DuplicatedUsernameException,
   UserNotFoundException,
-} from '@domain/user/user.errors';
+} from '@domain/errors/user.errors';
+import { Gym } from '@domain/gym/entities/gym.entity';
+import { User } from '@domain/user/user.entity';
 
 @Injectable()
 export class UserService {

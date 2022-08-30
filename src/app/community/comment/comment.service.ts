@@ -13,7 +13,7 @@ import {
 import { CommentProfileResponse } from '@app/community/comment/dtos/comment-profile.response';
 import { PostService } from '@app/community/post/post.service';
 import { Comment } from '@domain/community/comment.entity';
-import { CommentNotFoundException } from '@domain/community/community.errors';
+import { CommentNotFoundException } from '@domain/errors/community.errors';
 import { Pagination } from '@infrastructure/types/pagination.types';
 
 @Injectable()

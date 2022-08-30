@@ -30,7 +30,7 @@ import { BoardCreateRequest } from '@app/community/board/dtos/board-create.reque
 import { BoardProfileResponse } from '@app/community/board/dtos/board-profile.response';
 import { BoardUpdateRequest } from '@app/community/board/dtos/board-update.request';
 import { Board } from '@domain/community/board.entity';
-import { COMMUNITY_ERRORS } from '@domain/community/community.errors';
+import { COMMUNITY_ERRORS } from '@domain/errors/community.errors';
 import { Pagination } from '@infrastructure/types/pagination.types';
 
 @Controller('boards')

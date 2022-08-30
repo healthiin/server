@@ -12,8 +12,8 @@ import {
   PostQuery,
   PostUpdateCommand,
 } from '@app/community/post/post.command';
-import { PostNotFoundException } from '@domain/community/community.errors';
 import { Post } from '@domain/community/post.entity';
+import { PostNotFoundException } from '@domain/errors/community.errors';
 import { Pagination } from '@infrastructure/types/pagination.types';
 
 @Injectable()

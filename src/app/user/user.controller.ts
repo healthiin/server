@@ -22,11 +22,10 @@ import {
 
 import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
 import { UserCreateRequest } from '@app/user/dtos/user-create.request';
-import { UserJoinToGymRequest } from '@app/user/dtos/user-join-to-gym.request';
 import { UserProfileUpdateRequest } from '@app/user/dtos/user-profile-update.request';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { UserService } from '@app/user/user.service';
-import { USER_ERRORS } from '@domain/user/user.errors';
+import { USER_ERRORS } from '@domain/errors/user.errors';
 
 @ApiTags('[계정] 프로필')
 @Controller('users')

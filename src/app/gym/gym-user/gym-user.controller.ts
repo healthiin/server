@@ -25,9 +25,9 @@ import { PoliciesGuard } from '@app/auth/authorization/policy.guard';
 import { Action } from '@app/auth/authorization/types';
 import { GymUserProfileResponse } from '@app/gym/gym-user/dtos/gym-user-profile.response';
 import { GymUserService } from '@app/gym/gym-user/gym-user.service';
+import { USER_ERRORS } from '@domain/errors/user.errors';
 import { Gym } from '@domain/gym/entities/gym.entity';
 import { GYM_ERRORS } from '@domain/gym/gym.errors';
-import { USER_ERRORS } from '@domain/user/user.errors';
 import { Pagination } from '@infrastructure/types/pagination.types';
 
 @Controller('gyms/:gymId/users')

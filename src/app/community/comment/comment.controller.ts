@@ -30,7 +30,7 @@ import { CommentCreateRequest } from '@app/community/comment/dtos/comment-create
 import { CommentProfileResponse } from '@app/community/comment/dtos/comment-profile.response';
 import { CommentUpdateRequest } from '@app/community/comment/dtos/comment-update.request';
 import { Comment } from '@domain/community/comment.entity';
-import { COMMUNITY_ERRORS } from '@domain/community/community.errors';
+import { COMMUNITY_ERRORS } from '@domain/errors/community.errors';
 import { Pagination } from '@infrastructure/types/pagination.types';
 import { Request } from '@infrastructure/types/request.types';
 

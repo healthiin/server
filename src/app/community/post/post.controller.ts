@@ -29,8 +29,8 @@ import { PostCreateRequest } from '@app/community/post/dtos/post-create.request'
 import { PostProfileResponse } from '@app/community/post/dtos/post-profile.response';
 import { PostUpdateRequest } from '@app/community/post/dtos/post-update.request';
 import { PostService } from '@app/community/post/post.service';
-import { COMMUNITY_ERRORS } from '@domain/community/community.errors';
 import { Post as PostEntity } from '@domain/community/post.entity';
+import { COMMUNITY_ERRORS } from '@domain/errors/community.errors';
 import { Pagination } from '@infrastructure/types/pagination.types';
 import { Request } from '@infrastructure/types/request.types';
 
