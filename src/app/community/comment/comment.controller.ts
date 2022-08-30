@@ -11,8 +11,10 @@ import {
   Post,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -20,6 +22,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
 import { CheckPolicies } from '@app/auth/authorization/policy.decorator';
 import { Action } from '@app/auth/authorization/types';
 import { CommentService } from '@app/community/comment/comment.service';
@@ -32,7 +35,9 @@ import { Pagination } from '@infrastructure/types/pagination.types';
 import { Request } from '@infrastructure/types/request.types';
 
 @Controller('boards/:boardId/posts/:postId/comments')
+@UseGuards(JwtAuthGuard)
 @ApiTags('[커뮤니티] 댓글')
+@ApiBearerAuth()
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 

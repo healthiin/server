@@ -10,8 +10,10 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiConflictResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -20,6 +22,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
 import { CheckPolicies } from '@app/auth/authorization/policy.decorator';
 import { Action } from '@app/auth/authorization/types';
 import { BoardService } from '@app/community/board/board.service';
@@ -31,7 +34,9 @@ import { COMMUNITY_ERRORS } from '@domain/community/community.errors';
 import { Pagination } from '@infrastructure/types/pagination.types';
 
 @Controller('boards')
+@UseGuards(JwtAuthGuard)
 @ApiTags('[커뮤니티] 게시판')
+@ApiBearerAuth()
 export class BoardController {
   constructor(private readonly boardService: BoardService) {}
 
