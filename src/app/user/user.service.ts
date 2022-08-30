@@ -44,18 +44,6 @@ export class UserService {
     return new UserProfileResponse(user);
   }
 
-  async joinGym(data: UserJoinToGymRequest): Promise<boolean> {
-    const user = await this.userRepository.findOne({
-      where: { id: data.userId },
-    });
-    // user.gyms = await this.gymRepository.findOne({
-    //   where: { id: data.gymId },
-    // });
-    await this.userRepository.save(user);
-    // await this.gymRepository.save();
-    return true;
-  }
-
   async getUserProfile(id: string): Promise<UserProfileResponse> {
     const user = await this.findById(id);
     return new UserProfileResponse(user);

@@ -28,7 +28,7 @@ import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { UserService } from '@app/user/user.service';
 import { USER_ERRORS } from '@domain/user/user.errors';
 
-@ApiTags('User')
+@ApiTags('[계정] 프로필')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -48,11 +48,6 @@ export class UserController {
     @Body() data: UserCreateRequest,
   ): Promise<UserProfileResponse> {
     return this.userService.createUser(data);
-  }
-
-  @Post('/join')
-  async joinGym(@Body() data: UserJoinToGymRequest): Promise<boolean> {
-    return this.userService.joinGym(data);
   }
 
   @Get(':id')

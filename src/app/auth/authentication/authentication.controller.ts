@@ -18,8 +18,8 @@ import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { Request } from '@infrastructure/types/request.types';
 
-@ApiTags('Authentication')
 @Controller('auth')
+@ApiTags('[계정] 인증')
 export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {}
 
