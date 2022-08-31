@@ -24,6 +24,7 @@ import {
 
 import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
 import { CheckPolicies } from '@app/auth/authorization/policy.decorator';
+import { PoliciesGuard } from '@app/auth/authorization/policy.guard';
 import { Action } from '@app/auth/authorization/types';
 import { PostCreateRequest } from '@app/community/post/dtos/post-create.request';
 import { PostProfileResponse } from '@app/community/post/dtos/post-profile.response';
@@ -80,6 +81,7 @@ export class PostController {
   }
 
   @Patch(':postId')
+  @UseGuards(PoliciesGuard)
   @CheckPolicies((ability) => ability.can(Action.Update, PostEntity))
   @ApiOperation({ summary: '게시글을 수정합니다' })
   @ApiOkResponse({ type: PostProfileResponse })
@@ -98,6 +100,7 @@ export class PostController {
   }
 
   @Delete(':postId')
+  @UseGuards(PoliciesGuard)
   @CheckPolicies((ability) => ability.can(Action.Delete, PostEntity))
   @ApiOperation({ summary: '게시글을 삭제합니다' })
   @ApiOkResponse({ type: Boolean })

@@ -24,6 +24,7 @@ import {
 
 import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
 import { CheckPolicies } from '@app/auth/authorization/policy.decorator';
+import { PoliciesGuard } from '@app/auth/authorization/policy.guard';
 import { Action } from '@app/auth/authorization/types';
 import { CommentService } from '@app/community/comment/comment.service';
 import { CommentCreateRequest } from '@app/community/comment/dtos/comment-create.request';
@@ -72,6 +73,7 @@ export class CommentController {
   }
 
   @Patch(':commentId')
+  @UseGuards(PoliciesGuard)
   @CheckPolicies((ability) => ability.can(Action.Update, Comment))
   @ApiOperation({ summary: '댓글을 수정합니다' })
   @ApiOkResponse({ type: CommentProfileResponse })
@@ -93,6 +95,7 @@ export class CommentController {
   }
 
   @Delete(':commentId')
+  @UseGuards(PoliciesGuard)
   @CheckPolicies((ability) => ability.can(Action.Delete, Comment))
   @ApiOperation({ summary: '댓글을 삭제합니다' })
   @ApiOkResponse({ type: Boolean })
