@@ -9,7 +9,7 @@ export const tags: SwaggerTag[] = [
   // 헬스장 관련 태그
   { name: '[헬스장] 코어', description: '헬스장 관련 기능' },
   { name: '[헬스장] 구성원', description: '헬스장 관련 기능' },
-  { name: 'Gym Notice', description: '헬스장 공지사항' },
+  { name: '[헬스장] 공지사항', description: '헬스장 관련 기능' },
 ];
 
 type SwaggerTag = { name: string; description: string };

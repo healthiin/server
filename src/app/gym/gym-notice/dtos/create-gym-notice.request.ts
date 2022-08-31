@@ -1,7 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateGymNoticeRequest {
+import { GymNoticeCreateCommand } from '@app/gym/gym-notice/gym-notice.command';
+
+export class CreateGymNoticeRequest
+  implements Pick<GymNoticeCreateCommand, 'title' | 'body'>
+{
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
