@@ -51,7 +51,7 @@ export class GymCoreController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
   ): Promise<Pagination<GymProfileResponse>> {
-    return this.gymCoreService.searchGym(page, limit);
+    return this.gymCoreService.searchGym({ page, limit });
   }
 
   @Get(':gymId')
@@ -72,7 +72,10 @@ export class GymCoreController {
     @Body() data: CreateGymRequest,
     @Req() { user }: Request,
   ): Promise<GymProfileResponse> {
-    const gym = await this.gymCoreService.createGym(data, user);
+    const gym = await this.gymCoreService.createGym({
+      ...data,
+      userId: user.id,
+    });
     return new GymProfileResponse(gym);
   }
 
