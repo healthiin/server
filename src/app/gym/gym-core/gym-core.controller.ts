@@ -37,7 +37,7 @@ import { Request } from '@infrastructure/types/request.types';
 
 @Controller('gyms')
 @UseGuards(JwtAuthGuard)
-@ApiTags('Gym')
+@ApiTags('[헬스장] 코어')
 @ApiBearerAuth()
 export class GymCoreController {
   constructor(private readonly gymCoreService: GymCoreService) {}
@@ -54,14 +54,15 @@ export class GymCoreController {
     return this.gymCoreService.searchGym(page, limit);
   }
 
-  @Get(':id')
+  @Get(':gymId')
   @ApiOperation({ summary: '헬스장 정보를 조회합니다.' })
   @ApiOkResponse({ type: GymProfileResponse })
   @ApiNotFoundResponse({ description: GYM_ERRORS.NOT_FOUND })
   async getGymProfile(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('gymId', ParseUUIDPipe) gymId: string,
   ): Promise<GymProfileResponse> {
-    return this.gymCoreService.getGymProfile(id);
+    const gym = await this.gymCoreService.getGymById(gymId);
+    return new GymProfileResponse(gym);
   }
 
   @Post()
@@ -71,29 +72,33 @@ export class GymCoreController {
     @Body() data: CreateGymRequest,
     @Req() { user }: Request,
   ): Promise<GymProfileResponse> {
-    return this.gymCoreService.createGym(data, user);
+    const gym = await this.gymCoreService.createGym(data, user);
+    return new GymProfileResponse(gym);
   }
 
-  @Patch(':id')
+  @Patch(':gymId')
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability) => ability.can(Action.Manage, Gym))
   @ApiOperation({ summary: '헬스장 정보를 수정합니다.' })
   @ApiOkResponse({ type: GymProfileResponse })
   @ApiNotFoundResponse({ description: GYM_ERRORS.NOT_FOUND })
   async updateGymProfile(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('gymId', ParseUUIDPipe) gymId: string,
     @Body() data: UpdateGymProfileRequest,
   ): Promise<GymProfileResponse> {
-    return this.gymCoreService.updateGymProfile(id, data);
+    const gym = await this.gymCoreService.updateGymProfile(gymId, data);
+    return new GymProfileResponse(gym);
   }
 
-  @Delete(':id')
+  @Delete(':gymId')
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability) => ability.can(Action.Manage, Gym))
   @ApiOperation({ summary: '헬스장을 삭제합니다.' })
   @ApiOkResponse({ type: Boolean })
   @ApiNotFoundResponse({ description: GYM_ERRORS.NOT_FOUND })
-  async deleteGym(@Param('id', ParseUUIDPipe) id: string): Promise<boolean> {
-    return this.gymCoreService.deleteGym(id);
+  async deleteGym(
+    @Param('gymId', ParseUUIDPipe) gymId: string,
+  ): Promise<boolean> {
+    return this.gymCoreService.deleteGym(gymId);
   }
 }
