@@ -3,9 +3,13 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { Routine } from '@domain/routine/routine.entity';
 
 @Entity('manuals')
 export class Manual {
@@ -29,6 +33,10 @@ export class Manual {
 
   @Column()
   precautions!: string;
+
+  @ManyToOne(() => Routine, (routine) => routine.manuals)
+  @JoinColumn()
+  routine!: Routine;
 
   @CreateDateColumn()
   createdAt!: Date;
