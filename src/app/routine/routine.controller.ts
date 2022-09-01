@@ -1,37 +1,67 @@
 import {
+  Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 
-@Controller('routine')
+import { RoutineCreateRequest } from '@app/routine/dtos/routine-create.request';
+import { RoutineProfileResponse } from '@app/routine/dtos/routine-profile.response';
+import { RoutineUpdateRequest } from '@app/routine/dtos/routine-update.request';
+import { RoutineService } from '@app/routine/routine.service';
+import { Pagination } from '@infrastructure/types/pagination.types';
+
+@Controller('routines')
 export class RoutineController {
-  @Get()
-  async getRoutines() {
-    return '모든 운동 루틴을 반환한다.';
+  constructor(private readonly routineService: RoutineService) {}
+
+  @Get('/:routineId')
+  async getRoutineProfile(
+    @Param('routineId', ParseUUIDPipe) routineId: string,
+  ) {
+    const routine = await this.routineService.getRoutineById(routineId);
+    return new RoutineProfileResponse(routine);
   }
 
-  @Get('/:id')
-  async getRoutine(@Param('id', ParseUUIDPipe) id: string) {
-    return `특정 아이디 ${id} 루틴 하나를 반환한다.`;
+  @Get()
+  async getRoutines(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
+  ): Promise<Pagination<RoutineProfileResponse>> {
+    return this.routineService.getRoutines({ page, limit });
   }
 
   @Post()
-  async createRoutine() {
-    return '운동 루틴을 추가할 수 있다.';
+  async createRoutine(@Body() data: RoutineCreateRequest) {
+    const routine = await this.routineService.createRoutine({
+      ...data,
+    });
+    console.log(routine);
+    return new RoutineProfileResponse(routine);
   }
 
-  @Patch('/:id')
-  async updateRoutine(@Param('id', ParseUUIDPipe) id: string) {
-    return `특정 아이디 ${id} 루틴 하나를 업데이트한다.`;
+  @Patch('/:routineId')
+  async editRoutineProfile(
+    @Param('routineId', ParseUUIDPipe) routineId: string,
+    @Body() data: RoutineUpdateRequest,
+  ) {
+    const routine = await this.routineService.editRoutine({
+      ...data,
+    });
+    return new RoutineProfileResponse(routine);
   }
 
-  @Delete('/:id')
-  async withdrawRoutine(@Param('id', ParseUUIDPipe) id: string) {
-    return `특정 아이디 ${id} 루틴 하나를 소프트 삭제한다.`;
+  @Delete('/:routineId')
+  async deleteRoutine(
+    @Param('routineId', ParseUUIDPipe) routineId: string,
+  ): Promise<boolean> {
+    return this.routineService.deleteRoutine({ routineId });
   }
 }
