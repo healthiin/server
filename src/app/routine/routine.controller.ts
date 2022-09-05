@@ -12,6 +12,7 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { RoutineCreateRequest } from '@app/routine/dtos/routine-create.request';
 import { RoutineProfileResponse } from '@app/routine/dtos/routine-profile.response';
@@ -21,10 +22,13 @@ import { Pagination } from '@infrastructure/types/pagination.types';
 import { Request } from '@infrastructure/types/request.types';
 
 @Controller('routines')
+@ApiTags('[루틴] 루틴')
 export class RoutineController {
   constructor(private readonly routineService: RoutineService) {}
 
   @Get('/:routineId')
+  @ApiOperation({ summary: '특정 루틴의 내용을 조회합니다' })
+  @ApiOkResponse({ type: RoutineProfileResponse })
   async getRoutineProfile(
     @Param('routineId', ParseUUIDPipe) routineId: string,
   ): Promise<RoutineProfileResponse> {
@@ -33,6 +37,8 @@ export class RoutineController {
   }
 
   @Get()
+  @ApiOperation({ summary: '루틴 목록을 조회합니다' })
+  @ApiOkResponse({ type: RoutineProfileResponse })
   async getRoutines(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
@@ -41,6 +47,8 @@ export class RoutineController {
   }
 
   @Post()
+  @ApiOperation({ summary: '루틴을 생성합니다' })
+  @ApiOkResponse({ type: RoutineProfileResponse })
   async createRoutine(
     @Body() data: RoutineCreateRequest,
     // @Req() { user }: Request
@@ -53,6 +61,8 @@ export class RoutineController {
   }
 
   @Patch('/:routineId')
+  @ApiOperation({ summary: '루틴을 수정합니다' })
+  @ApiOkResponse({ type: RoutineProfileResponse })
   async editRoutineProfile(
     @Param('routineId', ParseUUIDPipe) routineId: string,
     // @Req() { user }: Request,
@@ -67,6 +77,8 @@ export class RoutineController {
   }
 
   @Delete('/:routineId')
+  @ApiOperation({ summary: '루틴을 삭제합니다' })
+  @ApiOkResponse({ type: Boolean })
   async deleteRoutine(
     @Param('routineId', ParseUUIDPipe) routineId: string,
   ): Promise<boolean> {
