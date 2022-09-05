@@ -3,7 +3,12 @@ import { IsNotEmpty, IsString } from 'class-validator';
 import { RoutineCreateCommand } from '@app/routine/routine.command';
 
 export class RoutineCreateRequest
-  implements Omit<RoutineCreateCommand, 'routineId'>
+  implements
+    Omit<
+      RoutineCreateCommand,
+      'routineId' | 'manualIds'
+      // 'userId'
+    >
 {
   @IsNotEmpty()
   @IsString()
@@ -12,4 +17,8 @@ export class RoutineCreateRequest
   @IsNotEmpty()
   @IsString()
   description: string;
+
+  @IsNotEmpty()
+  @IsString()
+  manualIds: string[];
 }

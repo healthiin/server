@@ -10,6 +10,8 @@ import {
   RoutineListQuery,
   RoutineUpdateCommand,
 } from '@app/routine/routine.command';
+import { RoutineNotFoundException } from '@domain/errors/routine.errors';
+import { Manual } from '@domain/manual/manual.entity';
 import { Routine } from '@domain/routine/routine.entity';
 import { Pagination } from '@infrastructure/types/pagination.types';
 
@@ -17,6 +19,8 @@ export class RoutineService {
   constructor(
     @InjectRepository(Routine)
     private readonly routineRepository: Repository<Routine>,
+    @InjectRepository(Manual)
+    private readonly manualRepository: Repository<Manual>,
   ) {}
 
   async getRoutineById(
@@ -27,7 +31,7 @@ export class RoutineService {
       where: { id },
       select,
     });
-    // if (!routine) throw new RoutineNotFoundException();
+    if (!routine) throw new RoutineNotFoundException();
     return routine;
   }
 
@@ -46,12 +50,15 @@ export class RoutineService {
   }
 
   async createRoutine(data: RoutineCreateCommand): Promise<Routine> {
-    console.log('test');
+    await this.validateManuals(data.manualIds);
+
     return this.routineRepository.save(data);
   }
 
   async editRoutine(data: RoutineUpdateCommand): Promise<Routine> {
-    const routine = await this.getRoutineById(data.id);
+    await this.validateManuals(data.manualIds);
+
+    const routine = await this.getRoutineById(data.routineId);
 
     return this.routineRepository.save({
       ...routine,
@@ -66,5 +73,15 @@ export class RoutineService {
       id: routine.id,
     });
     return affected > 0;
+  }
+
+  protected async validateManuals(manualIds: string[]): Promise<void> {
+    console.log(manualIds);
+    const test = manualIds.map(async (manualId) => {
+      await this.manualRepository.find({
+        where: { id: manualId },
+      });
+    });
+    console.log(test);
   }
 }
