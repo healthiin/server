@@ -8,10 +8,11 @@ import {
 } from 'typeorm';
 
 import { Equipment } from '@domain/equipment/entities/equipment.entity';
+import { GymEquipmentProperties } from '@domain/gym/entities/gym-equipment';
 import { Gym } from '@domain/gym/entities/gym.entity';
 
 @Entity('gym_equipments')
-export class GymEquipment {
+export class GymEquipment implements GymEquipmentProperties {
   @PrimaryColumn('uuid')
   @ManyToOne(() => Gym, ({ equipments }) => equipments)
   gym!: Gym;

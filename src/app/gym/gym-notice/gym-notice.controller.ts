@@ -38,7 +38,7 @@ import { Request } from '@infrastructure/types/request.types';
 
 @Controller('gyms/:gymId/notices')
 @UseGuards(JwtAuthGuard)
-@ApiTags('Gym Notice')
+@ApiTags('[헬스장] 공지사항')
 @ApiBearerAuth()
 export class GymNoticeController {
   constructor(private readonly gymNoticeService: GymNoticeService) {}
@@ -53,18 +53,22 @@ export class GymNoticeController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
   ): Promise<Pagination<GymNoticeProfileResponse>> {
-    return this.gymNoticeService.searchNotice(page, limit);
+    return this.gymNoticeService.searchNotice({ gymId, page, limit });
   }
 
-  @Get(':id')
+  @Get(':noticeId')
   @ApiOperation({ summary: '헬스장 공지를 조회합니다.' })
   @ApiOkResponse({ type: GymProfileResponse })
   @ApiNotFoundResponse({ description: GYM_ERRORS.NOT_FOUND })
   async getNoticeProfile(
     @Param('gymId', ParseUUIDPipe) gymId: string,
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('noticeId', ParseUUIDPipe) noticeId: string,
   ): Promise<GymNoticeProfileResponse> {
-    return this.gymNoticeService.getNoticeProfile(id);
+    const notice = await this.gymNoticeService.getNoticeById({
+      gymId,
+      noticeId,
+    });
+    return new GymNoticeProfileResponse(notice);
   }
 
   @Post()
@@ -77,10 +81,15 @@ export class GymNoticeController {
     @Body() data: CreateGymNoticeRequest,
     @Req() { user }: Request,
   ): Promise<GymNoticeProfileResponse> {
-    return this.gymNoticeService.createNotice(data, user);
+    const notice = await this.gymNoticeService.createNotice({
+      gymId,
+      userId: user.id,
+      ...data,
+    });
+    return new GymNoticeProfileResponse(notice);
   }
 
-  @Patch(':id')
+  @Patch(':noticeId')
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability) => ability.can(Action.Manage, Gym))
   @ApiOperation({ summary: '헬스장 공지를 수정합니다.' })
@@ -88,13 +97,18 @@ export class GymNoticeController {
   @ApiNotFoundResponse({ description: GYM_ERRORS.NOT_FOUND })
   async updateNoticeProfile(
     @Param('gymId', ParseUUIDPipe) gymId: string,
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('noticeId', ParseUUIDPipe) noticeId: string,
     @Body() data: UpdateGymNoticeRequest,
   ): Promise<GymNoticeProfileResponse> {
-    return this.gymNoticeService.updateNoticeProfile(id, data);
+    const notice = await this.gymNoticeService.updateNoticeProfile({
+      gymId,
+      noticeId,
+      ...data,
+    });
+    return new GymNoticeProfileResponse(notice);
   }
 
-  @Delete(':id')
+  @Delete(':noticeId')
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability) => ability.can(Action.Manage, Gym))
   @ApiOperation({ summary: '헬스장 공지를 삭제합니다.' })
@@ -102,8 +116,11 @@ export class GymNoticeController {
   @ApiNotFoundResponse({ description: GYM_ERRORS.NOT_FOUND })
   async deleteNotice(
     @Param('gymId', ParseUUIDPipe) gymId: string,
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('noticeId', ParseUUIDPipe) noticeId: string,
   ): Promise<boolean> {
-    return this.gymNoticeService.deleteNotice(id);
+    return this.gymNoticeService.deleteNotice({
+      gymId,
+      noticeId,
+    });
   }
 }

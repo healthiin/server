@@ -8,11 +8,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { GymNoticeProperties } from '@domain/gym/entities/gym-notice';
 import { Gym } from '@domain/gym/entities/gym.entity';
 import { User } from '@domain/user/user.entity';
 
 @Entity('gym_notices')
-export class GymNotice {
+export class GymNotice implements GymNoticeProperties {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 

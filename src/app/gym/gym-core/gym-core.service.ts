@@ -3,16 +3,17 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { paginate } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
-import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
-import { CreateGymData } from '@app/gym/gym-core/commands/create-gym.data';
-import { UpdateGymData } from '@app/gym/gym-core/commands/update-gym.data';
 import { GymProfileResponse } from '@app/gym/gym-core/dtos/gym-profile.response';
+import {
+  GymCreateCommand,
+  GymListQuery,
+  GymUpdateCommand,
+} from '@app/gym/gym-core/gym-core.command';
 import { Gym } from '@domain/gym/entities/gym.entity';
 import { GymCreatedEvent } from '@domain/gym/events/gym-created.event';
 import { GymDeletedEvent } from '@domain/gym/events/gym-deleted.event';
 import { GymNotFoundException } from '@domain/gym/gym.errors';
-import { User } from '@domain/user/user.entity';
 import { Events } from '@infrastructure/events';
 import { Pagination } from '@infrastructure/types/pagination.types';
 
@@ -24,15 +25,12 @@ export class GymCoreService {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async searchGym(
-    page: number,
-    limit: number,
-  ): Promise<Pagination<GymProfileResponse>> {
+  async searchGym(data: GymListQuery): Promise<Pagination<GymProfileResponse>> {
     const queryBuilder = this.gymRepository.createQueryBuilder('gym');
 
     const { items, meta } = await paginate(queryBuilder, {
-      page,
-      limit,
+      page: data.page,
+      limit: data.limit,
     });
 
     return {
@@ -41,44 +39,33 @@ export class GymCoreService {
     };
   }
 
-  async getGymProfile(id: string): Promise<GymProfileResponse> {
-    const gym = await this.findById(id);
-    return new GymProfileResponse(gym);
+  async getGymById(id: string): Promise<Gym> {
+    const gym = await this.gymRepository.findOne({ where: { id } });
+
+    if (!gym) throw new GymNotFoundException();
+    return gym;
   }
 
-  async createGym(
-    data: CreateGymData,
-    user: User,
-  ): Promise<GymProfileResponse> {
-    const gym = await this.gymRepository.save(data);
+  async createGym(data: GymCreateCommand): Promise<Gym> {
+    const { userId, ...profile } = data;
+    const gym = await this.gymRepository.save(profile);
 
     this.eventEmitter.emit(
       Events.GYM_CREATED,
-      new GymCreatedEvent({
-        gymId: gym.id,
-        ownerId: user.id,
-      }),
+      new GymCreatedEvent({ gymId: gym.id, ownerId: userId }),
     );
 
-    return new GymProfileResponse(gym);
+    return gym;
   }
 
-  async updateGymProfile(
-    id: string,
-    data: UpdateGymData,
-  ): Promise<GymProfileResponse> {
-    const gym = await this.findById(id);
+  async updateGymProfile(id: string, data: GymUpdateCommand): Promise<Gym> {
+    const gym = await this.getGymById(id);
 
-    const updatedGym = await this.gymRepository.save({
-      ...gym,
-      ...data,
-    });
-
-    return new GymProfileResponse(updatedGym);
+    return this.gymRepository.save({ ...gym, ...data });
   }
 
   async deleteGym(id: string): Promise<boolean> {
-    const gym = await this.findById(id);
+    const gym = await this.getGymById(id);
 
     const { deletedAt } = await this.gymRepository.softRemove({ id: gym.id });
 
@@ -92,16 +79,5 @@ export class GymCoreService {
     }
 
     return false;
-  }
-
-  async findById(id: string, select?: FindOptionsSelect<Gym>): Promise<Gym> {
-    const gym = await this.gymRepository.findOne({
-      where: { id },
-      select,
-    });
-
-    if (!gym) throw new GymNotFoundException();
-
-    return gym;
   }
 }

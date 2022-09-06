@@ -43,7 +43,7 @@ export class GymUserService {
     userId: string,
   ): Promise<GymUserProfileResponse> {
     const [gym, user] = await Promise.all([
-      this.gymCoreService.findById(gymId),
+      this.gymCoreService.getGymById(gymId),
       this.userService.findById(userId),
     ]);
 
@@ -57,7 +57,7 @@ export class GymUserService {
 
   async deleteUserFromGym(gymId: string, userId: string): Promise<boolean> {
     const [gym, user] = await Promise.all([
-      this.gymCoreService.findById(gymId),
+      this.gymCoreService.getGymById(gymId),
       this.userService.findById(userId),
     ]);
 

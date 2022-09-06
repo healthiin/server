@@ -33,7 +33,7 @@ import { Pagination } from '@infrastructure/types/pagination.types';
 @Controller('gyms/:gymId/users')
 @UseGuards(JwtAuthGuard, PoliciesGuard)
 @CheckPolicies((ability) => ability.can(Action.Manage, Gym))
-@ApiTags('Gym User')
+@ApiTags('[헬스장] 구성원')
 @ApiBearerAuth()
 export class GymUserController {
   constructor(private readonly gymUserService: GymUserService) {}

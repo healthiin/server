@@ -1,7 +1,9 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
 
-export class UpdateGymProfileRequest {
+import { GymUpdateCommand } from '@app/gym/gym-core/gym-core.command';
+
+export class UpdateGymProfileRequest implements GymUpdateCommand {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
