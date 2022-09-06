@@ -23,11 +23,11 @@ export class ManualController {
     return this.manualService.getAllManuals();
   }
 
-  @Get('/:id')
+  @Get('/:manualId')
   async getManualById(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('manualId', ParseUUIDPipe) manualId: string,
   ): Promise<ManualResponse> {
-    return this.manualService.getManualById(id);
+    return this.manualService.getManualById(manualId);
   }
 
   @Get('category/:category')
@@ -38,25 +38,26 @@ export class ManualController {
     return this.manualService.getManualsByType(type);
   }
 
-  @Post()
+  @Post(':/equipmentId')
   async createManual(
+    @Param('equipmentId', ParseUUIDPipe) equipmentId: string,
     @Body() manualCreateRequest: ManualCreateRequest,
   ): Promise<string> {
-    return this.manualService.createManual(manualCreateRequest);
+    return this.manualService.createManual(equipmentId, manualCreateRequest);
   }
 
-  @Patch('/:id')
+  @Patch('/:manualId')
   async updateManual(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('manualId', ParseUUIDPipe) manualId: string,
     @Body() manualCreateRequest: ManualCreateRequest,
   ): Promise<string> {
-    return this.manualService.updateManual(id, manualCreateRequest);
+    return this.manualService.updateManual(manualId, manualCreateRequest);
   }
 
-  @Delete('/:id')
+  @Delete('/:manualId')
   async withdrawManual(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('manualId', ParseUUIDPipe) manualId: string,
   ): Promise<boolean> {
-    return this.manualService.withdrawManual(id);
+    return this.manualService.withdrawManual(manualId);
   }
 }

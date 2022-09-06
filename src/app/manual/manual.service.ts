@@ -35,8 +35,14 @@ export class ManualService {
     return new ManualResponse(manual);
   }
 
-  async createManual(data: ManualCreateData): Promise<string> {
-    const manual = await this.manualRepository.save({ ...data });
+  async createManual(
+    equipmentId: string,
+    data: ManualCreateData,
+  ): Promise<string> {
+    const manual = await this.manualRepository.save({
+      ...data,
+      equipment: { id: equipmentId },
+    });
 
     return manual.id;
   }
