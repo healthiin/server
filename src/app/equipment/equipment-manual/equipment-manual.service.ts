@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
+import { EquipmentCoreService } from '@app/equipment/equipment-core/equipment-core.service';
 import { ManualProfileResponse } from '@app/equipment/equipment-manual/dtos/manual-profile.response';
 import {
   ManualCreateCommand,
@@ -15,6 +16,7 @@ export class EquipmentManualService {
   constructor(
     @InjectRepository(Manual)
     private readonly manualRepository: Repository<Manual>,
+    private readonly equipmentCoreService: EquipmentCoreService,
   ) {}
 
   async getAllManuals(): Promise<ManualProfileResponse[]> {
@@ -38,6 +40,8 @@ export class EquipmentManualService {
   }
 
   async createManual(data: ManualCreateCommand): Promise<Manual> {
+    await this.equipmentCoreService.getEquipmentById(data.equipmentId);
+
     return await this.manualRepository.save({
       ...data,
       equipment: { id: data.equipmentId },
@@ -45,6 +49,10 @@ export class EquipmentManualService {
   }
 
   async updateManual(data: ManualUpdateCommand): Promise<Manual> {
+    if (!data.equipmentId == null) {
+      await this.equipmentCoreService.getEquipmentById(data.equipmentId);
+    }
+
     const manual = await this.findById(data.manualId);
 
     return await this.manualRepository.save({
