@@ -3,7 +3,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -27,11 +26,9 @@ export class Equipment {
   description?: string | null;
 
   @OneToMany(() => Manual, (manual) => manual)
-  @JoinColumn()
   manuals!: Manual[];
 
   @OneToMany(() => GymEquipment, ({ equipment }) => equipment)
-  @JoinColumn()
   gymEquipment!: GymEquipment[];
 
   @CreateDateColumn()
