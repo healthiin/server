@@ -38,7 +38,7 @@ export class ManualController {
     return this.manualService.getManualsByType(type);
   }
 
-  @Post(':/equipmentId')
+  @Post('/:equipmentId')
   async createManual(
     @Param('equipmentId', ParseUUIDPipe) equipmentId: string,
     @Body() manualCreateRequest: ManualCreateRequest,
