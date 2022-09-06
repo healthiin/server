@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Equipment } from '@domain/equipment/entities/equipment.entity';
+import { Equipment } from '@domain/equipment/equipment.entity';
 import { GymEquipmentProperties } from '@domain/gym/entities/gym-equipment';
 import { Gym } from '@domain/gym/entities/gym.entity';
 

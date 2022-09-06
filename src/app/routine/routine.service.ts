@@ -10,8 +10,8 @@ import {
   RoutineListQuery,
   RoutineUpdateCommand,
 } from '@app/routine/routine.command';
+import { Manual } from '@domain/equipment/equipment-manual.entity';
 import { RoutineNotFoundException } from '@domain/errors/routine.errors';
-import { Manual } from '@domain/manual/manual.entity';
 import { Routine } from '@domain/routine/routine.entity';
 import { Pagination } from '@infrastructure/types/pagination.types';
 
@@ -76,12 +76,10 @@ export class RoutineService {
   }
 
   protected async validateManuals(manualIds: string[]): Promise<void> {
-    console.log(manualIds);
-    const test = manualIds.map(async (manualId) => {
+    manualIds.map(async (manualId) => {
       await this.manualRepository.find({
         where: { id: manualId },
       });
     });
-    console.log(test);
   }
 }

@@ -1,82 +1,75 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
-import { CreateManualData } from '@app/equipment/equipment-manual/commands/create-manual.data';
-import { UpdateManualData } from '@app/equipment/equipment-manual/commands/update-manual.data';
 import { ManualProfileResponse } from '@app/equipment/equipment-manual/dtos/manual-profile.response';
-import { Manual } from '@domain/equipment/entities/equipment-manual.entity';
-import { Equipment } from '@domain/equipment/entities/equipment.entity';
+import {
+  ManualCreateCommand,
+  ManualDeleteCommand,
+  ManualUpdateCommand,
+} from '@app/equipment/equipment-manual/equipment-manual.command';
+import { Manual } from '@domain/equipment/equipment-manual.entity';
 import { ManualNotFoundException } from '@domain/equipment/manual.errors';
 
 export class EquipmentManualService {
   constructor(
     @InjectRepository(Manual)
     private readonly manualRepository: Repository<Manual>,
-    @InjectRepository(Equipment)
-    private readonly equipmentRepository: Repository<Equipment>,
   ) {}
 
   async getAllManuals(): Promise<ManualProfileResponse[]> {
     const manuals = await this.manualRepository.find();
+
     return manuals.map((manual) => new ManualProfileResponse(manual));
   }
 
-  async getManualsByEquipment(
-    equipmentId: string,
+  async getManualsByType(
+    type: 'back' | 'shoulder' | 'chest' | 'arm' | 'lef' | 'abs',
   ): Promise<ManualProfileResponse[]> {
-    const manuals = await this.manualRepository.find({
-      where: { equipment: { id: equipmentId } },
-    });
+    const manuals = await this.manualRepository.findBy({ type });
 
     return manuals.map((manual) => new ManualProfileResponse(manual));
   }
 
-  async getManual(manualId: string): Promise<ManualProfileResponse> {
-    const manual = await this.findManualById(manualId);
+  async getManualById(id: string): Promise<ManualProfileResponse> {
+    const manual = await this.manualRepository.findOne({ where: { id } });
 
     return new ManualProfileResponse(manual);
   }
 
-  async createManual(
-    equipmentId: string,
-    createManualData: CreateManualData,
-  ): Promise<ManualProfileResponse> {
-    const equipment = await this.equipmentRepository.findOne({
-      where: { id: equipmentId },
+  async createManual(data: ManualCreateCommand): Promise<Manual> {
+    return await this.manualRepository.save({
+      ...data,
+      equipment: { id: data.equipmentId },
     });
-
-    const manual = await this.manualRepository.save({
-      ...createManualData,
-      equipment,
-    });
-
-    return new ManualProfileResponse(manual);
   }
 
-  async updateManual(
-    manualId: string,
-    createManualData: UpdateManualData,
-  ): Promise<ManualProfileResponse> {
-    const manual = await this.findManualById(manualId);
-    const updatedManual = await this.manualRepository.save({
+  async updateManual(data: ManualUpdateCommand): Promise<Manual> {
+    const manual = await this.findById(data.manualId);
+
+    return await this.manualRepository.save({
       ...manual,
-      ...createManualData,
+      ...data,
     });
-    return new ManualProfileResponse(updatedManual);
   }
 
-  async deleteManual(manualId: string): Promise<ManualProfileResponse> {
-    const manual = await this.findManualById(manualId);
-    await this.manualRepository.softDelete({ id: manual.id });
-    return new ManualProfileResponse(manual);
+  async withdrawManual(data: ManualDeleteCommand): Promise<boolean> {
+    const manual = await this.findById(data.manualId);
+
+    const { affected } = await this.manualRepository.softDelete(manual.id);
+
+    return affected > 0;
   }
 
-  async findManualById(manualId: string): Promise<Manual> {
+  async findById(
+    id: string,
+    select?: FindOptionsSelect<Manual>,
+  ): Promise<Manual> {
     const manual = await this.manualRepository.findOne({
-      where: {
-        id: manualId,
-      },
+      where: { id },
+      select,
     });
+
     if (!manual) throw new ManualNotFoundException();
 
     return manual;

@@ -1,12 +1,13 @@
 import { Manual } from '@domain/equipment/equipment-manual.entity';
-import { User } from '@domain/user/user.entity';
+import { GymEquipment } from '@domain/gym/entities/gym-equipment.entity';
 
-export type RoutineProperties = {
+export type EquipmentProperties = {
   id: string;
-  title: string;
+  name: string;
+  enName: string;
   description: string | null;
-  author: User;
   manuals: Manual[];
+  gymEquipment: GymEquipment[];
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

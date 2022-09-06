@@ -7,9 +7,19 @@ import { Post } from '@domain/community/post.entity';
 import { GymNotice } from '@domain/gym/entities/gym-notice.entity';
 import { GymUser } from '@domain/gym/entities/gym-user.entity';
 import { Gym } from '@domain/gym/entities/gym.entity';
+import { Routine } from '@domain/routine/routine.entity';
 import { User } from '@domain/user/user.entity';
 
-const domains = [User, Board, Gym, GymNotice, GymUser, Post, Comment] as const;
+const domains = [
+  User,
+  Board,
+  Gym,
+  GymNotice,
+  GymUser,
+  Post,
+  Comment,
+  Routine,
+] as const;
 
 export enum Action {
   Manage = 'manage',

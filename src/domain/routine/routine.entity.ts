@@ -10,11 +10,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Manual } from '@domain/manual/manual.entity';
+import { Manual } from '@domain/equipment/equipment-manual.entity';
+import { RoutineProperties } from '@domain/routine/routine';
 import { User } from '@domain/user/user.entity';
 
 @Entity('routines')
-export class Routine {
+export class Routine implements RoutineProperties {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -22,7 +23,7 @@ export class Routine {
   title: string;
 
   @Column()
-  description: string;
+  description: string | null;
 
   @ManyToOne(() => User, ({ routines }) => routines)
   @JoinColumn()

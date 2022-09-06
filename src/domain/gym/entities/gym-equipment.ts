@@ -1,4 +1,4 @@
-import { Equipment } from '@domain/equipment/entities/equipment.entity';
+import { Equipment } from '@domain/equipment/equipment.entity';
 import { GymProperties } from '@domain/gym/entities/gym';
 
 export type GymEquipmentProperties = {

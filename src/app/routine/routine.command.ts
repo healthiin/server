@@ -9,11 +9,11 @@ export type RoutineListQuery = {
   limit: number;
 };
 
-export type RoutineCreateCommand =
-  // UserInfo &
-  manualIds & Pick<RoutineProperties, 'title' | 'description'>;
+export type RoutineCreateCommand = UserInfo &
+  manualIds &
+  Pick<RoutineProperties, 'title' | 'description'>;
 
-export type RoutineUpdateCommand =
-  // UserInfo &
-  RoutineInfo & Partial<RoutineCreateCommand>;
+export type RoutineUpdateCommand = UserInfo &
+  RoutineInfo &
+  Partial<RoutineCreateCommand>;
 export type RoutineDeleteCommand = RoutineInfo;
