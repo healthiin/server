@@ -23,6 +23,14 @@ export class EquipmentCoreController {
     return await this.equipmentCoreService.getEquipments();
   }
 
+  @Get(':id')
+  async getEquipment(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<EquipmentProfileResponse> {
+    const equipment = await this.equipmentCoreService.getEquipmentById(id);
+    return new EquipmentProfileResponse(equipment);
+  }
+
   @Post()
   async createEquipment(
     @Body() data: EquipmentCreateRequest,

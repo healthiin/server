@@ -25,29 +25,7 @@ export class EquipmentCoreService {
     );
   }
 
-  async createEquipment(data: EquipmentCreateCommand): Promise<Equipment> {
-    return await this.equipmentRepository.save(data);
-  }
-
-  async updateEquipment(data: EquipmentUpdateCommand): Promise<Equipment> {
-    const equipment = await this.findById(data.equipmentId);
-
-    return this.equipmentRepository.save({
-      ...equipment,
-      ...data,
-    });
-  }
-
-  async deleteEquipment(data: EquipmentDeleteCommand): Promise<boolean> {
-    const equipment = await this.findById(data.equipmentId);
-    console.log(equipment);
-    const { affected } = await this.equipmentRepository.softDelete({
-      id: equipment.id,
-    });
-    return affected > 0;
-  }
-
-  async findById(
+  async getEquipmentById(
     id: string,
     select?: FindOptionsSelect<Equipment>,
   ): Promise<Equipment> {
@@ -59,5 +37,27 @@ export class EquipmentCoreService {
       throw new EquipmentNotFoundException();
     }
     return equipment;
+  }
+
+  async createEquipment(data: EquipmentCreateCommand): Promise<Equipment> {
+    return await this.equipmentRepository.save(data);
+  }
+
+  async updateEquipment(data: EquipmentUpdateCommand): Promise<Equipment> {
+    const equipment = await this.getEquipmentById(data.equipmentId);
+
+    return this.equipmentRepository.save({
+      ...equipment,
+      ...data,
+    });
+  }
+
+  async deleteEquipment(data: EquipmentDeleteCommand): Promise<boolean> {
+    const equipment = await this.getEquipmentById(data.equipmentId);
+    console.log(equipment);
+    const { affected } = await this.equipmentRepository.softDelete({
+      id: equipment.id,
+    });
+    return affected > 0;
   }
 }
