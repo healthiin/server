@@ -2,10 +2,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
-import { CreateEquipmentCoreData } from '@app/equipment/equipment-core/commands/create-equipment-core.data';
-import { UpdateEquipmentCoreData } from '@app/equipment/equipment-core/commands/update-equipment-core.data';
-import { EquipmentCoreResponse } from '@app/equipment/equipment-core/dtos/equipment-core.response';
-import { Equipment } from '@domain/equipment/entities/equipment.entity';
+import { EquipmentProfileResponse } from '@app/equipment/equipment-core/dtos/equipment-profile.response';
+import {
+  EquipmentCreateCommand,
+  EquipmentDeleteCommand,
+  EquipmentUpdateCommand,
+} from '@app/equipment/equipment-core/equipment-core.command';
+import { Equipment } from '@domain/equipment/equipment.entity';
 import { EquipmentNotFoundException } from '@domain/equipment/equipment.errors';
 
 export class EquipmentCoreService {
@@ -14,36 +17,29 @@ export class EquipmentCoreService {
     private readonly equipmentRepository: Repository<Equipment>,
   ) {}
 
-  async getEquipments(): Promise<EquipmentCoreResponse[]> {
+  async getEquipments(): Promise<EquipmentProfileResponse[]> {
     const equipments = await this.equipmentRepository.find();
 
-    return equipments.map((equipment) => new EquipmentCoreResponse(equipment));
-  }
-
-  async createEquipment(
-    createEquipmentCoreData: CreateEquipmentCoreData,
-  ): Promise<EquipmentCoreResponse> {
-    const equipment = await this.equipmentRepository.save(
-      createEquipmentCoreData,
+    return equipments.map(
+      (equipment) => new EquipmentProfileResponse(equipment),
     );
-    return new EquipmentCoreResponse(equipment);
   }
 
-  async updateEquipment(
-    id: string,
-    updateEquipmentCoreData: UpdateEquipmentCoreData,
-  ): Promise<EquipmentCoreResponse> {
-    const equipment = await this.findById(id);
+  async createEquipment(data: EquipmentCreateCommand): Promise<Equipment> {
+    return await this.equipmentRepository.save(data);
+  }
 
-    const updatedEquipment = await this.equipmentRepository.save({
+  async updateEquipment(data: EquipmentUpdateCommand): Promise<Equipment> {
+    const equipment = await this.findById(data.equipmentId);
+
+    return this.equipmentRepository.save({
       ...equipment,
-      ...updateEquipmentCoreData,
+      ...data,
     });
-    return new EquipmentCoreResponse(updatedEquipment);
   }
 
-  async deleteEquipment(id: string): Promise<boolean> {
-    const equipment = await this.findById(id);
+  async deleteEquipment(data: EquipmentDeleteCommand): Promise<boolean> {
+    const equipment = await this.findById(data.equipmentId);
     console.log(equipment);
     const { affected } = await this.equipmentRepository.softDelete({
       id: equipment.id,

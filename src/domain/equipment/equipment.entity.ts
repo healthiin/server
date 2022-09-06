@@ -9,8 +9,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { Manual } from '@domain/equipment/equipment-manual.entity';
 import { GymEquipment } from '@domain/gym/entities/gym-equipment.entity';
-import { Manual } from '@domain/manual/manual.entity';
 
 @Entity('equipments')
 export class Equipment {
@@ -19,6 +19,9 @@ export class Equipment {
 
   @Column()
   name!: string;
+
+  @Column()
+  enName!: string;
 
   @Column({ nullable: true })
   description?: string | null;

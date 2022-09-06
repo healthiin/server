@@ -3,13 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { EquipmentManualController } from '@app/equipment/equipment-manual/equipment-manual.controller';
 import { EquipmentManualService } from '@app/equipment/equipment-manual/equipment-manual.service';
-import { Manual } from '@domain/equipment/entities/equipment-manual.entity';
-import { Equipment } from '@domain/equipment/entities/equipment.entity';
+import { Manual } from '@domain/equipment/equipment-manual.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Manual, Equipment])],
+  imports: [TypeOrmModule.forFeature([Manual])],
   controllers: [EquipmentManualController],
   providers: [EquipmentManualService],
-  exports: [],
 })
 export class EquipmentManualModule {}

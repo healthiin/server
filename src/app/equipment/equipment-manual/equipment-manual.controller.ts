@@ -9,55 +9,64 @@ import {
   Post,
 } from '@nestjs/common';
 
-import { CreateManualRequest } from '@app/equipment/equipment-manual/dtos/create-manual.request';
+import { ManualCreateRequest } from '@app/equipment/equipment-manual/dtos/manual-create.request';
 import { ManualProfileResponse } from '@app/equipment/equipment-manual/dtos/manual-profile.response';
-import { UpdateManualRequest } from '@app/equipment/equipment-manual/dtos/update-manual.request';
+import { ManualUpdateRequest } from '@app/equipment/equipment-manual/dtos/manual-update.request';
 import { EquipmentManualService } from '@app/equipment/equipment-manual/equipment-manual.service';
 
-@Controller('manual')
+@Controller('manuals')
 export class EquipmentManualController {
-  constructor(
-    private readonly equipmentManualService: EquipmentManualService,
-  ) {}
+  constructor(private readonly manualService: EquipmentManualService) {}
 
   @Get()
   async getAllManuals(): Promise<ManualProfileResponse[]> {
-    return this.equipmentManualService.getAllManuals();
+    return this.manualService.getAllManuals();
   }
 
-  @Get('equipment/:equipmentId')
-  async getManualsByEquipments(
-    @Param('equipmentId', ParseUUIDPipe) equipmentId: string,
-  ): Promise<ManualProfileResponse[]> {
-    return this.equipmentManualService.getManualsByEquipment(equipmentId);
-  }
-
-  @Get(':manualId')
-  async getManual(
+  @Get('/:manualId')
+  async getManualById(
     @Param('manualId', ParseUUIDPipe) manualId: string,
   ): Promise<ManualProfileResponse> {
-    return this.equipmentManualService.getManual(manualId);
+    return this.manualService.getManualById(manualId);
   }
 
-  @Post(':equipmentId')
+  @Get('category/:category')
+  async getManualsByType(
+    @Param('category')
+    type: 'back' | 'shoulder' | 'chest' | 'arm' | 'lef' | 'abs',
+  ): Promise<ManualProfileResponse[]> {
+    return this.manualService.getManualsByType(type);
+  }
+
+  @Post('/:equipmentId')
   async createManual(
     @Param('equipmentId', ParseUUIDPipe) equipmentId: string,
-    @Body() data: CreateManualRequest,
+    @Body() data: ManualCreateRequest,
   ): Promise<ManualProfileResponse> {
-    return this.equipmentManualService.createManual(equipmentId, data);
+    const manual = await this.manualService.createManual({
+      equipmentId,
+      ...data,
+    });
+    return new ManualProfileResponse(manual);
   }
 
-  @Patch(':manualId')
+  @Patch('/:manualId')
   async updateManual(
     @Param('manualId', ParseUUIDPipe) manualId: string,
-    @Body() data: UpdateManualRequest,
+    @Body() data: ManualUpdateRequest,
   ): Promise<ManualProfileResponse> {
-    return this.equipmentManualService.updateManual(manualId, data);
+    const manual = await this.manualService.updateManual({
+      manualId,
+      ...data,
+    });
+
+    return new ManualProfileResponse(manual);
   }
-  @Delete(':manualId')
-  async deleteManual(
+
+  @Delete('/:manualId')
+  async withdrawManual(
     @Param('manualId', ParseUUIDPipe) manualId: string,
-  ): Promise<ManualProfileResponse> {
-    return this.equipmentManualService.deleteManual(manualId);
+  ): Promise<boolean> {
+    return this.manualService.withdrawManual({ manualId });
   }
 }
