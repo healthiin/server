@@ -1,10 +1,10 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class ManualCreateRequest {
-  @IsNotEmpty()
-  @IsString()
-  id!: string;
+import { ManualCreateCommand } from '@app/equipment/equipment-manual/equipment-manual.command';
 
+export class ManualCreateRequest
+  implements Omit<ManualCreateCommand, 'equipmentId'>
+{
   @IsNotEmpty()
   @IsString()
   title!: string;
@@ -19,13 +19,5 @@ export class ManualCreateRequest {
 
   @IsNotEmpty()
   @IsString()
-  difficulty!: number;
-
-  @IsNotEmpty()
-  @IsString()
   description!: string;
-
-  @IsNotEmpty()
-  @IsString()
-  precautions!: string;
 }
