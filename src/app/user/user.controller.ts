@@ -25,9 +25,9 @@ import { UserCreateRequest } from '@app/user/dtos/user-create.request';
 import { UserProfileUpdateRequest } from '@app/user/dtos/user-profile-update.request';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { UserService } from '@app/user/user.service';
-import { USER_ERRORS } from '@domain/user/user.errors';
+import { USER_ERRORS } from '@domain/errors/user.errors';
 
-@ApiTags('User')
+@ApiTags('[계정] 프로필')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}

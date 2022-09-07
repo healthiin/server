@@ -1,13 +1,25 @@
 import { InferSubjects } from '@casl/ability';
 
 import { AppAbility } from '@app/auth/authorization/permission.factory';
-import { Board } from '@domain/community/entities/board.entity';
+import { Board } from '@domain/community/board.entity';
+import { Comment } from '@domain/community/comment.entity';
+import { Post } from '@domain/community/post.entity';
 import { GymNotice } from '@domain/gym/entities/gym-notice.entity';
 import { GymUser } from '@domain/gym/entities/gym-user.entity';
 import { Gym } from '@domain/gym/entities/gym.entity';
+import { Routine } from '@domain/routine/routine.entity';
 import { User } from '@domain/user/user.entity';
 
-const domains = [User, Board, Gym, GymNotice, GymUser] as const;
+const domains = [
+  User,
+  Board,
+  Gym,
+  GymNotice,
+  GymUser,
+  Post,
+  Comment,
+  Routine,
+] as const;
 
 export enum Action {
   Manage = 'manage',

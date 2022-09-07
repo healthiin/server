@@ -1,7 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class CreateGymRequest {
+import { GymCreateCommand } from '@app/gym/gym-core/gym-core.command';
+
+export class CreateGymRequest implements Omit<GymCreateCommand, 'userId'> {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()

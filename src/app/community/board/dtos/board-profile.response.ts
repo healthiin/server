@@ -1,17 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { Board } from '@domain/community/entities/board.entity';
+import { Board } from '@domain/community/board.entity';
 
 export class BoardProfileResponse {
-  @ApiProperty() private id!: string;
-  @ApiProperty() private title!: string;
-  @ApiProperty() private description!: string | null;
-  @ApiProperty() private slug!: string | null;
+  @ApiProperty()
+  id!: string;
+
+  @ApiProperty({ description: '게시판 이름' })
+  title!: string;
+
+  @ApiProperty({ description: '게시판 설명' })
+  description!: string | null;
+
+  @ApiProperty({ description: '게시판 짧은 주소' })
+  slug!: string | null;
 
   constructor(data: Board) {
-    this.id = data.id;
-    this.title = data.title;
-    this.description = data.description;
-    this.slug = data.slug;
+    Object.assign(this, data);
   }
 }

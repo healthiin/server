@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+import { GymUserProperties } from '@domain/gym/entities/gym-user';
 import { Gym } from '@domain/gym/entities/gym.entity';
 import { User } from '@domain/user/user.entity';
 
@@ -17,7 +18,7 @@ export enum GymUserRole {
 }
 
 @Entity('gym_users')
-export class GymUser {
+export class GymUser implements GymUserProperties {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 

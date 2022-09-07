@@ -4,8 +4,6 @@ import { EquipmentCoreModule } from '@app/equipment/equipment-core/equipment-cor
 import { EquipmentManualModule } from '@app/equipment/equipment-manual/equipment-manual.module';
 
 @Module({
-  imports: [EquipmentCoreModule, EquipmentManualModule],
-  providers: [],
-  controllers: [],
+  imports: [EquipmentManualModule, EquipmentCoreModule],
 })
 export class EquipmentModule {}

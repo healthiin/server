@@ -8,7 +8,9 @@ import { Injectable } from '@nestjs/common';
 
 import { AuthenticatedUserData } from '@app/auth/authentication/commands/authenticated-user.data';
 import { Action, Subjects } from '@app/auth/authorization/types';
-import { GymUserRole } from '@domain/gym/entities/gym-user.entity';
+import { Board } from '@domain/community/board.entity';
+import { Comment } from '@domain/community/comment.entity';
+import { Post } from '@domain/community/post.entity';
 import { Gym } from '@domain/gym/entities/gym.entity';
 import { User } from '@domain/user/user.entity';
 
@@ -43,16 +45,26 @@ export class PermissionFactory {
     this.builder.can([Action.Create], Gym);
 
     if (user.gyms.length > 0) {
-      user.gyms.forEach(({ id, role }) => {
-        if (role === GymUserRole.OWNER) {
+      user.gyms.forEach(({ id, isAdmin }) => {
+        if (isAdmin()) {
           this.builder.can([Action.Manage], Gym, { id });
-        } else {
-          this.builder.can([Action.Update, Action.ReadDetail], Gym, {
-            id,
-          });
         }
       });
     }
+
+    if (user.isAdmin) {
+      this.builder.can([Action.Create, Action.Update, Action.Delete], Board);
+    }
+
+    this.builder.can(Action.Create, Post, 'all');
+    this.builder.can([Action.Update, Action.Delete], Post, {
+      author: { id: user.id },
+    });
+
+    this.builder.can(Action.Create, Comment, 'all');
+    this.builder.can([Action.Update, Action.Delete], Comment, {
+      author: { id: user.id },
+    });
 
     return this.builder;
   }

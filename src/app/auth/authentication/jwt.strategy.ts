@@ -5,7 +5,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { AuthenticatedUserData } from '@app/auth/authentication/commands/authenticated-user.data';
 import { UserService } from '@app/user/user.service';
-import { NeedAuthenticationException } from '@domain/auth/auth.errors';
+import { NeedAuthenticationException } from '@domain/errors/auth.errors';
 import {
   JwtDecodedData,
   JwtSubjectType,

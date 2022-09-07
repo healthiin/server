@@ -9,9 +9,9 @@ import { LoginRequest } from '@app/auth/authentication/commands/login.request';
 import { TokenResponse } from '@app/auth/authentication/dtos/token.response';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { UserService } from '@app/user/user.service';
-import { InvalidTokenException } from '@domain/auth/auth.errors';
+import { InvalidTokenException } from '@domain/errors/auth.errors';
+import { UserNotFoundException } from '@domain/errors/user.errors';
 import { User } from '@domain/user/user.entity';
-import { UserNotFoundException } from '@domain/user/user.errors';
 import {
   JwtDecodedData,
   JwtSubjectType,
@@ -85,9 +85,7 @@ export class AuthenticationService {
     password: string,
     hashedPassword: string,
   ): Promise<boolean> {
-    const secret = Buffer.from(
-      this.configService.get<string>('APP_SECRET', ''),
-    );
+    const secret = Buffer.from(this.configService.get<string>('APP_SECRET'));
     return argon2.verify(hashedPassword, password, { secret });
   }
 

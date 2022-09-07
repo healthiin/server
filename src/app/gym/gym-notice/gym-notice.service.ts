@@ -2,14 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { paginate } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
-import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
-import { CreateNoticeData } from '@app/gym/gym-notice/commands/create-notice.data';
-import { UpdateNoticeData } from '@app/gym/gym-notice/commands/update-notice.data';
 import { GymNoticeProfileResponse } from '@app/gym/gym-notice/dtos/gym-notice-profile.response';
+import {
+  GymNoticeCreateCommand,
+  GymNoticeDeleteCommand,
+  GymNoticeListQuery,
+  GymNoticeQuery,
+  GymNoticeUpdateCommand,
+} from '@app/gym/gym-notice/gym-notice.command';
 import { GymNotice } from '@domain/gym/entities/gym-notice.entity';
 import { GymNoticeNotFoundException } from '@domain/gym/gym.errors';
-import { User } from '@domain/user/user.entity';
 import { Pagination } from '@infrastructure/types/pagination.types';
 
 @Injectable()
@@ -20,16 +23,15 @@ export class GymNoticeService {
   ) {}
 
   async searchNotice(
-    page: number,
-    limit: number,
+    data: GymNoticeListQuery,
   ): Promise<Pagination<GymNoticeProfileResponse>> {
     const queryBuilder = this.gymNoticeRepository.createQueryBuilder('notice');
 
-    queryBuilder.where('notice.');
+    queryBuilder.where('notice.gymId = :gymId', { gymId: data.gymId });
 
     const { items, meta } = await paginate(queryBuilder, {
-      page,
-      limit,
+      page: data.page,
+      limit: data.limit,
     });
 
     return {
@@ -38,58 +40,43 @@ export class GymNoticeService {
     };
   }
 
-  async getNoticeProfile(id: string): Promise<GymNoticeProfileResponse> {
-    const notice = await this.findById(id);
-    return new GymNoticeProfileResponse(notice);
-  }
-
-  async createNotice(
-    data: CreateNoticeData,
-    user: User,
-  ): Promise<GymNoticeProfileResponse> {
-    const notice = await this.gymNoticeRepository.save({
-      ...data,
-      author: { id: user.id },
+  async getNoticeById(data: GymNoticeQuery): Promise<GymNotice> {
+    const notice = await this.gymNoticeRepository.findOne({
+      where: {
+        id: data.noticeId,
+        gym: { id: data.gymId },
+      },
     });
 
-    return new GymNoticeProfileResponse(notice);
+    if (!notice) throw new GymNoticeNotFoundException();
+    return notice;
   }
 
-  async updateNoticeProfile(
-    id: string,
-    data: UpdateNoticeData,
-  ): Promise<GymNoticeProfileResponse> {
-    const notice = await this.findById(id);
+  async createNotice(data: GymNoticeCreateCommand): Promise<GymNotice> {
+    const { userId, gymId, ...profile } = data;
 
-    const updatedNotice = await this.gymNoticeRepository.save({
-      ...notice,
-      ...data,
+    return this.gymNoticeRepository.save({
+      ...profile,
+      author: { id: userId },
+      gym: { id: gymId },
     });
-
-    return new GymNoticeProfileResponse(updatedNotice);
   }
 
-  async deleteNotice(id: string): Promise<boolean> {
-    const notice = await this.findById(id);
+  async updateNoticeProfile(data: GymNoticeUpdateCommand): Promise<GymNotice> {
+    const { noticeId, gymId, ...profile } = data;
+    const notice = await this.getNoticeById({ gymId, noticeId });
+
+    return this.gymNoticeRepository.save({ ...notice, ...profile });
+  }
+
+  async deleteNotice(data: GymNoticeDeleteCommand): Promise<boolean> {
+    const { noticeId, gymId } = data;
+    const notice = await this.getNoticeById({ noticeId, gymId });
 
     const { affected } = await this.gymNoticeRepository.softDelete({
       id: notice.id,
     });
 
     return affected > 0;
-  }
-
-  async findById(
-    id: string,
-    select?: FindOptionsSelect<GymNotice>,
-  ): Promise<GymNotice> {
-    const notice = await this.gymNoticeRepository.findOne({
-      where: { id },
-      select,
-    });
-
-    if (!notice) throw new GymNoticeNotFoundException();
-
-    return notice;
   }
 }
