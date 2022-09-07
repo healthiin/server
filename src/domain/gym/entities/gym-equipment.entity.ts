@@ -19,7 +19,7 @@ export class GymEquipment implements GymEquipmentProperties {
 
   @PrimaryColumn('uuid')
   @ManyToOne(() => Equipment, ({ gymEquipment }) => gymEquipment)
-  equipment!: Equipment;
+  equipments!: Equipment[];
 
   @CreateDateColumn()
   createdAt!: Date;

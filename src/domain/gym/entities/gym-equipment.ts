@@ -3,7 +3,7 @@ import { GymProperties } from '@domain/gym/entities/gym';
 
 export type GymEquipmentProperties = {
   gym: GymProperties;
-  equipment: Equipment;
+  equipments: Equipment[];
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

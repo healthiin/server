@@ -1,28 +1,39 @@
-import { Controller, Delete, Get, Post } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import {
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from '@nestjs/common';
 
-import { GymEquipment } from '@domain/gym/entities/gym-equipment.entity';
+import { EquipmentProfileResponse } from '@app/equipment/equipment-core/dtos/equipment-profile.response';
+import { GymEquipmentService } from '@app/gym/gym-equipment/gym-equipment.service';
 
 @Controller('gyms/:gymId/equipments')
 export class GymEquipmentController {
-  constructor(
-    @InjectRepository(GymEquipment)
-    private readonly gymEquipmentRepository: Repository<GymEquipment>,
-  ) {}
+  constructor(private readonly gymEquipmentService: GymEquipmentService) {}
 
   @Get()
-  async getGymEquipmentById(): Promise<void> {
-    return;
+  async getGymEquipmentById(
+    @Param('gymId', ParseUUIDPipe) gymId: string,
+  ): Promise<EquipmentProfileResponse[]> {
+    return this.gymEquipmentService.getGymEquipmentById(gymId);
   }
 
   @Post('/:equipmentId')
-  async addGymEquipment(): Promise<void> {
-    return;
+  async addGymEquipment(
+    @Param('gymId', ParseUUIDPipe) gymId: string,
+    @Param('equipmentId', ParseUUIDPipe) equipmentId: string,
+  ): Promise<EquipmentProfileResponse[]> {
+    return this.gymEquipmentService.addGymEquipment(gymId, equipmentId);
   }
 
   @Delete('/:equipmentId')
-  async deleteGymEquipment(): Promise<void> {
-    return;
+  async deleteGymEquipment(
+    @Param('gymId', ParseUUIDPipe) gymId: string,
+    @Param('equipmentId', ParseUUIDPipe) equipmentId: string,
+  ): Promise<boolean> {
+    return this.gymEquipmentService.deleteGymEquipment(gymId, equipmentId);
   }
 }
