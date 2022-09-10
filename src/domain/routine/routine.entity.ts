@@ -13,7 +13,6 @@ import {
 import { Manual } from '@domain/equipment/equipment-manual.entity';
 import { RoutineProperties } from '@domain/routine/routine';
 import { User } from '@domain/user/user.entity';
-
 @Entity('routines')
 export class Routine implements RoutineProperties {
   @PrimaryGeneratedColumn('uuid')
