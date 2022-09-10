@@ -5,7 +5,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { SwaggerModule } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { MainModule } from './main.module';
 
@@ -26,6 +26,14 @@ import generateSwaggerDocument from '@infrastructure/swagger/swagger.generator';
         forbidNonWhitelisted: true,
       }),
     );
+
+  const config = new DocumentBuilder()
+    .setTitle('헬신 ')
+    .setDescription('헬신 API 설명서')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
   app.enableCors({ origin: true, credentials: true });
 
