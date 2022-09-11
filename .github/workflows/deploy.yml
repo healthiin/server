@@ -1,77 +1,40 @@
-name: Deploy to Production
+name: AWS ECR push
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  build:
+  deploy:
+    name: Deploy
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - name: Generate Version Code
-        id: version
-        run: echo "::set-output name=code::$(date +'%Y%m%d%H%M%S')"
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
 
-      - name: Send Log to Discord
-        uses: Ilshidur/action-discord@master
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push the image to Amazon ECR
+        id: build-image
         env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          VERSION_CODE: ${{ steps.version.outputs.code }}
-        with:
-          args: '[API] `v{{ VERSION_CODE }}` 빌드를 시작합니다.'
-
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to Harbor Registry
-        uses: docker/login-action@v2
-        with:
-          registry: harbor.adrinerdp.co
-          username: ${{ secrets.HARBOR_USERNAME }}
-          password: ${{ secrets.HARBOR_ACCESS_TOKEN }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          target: production
-          push: true
-          platforms:
-            linux/amd64
-          tags: harbor.adrinerdp.co/healthin/api:latest, harbor.adrinerdp.co/healthin/api:${{ steps.version.outputs.code }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Send Log to Discord
-        uses: Ilshidur/action-discord@master
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          VERSION_CODE: ${{ steps.version.outputs.code }}
-          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
-        with:
-          args: '[API] `v{{ VERSION_CODE }}` 배포를 시작합니다. ```{{ COMMIT_MESSAGE }}```'
-
-      - name: Deploy to cluster
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-        with:
-          args: set image deployment healthin-api healthin-api=harbor.adrinerdp.co/healthin/api:${{ steps.version.outputs.code }}
-
-      - name: Verify Deployment
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-        with:
-          args: rollout status deployment healthin-api
-
-      - name: Send Success Log to Discord
-        uses: Ilshidur/action-discord@master
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          VERSION_CODE: ${{ steps.version.outputs.code }}
-        with:
-          args: '[API] `v{{ VERSION_CODE }}` 배포가 완료되었습니다. 🍻'
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
+          IMAGE_TAG: latest
+        run: |
+          # Build a docker container and push it to ECR 
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          echo "Pushing image to ECR..."
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
