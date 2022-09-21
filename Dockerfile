@@ -10,4 +10,4 @@ RUN yarn build
 CMD ["node", "dist/main"]
 
 FROM base as development
-CMD ["yarn start:dev"]
+CMD ["yarn", "start:dev"]

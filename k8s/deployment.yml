@@ -1,79 +1,68 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: healthin-api
+  name: healthin-server
   namespace: healthin
   labels:
-    app: healthin-api
+    app: healthin-server
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: healthin-api
+      app: healthin-server
   template:
     metadata:
       labels:
-        app: healthin-api
+        app: healthin-server
     spec:
       containers:
-        - name: healthin-api
-          image: harbor.adrinerdp.co/healthin/api:latest
+        - name: healthin-server
+          image: 876456430036.dkr.ecr.ap-northeast-2.amazonaws.com/healthin-server:latest
           ports:
             - containerPort: 3000
           env:
             - name: APP_URL
-              valueFrom:
-                secretKeyRef:
-                  name: healthin-api
-                  key: APP_URL
+              value: "https://api.be-healthy.life"
             - name: APP_PORT
-              valueFrom:
-                secretKeyRef:
-                  name: healthin-api
-                  key: APP_PORT
+              value: "3000"
             - name: APP_ENV
-              valueFrom:
-                secretKeyRef:
-                  name: healthin-api
-                  key: APP_ENV
+              value: production
             - name: APP_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: healthin-api
+                  name: secret-healthin-server
                   key: APP_SECRET
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
-                  name: healthin-api
+                  name: secret-healthin-server
                   key: DB_HOST
             - name: DB_PORT
               valueFrom:
                 secretKeyRef:
-                  name: healthin-api
+                  name: secret-healthin-server
                   key: DB_PORT
             - name: DB_DATABASE
               valueFrom:
                 secretKeyRef:
-                  name: healthin-api
+                  name: secret-healthin-server
                   key: DB_DATABASE
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: healthin-api
+                  name: secret-healthin-server
                   key: DB_USERNAME
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: healthin-api
+                  name: secret-healthin-server
                   key: DB_PASSWORD
           imagePullPolicy: Always
-      imagePullSecrets:
-        - name: regcred
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: healthin-api
+  name: healthin-server
   namespace: healthin
 spec:
   ports:
@@ -82,4 +71,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: healthin-api
+    app: healthin-server

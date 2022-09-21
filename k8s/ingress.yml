@@ -1,18 +1,13 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: healthin-api-ingress
+  name: healthin-server-ingress
   namespace: healthin
   annotations:
-    ingress.kubernetes.io/ssl-redirect: "true"
-    kubernetes.io/ingress.class: nginx
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
 spec:
-  tls:
-    - hosts:
-        - api.be-healthy.life
-      secretName: api-be-healthy-life-tls
   rules:
     - host: api.be-healthy.life
       http:
@@ -21,6 +16,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: healthin-api
+                name: healthin-server
                 port:
                   number: 3000
