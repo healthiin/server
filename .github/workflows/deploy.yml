@@ -48,7 +48,9 @@ jobs:
         with:
           args: set image deployment healthin-server healthin-server=876456430036.dkr.ecr.ap-northeast-2.amazonaws.com/healthin-server:${{ steps.version.outputs.code }} -n healthin
 
-      - name: Verify Kubernetes deployment
+      - name: Verify EKS Deployment
         uses: kodermax/kubectl-aws-eks@master
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG }}
         with:
           args: rollout status deployment healthin-server -n healthin
