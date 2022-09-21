@@ -27,7 +27,7 @@ export class UserService {
     private readonly configService: ConfigService,
   ) {}
 
-  async createUser(data: UserCreateData): Promise<UserProfileResponse> {
+  async createUser(data: UserCreateData): Promise<string> {
     await Promise.all([
       this.validateUsername(data.username),
       this.validateNickname(data.nickname),
@@ -40,7 +40,7 @@ export class UserService {
       password: await this.hashPassword(password),
     });
 
-    return new UserProfileResponse(user);
+    return user.id;
   }
 
   async getUserProfile(id: string): Promise<UserProfileResponse> {

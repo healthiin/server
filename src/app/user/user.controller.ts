@@ -43,9 +43,7 @@ export class UserController {
       USER_ERRORS.DUPLICATED_USERNAME,
     ].join(', '),
   })
-  async joinUser(
-    @Body() data: UserCreateRequest,
-  ): Promise<UserProfileResponse> {
+  async joinUser(@Body() data: UserCreateRequest): Promise<string> {
     return this.userService.createUser(data);
   }
 
