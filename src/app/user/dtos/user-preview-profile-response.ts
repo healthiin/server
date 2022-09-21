@@ -8,7 +8,6 @@ export class UserPreviewProfileResponse {
   @ApiProperty() private name!: string;
   @ApiProperty() private nickname!: string;
   @ApiProperty({ nullable: true }) private avatarImage!: string | null;
-  @ApiProperty() private phoneNumber!: string;
 
   constructor(user: User) {
     this.id = user.id;
@@ -16,6 +15,5 @@ export class UserPreviewProfileResponse {
     this.name = user.name;
     this.nickname = user.nickname;
     this.avatarImage = user.avatarImage;
-    this.phoneNumber = user.phoneNumber;
   }
 }

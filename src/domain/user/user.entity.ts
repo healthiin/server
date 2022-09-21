@@ -19,26 +19,29 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ unique: true })
-  username!: string;
-
-  @Column()
-  password!: string;
-
   @Column()
   name!: string;
 
   @Column({ unique: true })
+  username: string | null;
+
+  @Column({ nullable: true })
+  ageRange: string | null;
+
+  @Column({ nullable: true })
+  gender: string | null;
+
+  @Column({ nullable: true })
   nickname!: string;
+
+  @Column({ nullable: true })
+  userEmail: string | null;
 
   @Column({ nullable: true })
   avatarImage!: string | null;
 
   @Column({ default: false })
   isAdmin!: boolean;
-
-  @Column()
-  phoneNumber!: string;
 
   @CreateDateColumn()
   createdAt!: Date;
