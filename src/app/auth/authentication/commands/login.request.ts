@@ -1,4 +1,4 @@
 export type LoginRequest = {
-  username: string;
-  password: string;
+  accessToken: string;
+  vendor: string;
 };

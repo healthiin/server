@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
+import axios from 'axios';
 
 import { ACCESS_TOKEN_EXPIRE, REFRESH_TOKEN_EXPIRE } from '../../../constants';
 
@@ -9,8 +10,11 @@ import { LoginRequest } from '@app/auth/authentication/commands/login.request';
 import { TokenResponse } from '@app/auth/authentication/dtos/token.response';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { UserService } from '@app/user/user.service';
-import { InvalidTokenException } from '@domain/errors/auth.errors';
-import { UserNotFoundException } from '@domain/errors/user.errors';
+import {
+  InvalidTokenException,
+  InvalidVendorNameException,
+  KakaoOAuthFailedException,
+} from '@domain/errors/auth.errors';
 import { User } from '@domain/user/user.entity';
 import {
   JwtDecodedData,
@@ -27,18 +31,20 @@ export class AuthenticationService {
   ) {}
 
   async login(data: LoginRequest, res): Promise<TokenResponse> {
-    const { id, password } = await this.userService.findByUsername(
-      data.username,
-      { id: true, password: true },
-    );
-
-    const isValidPassword = await this.isValidPassword(data.password, password);
-
-    if (!isValidPassword) throw new UserNotFoundException();
+    let userId;
+    switch (data.vendor) {
+      case 'kakao': {
+        userId = await this.getUserByKakaoAccessToken(data.accessToken);
+        break;
+      }
+      default: {
+        throw new InvalidVendorNameException();
+      }
+    }
 
     const [accessToken, refreshToken] = await Promise.all([
-      this.generateAccessToken(id),
-      this.generateRefreshToken(id),
+      this.generateAccessToken(userId),
+      this.generateRefreshToken(userId),
     ]);
 
     res.cookie('refresh_token', refreshToken, {
@@ -47,6 +53,18 @@ export class AuthenticationService {
     });
 
     return new TokenResponse({ accessToken });
+  }
+
+  async getUserByKakaoAccessToken(accessToken: string): Promise<string> {
+    const user = await axios.get('kapi.kakao.com/v2/user/me', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    if (!user) throw new KakaoOAuthFailedException();
+
+    const userId = await this.userService.findById(user.data.id);
+    if (!userId) return this.userService.createUser(user.data);
+
+    return userId.id;
   }
 
   async refresh(req: Request): Promise<TokenResponse> {
