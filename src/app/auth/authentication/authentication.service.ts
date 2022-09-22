@@ -12,8 +12,8 @@ import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { UserService } from '@app/user/user.service';
 import {
   InvalidTokenException,
-  InvalidVendorNameException,
   KakaoOAuthFailedException,
+  UnSupportedVendorTypeException,
 } from '@domain/errors/auth.errors';
 import { User } from '@domain/user/user.entity';
 import {
@@ -38,7 +38,7 @@ export class AuthenticationService {
         break;
       }
       default: {
-        throw new InvalidVendorNameException();
+        throw new UnSupportedVendorTypeException();
       }
     }
 
