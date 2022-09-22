@@ -6,7 +6,6 @@ export class GymUserProfileResponse {
   @ApiProperty() private id!: string;
   @ApiProperty() private name!: string;
   @ApiProperty() private avatarImage!: string | null;
-  @ApiProperty() private phoneNumber!: string;
   @ApiProperty() private role!: GymUserRole;
   @ApiProperty() private createdAt!: Date;
 
@@ -14,7 +13,6 @@ export class GymUserProfileResponse {
     this.id = data.user.id;
     this.name = data.user.name;
     this.avatarImage = data.user.avatarImage;
-    this.phoneNumber = data.user.phoneNumber;
     this.role = data.role;
     this.createdAt = data.createdAt;
   }
