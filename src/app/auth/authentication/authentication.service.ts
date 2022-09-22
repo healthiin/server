@@ -34,7 +34,7 @@ export class AuthenticationService {
     let userId;
     switch (data.vendor) {
       case 'kakao': {
-        userId = await this.getUserByKakaoAccessToken(data.accessToken);
+        userId = await this.getUserIdByKakaoAccessToken(data.accessToken);
         break;
       }
       default: {
@@ -55,7 +55,7 @@ export class AuthenticationService {
     return new TokenResponse({ accessToken });
   }
 
-  async getUserByKakaoAccessToken(accessToken: string): Promise<string> {
+  async getUserIdByKakaoAccessToken(accessToken: string): Promise<string> {
     const user = await axios.get('kapi.kakao.com/v2/user/me', {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
