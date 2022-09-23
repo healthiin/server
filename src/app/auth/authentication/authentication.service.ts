@@ -11,6 +11,7 @@ import { TokenResponse } from '@app/auth/authentication/dtos/token.response';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { UserService } from '@app/user/user.service';
 import {
+  GoogleOAuthFailedException,
   InvalidTokenException,
   KakaoOAuthFailedException,
   UnSupportedVendorTypeException,
@@ -37,6 +38,13 @@ export class AuthenticationService {
         userId = await this.getUserIdByKakaoAccessToken(data.accessToken);
         break;
       }
+      case 'google': {
+        userId = await this.getUserIdByGoogleAccessToken(
+          data.accessToken,
+          data.payload,
+        );
+        break;
+      }
       default: {
         throw new UnSupportedVendorTypeException();
       }
@@ -56,7 +64,7 @@ export class AuthenticationService {
   }
 
   async getUserIdByKakaoAccessToken(accessToken: string): Promise<string> {
-    const user = await axios.get('kapi.kakao.com/v2/user/me', {
+    const user = await axios.get('kapi.kakaox.com/v2/user/me', {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
     if (!user) throw new KakaoOAuthFailedException();
@@ -65,6 +73,31 @@ export class AuthenticationService {
     if (!userId) return this.userService.createUser(user.data);
 
     return userId.id;
+  }
+
+  async getUserIdByGoogleAccessToken(
+    accessToken: string,
+    payload: any,
+  ): Promise<string> {
+    const googleAPI = `https://www.googleapis.com/oauth2/v2/userinfo?access_token=${accessToken}`;
+    const userInfo = await axios.get(googleAPI, {
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+    if (!userInfo) throw new GoogleOAuthFailedException();
+
+    const user = await this.userService.findByEmail(payload.email);
+    const userId = await this.userService.findById(user.id);
+    if (!userId) {
+      return await this.userService.createUser({
+        email: payload.email,
+        name: payload.name,
+        username: 'google',
+        nickname: 'test',
+      });
+    }
+    return user.id;
   }
 
   async refresh(req: Request): Promise<TokenResponse> {

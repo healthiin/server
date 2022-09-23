@@ -10,21 +10,16 @@ export class UserCreateRequest {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  password!: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
   name!: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   @Length(2, 10)
-  nickname!: string;
+  nickname?: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  phoneNumber!: string;
+  email?: string;
 }

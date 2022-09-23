@@ -33,11 +33,10 @@ export class UserService {
       this.validateNickname(data.nickname),
     ]);
 
-    const { password, ...profile } = data;
+    const { ...profile } = data;
 
     const user = await this.userRepository.save({
       ...profile,
-      password: await this.hashPassword(password),
     });
 
     return user.id;
@@ -95,6 +94,18 @@ export class UserService {
   }
 
   async findByUsername(
+    username: string,
+    select?: FindOptionsSelect<User>,
+  ): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { username },
+      select,
+    });
+    if (!user) throw new UserNotFoundException();
+    return user;
+  }
+
+  async findByEmail(
     username: string,
     select?: FindOptionsSelect<User>,
   ): Promise<User> {

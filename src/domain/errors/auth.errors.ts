@@ -4,6 +4,7 @@ export const AUTH_ERRORS = {
   TOKEN_INVALID: 'TOKEN_INVALID',
   UNAUTHORIZED: 'UNAUTHORIZED',
   KAKAO_OAUTH_FAILED: 'KAKAO_OAUTH_FAILED',
+  GOOGLE_OAUTH_FAILED: 'GOOGLE_OAUTH_FAILED',
   UNSUPPORTED_VENDOR_TYPE: 'UNSUPPORTED_VENDOR_TYPE',
 };
 
@@ -22,6 +23,12 @@ export class NeedAuthenticationException extends UnauthorizedException {
 export class KakaoOAuthFailedException extends UnauthorizedException {
   constructor() {
     super('카카오 로그인에 실패했습니다.', AUTH_ERRORS.KAKAO_OAUTH_FAILED);
+  }
+}
+
+export class GoogleOAuthFailedException extends UnauthorizedException {
+  constructor() {
+    super('구글 로그인에 실패했습니다.', AUTH_ERRORS.GOOGLE_OAUTH_FAILED);
   }
 }
 
