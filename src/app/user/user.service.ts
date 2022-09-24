@@ -28,16 +28,13 @@ export class UserService {
   ) {}
 
   async createUser(data: UserCreateData): Promise<string> {
-    await Promise.all([
-      this.validateUsername(data.username),
-      this.validateNickname(data.nickname),
-    ]);
+    await this.validateUsername(data.username);
+    if (data.nickname) await this.validateNickname(data.nickname);
 
-    const { password, ...profile } = data;
+    const { ...profile } = data;
 
     const user = await this.userRepository.save({
       ...profile,
-      password: await this.hashPassword(password),
     });
 
     return user.id;
@@ -102,7 +99,7 @@ export class UserService {
       where: { username },
       select,
     });
-    if (!user) throw new UserNotFoundException();
+
     return user;
   }
 

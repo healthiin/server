@@ -12,7 +12,6 @@ import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { UserService } from '@app/user/user.service';
 import {
   InvalidTokenException,
-  KakaoOAuthFailedException,
   UnSupportedVendorTypeException,
 } from '@domain/errors/auth.errors';
 import { User } from '@domain/user/user.entity';
@@ -31,10 +30,15 @@ export class AuthenticationService {
   ) {}
 
   async login(data: LoginRequest, res): Promise<TokenResponse> {
-    let userId;
+    let id;
+    let isFreshman;
     switch (data.vendor) {
       case 'kakao': {
-        userId = await this.getUserIdByKakaoAccessToken(data.accessToken);
+        const userData = await this.getUserIdByKakaoAccessToken(
+          data.accessToken,
+        );
+        id = userData.id;
+        isFreshman = userData.isFreshman;
         break;
       }
       default: {
@@ -43,8 +47,8 @@ export class AuthenticationService {
     }
 
     const [accessToken, refreshToken] = await Promise.all([
-      this.generateAccessToken(userId),
-      this.generateRefreshToken(userId),
+      this.generateAccessToken(id),
+      this.generateRefreshToken(id),
     ]);
 
     res.cookie('refresh_token', refreshToken, {
@@ -52,19 +56,28 @@ export class AuthenticationService {
       httpOnly: true,
     });
 
-    return new TokenResponse({ accessToken });
+    return new TokenResponse({ accessToken, isFreshman });
   }
 
-  async getUserIdByKakaoAccessToken(accessToken: string): Promise<string> {
-    const user = await axios.get('kapi.kakao.com/v2/user/me', {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    if (!user) throw new KakaoOAuthFailedException();
+  async getUserIdByKakaoAccessToken(
+    accessToken: string,
+  ): Promise<{ id: string; isFreshman: boolean }> {
+    const oAuthLoginData = await axios.get(
+      'https://kapi.kakao.com/v2/user/me',
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      },
+    );
 
-    const userId = await this.userService.findById(user.data.id);
-    if (!userId) return this.userService.createUser(user.data);
+    const user = await this.userService.findByUsername(oAuthLoginData.data.id);
+    if (!user) {
+      const createdUserId = await this.userService.createUser({
+        username: oAuthLoginData.data.id,
+      });
+      return { id: createdUserId, isFreshman: true };
+    }
 
-    return userId.id;
+    return { id: user.id, isFreshman: false };
   }
 
   async refresh(req: Request): Promise<TokenResponse> {
