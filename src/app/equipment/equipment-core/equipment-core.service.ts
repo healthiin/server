@@ -1,4 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
+import { toDataURL } from 'qrcode';
 import { Repository } from 'typeorm';
 import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
@@ -63,10 +64,7 @@ export class EquipmentCoreService {
   }
 
   async generateQrCodeByEquipmentId(id: string): Promise<string> {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const QRCode = require('qrcode');
-
-    const qrUrl = QRCode.toDataURL(`${id}`);
+    const qrUrl = await toDataURL(id);
     if (!qrUrl) {
       throw new QrGenerationFailedException();
     }

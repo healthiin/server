@@ -39,6 +39,7 @@
     "@nestjs/platform-fastify": "^9.0.5",
     "@nestjs/swagger": "^6.0.4",
     "@nestjs/typeorm": "^9.0.0",
+    "@types/qrcode": "^1.5.0",
     "argon2": "^0.28.7",
     "axios": "^0.27.2",
     "class-transformer": "^0.5.1",
