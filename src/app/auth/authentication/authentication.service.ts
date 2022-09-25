@@ -30,25 +30,10 @@ export class AuthenticationService {
   ) {}
 
   async login(data: LoginRequest, res): Promise<TokenResponse> {
-    let id;
-    let isFreshman;
-    switch (data.vendor) {
-      case 'kakao': {
-        const userData = await this.getUserIdByKakaoAccessToken(
-          data.accessToken,
-        );
-        id = userData.id;
-        isFreshman = userData.isFreshman;
-        break;
-      }
-      default: {
-        throw new UnSupportedVendorTypeException();
-      }
-    }
-
+    const user = await this.oAuthLogin(data);
     const [accessToken, refreshToken] = await Promise.all([
-      this.generateAccessToken(id),
-      this.generateRefreshToken(id),
+      this.generateAccessToken(user.id),
+      this.generateRefreshToken(user.id),
     ]);
 
     res.cookie('refresh_token', refreshToken, {
@@ -56,10 +41,10 @@ export class AuthenticationService {
       httpOnly: true,
     });
 
-    return new TokenResponse({ accessToken, isFreshman });
+    return new TokenResponse({ accessToken, isFreshman: user.isFreshman });
   }
 
-  async getUserIdByKakaoAccessToken(
+  async getUserByKakaoAccessToken(
     accessToken: string,
   ): Promise<{ id: string; isFreshman: boolean }> {
     const oAuthLoginData = await axios.get(
@@ -71,13 +56,32 @@ export class AuthenticationService {
 
     const user = await this.userService.findByUsername(oAuthLoginData.data.id);
     if (!user) {
-      const createdUserId = await this.userService.createUser({
+      const createdUser = await this.userService.createUser({
         username: oAuthLoginData.data.id,
       });
-      return { id: createdUserId, isFreshman: true };
+      return { id: createdUser.getUserId, isFreshman: createdUser.isFreshman };
     }
 
     return { id: user.id, isFreshman: false };
+  }
+
+  async oAuthLogin(
+    data: LoginRequest,
+  ): Promise<{ id: string; isFreshman: boolean }> {
+    let id;
+    let isFreshman;
+    switch (data.vendor) {
+      case 'kakao': {
+        const user = await this.getUserByKakaoAccessToken(data.accessToken);
+        id = user.id;
+        isFreshman = user.isFreshman;
+        break;
+      }
+      default: {
+        throw new UnSupportedVendorTypeException();
+      }
+    }
+    return { id, isFreshman };
   }
 
   async refresh(req: Request): Promise<TokenResponse> {
