@@ -27,6 +27,9 @@ export class Equipment {
   @Column({ nullable: true })
   description?: string | null;
 
+  @Column({ unique: true, nullable: true })
+  qrUrl?: string | null;
+
   @OneToMany(() => Manual, (manual) => manual)
   manuals!: Manual[];
 
