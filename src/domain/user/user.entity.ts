@@ -20,10 +20,10 @@ export class User {
   id!: string;
 
   @Column({ unique: true })
-  username!: string | null;
+  username!: string;
 
   @Column({ nullable: true, unique: true })
-  nickname!: string;
+  nickname!: string | null;
 
   @Column({ nullable: true })
   ageRange!: string | null;

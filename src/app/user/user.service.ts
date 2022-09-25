@@ -27,17 +27,15 @@ export class UserService {
     private readonly configService: ConfigService,
   ) {}
 
-  async createUser(data: UserCreateData): Promise<string> {
+  async createUser(data: UserCreateData): Promise<UserProfileResponse> {
     await this.validateUsername(data.username);
     if (data.nickname) await this.validateNickname(data.nickname);
 
-    const { ...profile } = data;
-
     const user = await this.userRepository.save({
-      ...profile,
+      ...data,
     });
 
-    return user.id;
+    return new UserProfileResponse(user);
   }
 
   async getUserProfile(id: string): Promise<UserProfileResponse> {
