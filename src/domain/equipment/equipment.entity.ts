@@ -30,7 +30,7 @@ export class Equipment {
   @Column({ unique: true, nullable: true })
   qrUrl?: string | null;
 
-  @OneToMany(() => Manual, (manual) => manual)
+  @OneToMany(() => Manual, (manual) => manual, { cascade: true })
   manuals!: Manual[];
 
   @ManyToOne(() => GymEquipment, ({ equipments }) => equipments)
