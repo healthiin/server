@@ -33,6 +33,9 @@ export class Manual implements ManualProperties {
   @ManyToOne(() => Equipment, (equipment) => equipment.manuals)
   equipment: Equipment;
 
+  @Column({ nullable: true })
+  equipmentId: string | null;
+
   @ManyToOne(() => Routine, (routine) => routine.manuals)
   @JoinColumn()
   routine!: Routine;

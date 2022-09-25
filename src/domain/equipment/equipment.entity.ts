@@ -30,12 +30,12 @@ export class Equipment {
   @Column({ unique: true, nullable: true })
   qrUrl?: string | null;
 
-  @OneToMany(() => Manual, (manual) => manual, { cascade: true })
+  @OneToMany(() => Manual, (manuals) => manuals)
   manuals!: Manual[];
 
   @ManyToOne(() => GymEquipment, ({ equipments }) => equipments)
   @JoinColumn()
-  gymEquipment!: GymEquipment;
+  gymEquipment?: GymEquipment | null;
 
   @CreateDateColumn()
   createdAt!: Date;

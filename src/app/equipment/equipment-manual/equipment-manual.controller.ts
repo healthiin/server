@@ -62,7 +62,6 @@ export class EquipmentManualController {
   async getManualsByEquipmentId(
     @Param('equipmentId') equipmentId: string,
   ): Promise<ManualProfileResponse[]> {
-    console.log('1111');
     return this.manualService.getManualsByEquipmentId(equipmentId);
   }
 
