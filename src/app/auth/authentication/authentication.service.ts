@@ -57,6 +57,8 @@ export class AuthenticationService {
 
     if (!userData) throw new KakaoOAuthFailedException();
 
+    userData.id = 'kakao:' + userData.id;
+
     const user = await this.userService.findByUsername(userData.id);
     if (!user) {
       const createdUser = await this.userService.createUser({
