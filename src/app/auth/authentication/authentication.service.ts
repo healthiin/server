@@ -12,6 +12,7 @@ import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { UserService } from '@app/user/user.service';
 import {
   InvalidTokenException,
+  KakaoOAuthFailedException,
   UnSupportedVendorTypeException,
 } from '@domain/errors/auth.errors';
 import { User } from '@domain/user/user.entity';
@@ -53,6 +54,8 @@ export class AuthenticationService {
         headers: { Authorization: `Bearer ${accessToken}` },
       },
     );
+
+    if (!oAuthLoginData) throw new KakaoOAuthFailedException();
 
     const user = await this.userService.findByUsername(oAuthLoginData.data.id);
     if (!user) {
