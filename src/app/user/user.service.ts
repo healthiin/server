@@ -27,20 +27,15 @@ export class UserService {
     private readonly configService: ConfigService,
   ) {}
 
-  async createUser(data: UserCreateData): Promise<string> {
-    await Promise.all([
-      this.validateUsername(data.username),
-      this.validateNickname(data.nickname),
-    ]);
-
-    const { password, ...profile } = data;
+  async createUser(data: UserCreateData): Promise<UserProfileResponse> {
+    await this.validateUsername(data.username);
+    if (data.nickname) await this.validateNickname(data.nickname);
 
     const user = await this.userRepository.save({
-      ...profile,
-      password: await this.hashPassword(password),
+      ...data,
     });
 
-    return user.id;
+    return new UserProfileResponse(user);
   }
 
   async getUserProfile(id: string): Promise<UserProfileResponse> {
@@ -102,7 +97,7 @@ export class UserService {
       where: { username },
       select,
     });
-    if (!user) throw new UserNotFoundException();
+
     return user;
   }
 

@@ -19,23 +19,20 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column()
-  name!: string;
-
   @Column({ unique: true })
-  username: string | null;
+  username!: string;
+
+  @Column({ nullable: true, unique: true })
+  nickname!: string | null;
 
   @Column({ nullable: true })
-  ageRange: string | null;
+  ageRange!: string | null;
 
   @Column({ nullable: true })
-  gender: string | null;
+  gender!: string | null;
 
   @Column({ nullable: true })
-  nickname!: string;
-
-  @Column({ nullable: true })
-  userEmail: string | null;
+  userEmail!: string | null;
 
   @Column({ nullable: true })
   avatarImage!: string | null;
@@ -50,7 +47,7 @@ export class User {
   updatedAt!: Date;
 
   @DeleteDateColumn()
-  deletedAt!: Date;
+  deletedAt!: Date | null;
 
   @OneToMany(() => GymUser, ({ user }) => user)
   gyms!: GymUser[];

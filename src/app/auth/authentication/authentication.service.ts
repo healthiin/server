@@ -12,7 +12,6 @@ import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { UserService } from '@app/user/user.service';
 import {
   InvalidTokenException,
-  KakaoOAuthFailedException,
   UnSupportedVendorTypeException,
 } from '@domain/errors/auth.errors';
 import { User } from '@domain/user/user.entity';
@@ -31,20 +30,10 @@ export class AuthenticationService {
   ) {}
 
   async login(data: LoginRequest, res): Promise<TokenResponse> {
-    let userId;
-    switch (data.vendor) {
-      case 'kakao': {
-        userId = await this.getUserIdByKakaoAccessToken(data.accessToken);
-        break;
-      }
-      default: {
-        throw new UnSupportedVendorTypeException();
-      }
-    }
-
+    const user = await this.oAuthLogin(data);
     const [accessToken, refreshToken] = await Promise.all([
-      this.generateAccessToken(userId),
-      this.generateRefreshToken(userId),
+      this.generateAccessToken(user.id),
+      this.generateRefreshToken(user.id),
     ]);
 
     res.cookie('refresh_token', refreshToken, {
@@ -52,19 +41,47 @@ export class AuthenticationService {
       httpOnly: true,
     });
 
-    return new TokenResponse({ accessToken });
+    return new TokenResponse({ accessToken, isFreshman: user.isFreshman });
   }
 
-  async getUserIdByKakaoAccessToken(accessToken: string): Promise<string> {
-    const user = await axios.get('kapi.kakao.com/v2/user/me', {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    if (!user) throw new KakaoOAuthFailedException();
+  async getUserByKakaoAccessToken(
+    accessToken: string,
+  ): Promise<{ id: string; isFreshman: boolean }> {
+    const oAuthLoginData = await axios.get(
+      'https://kapi.kakao.com/v2/user/me',
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      },
+    );
 
-    const userId = await this.userService.findById(user.data.id);
-    if (!userId) return this.userService.createUser(user.data);
+    const user = await this.userService.findByUsername(oAuthLoginData.data.id);
+    if (!user) {
+      const createdUser = await this.userService.createUser({
+        username: oAuthLoginData.data.id,
+      });
+      return { id: createdUser.getUserId, isFreshman: createdUser.isFreshman };
+    }
 
-    return userId.id;
+    return { id: user.id, isFreshman: false };
+  }
+
+  async oAuthLogin(
+    data: LoginRequest,
+  ): Promise<{ id: string; isFreshman: boolean }> {
+    let id;
+    let isFreshman;
+    switch (data.vendor) {
+      case 'kakao': {
+        const user = await this.getUserByKakaoAccessToken(data.accessToken);
+        id = user.id;
+        isFreshman = user.isFreshman;
+        break;
+      }
+      default: {
+        throw new UnSupportedVendorTypeException();
+      }
+    }
+    return { id, isFreshman };
   }
 
   async refresh(req: Request): Promise<TokenResponse> {

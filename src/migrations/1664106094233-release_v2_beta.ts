@@ -1,11 +1,14 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class createUsersTable1663786622031 implements MigrationInterface {
-  name = 'createUsersTable1663786622031';
+export class createUsersTable1664106094233 implements MigrationInterface {
+  name = 'createUsersTable1664106094233';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
             ALTER TABLE "users" DROP COLUMN "password"
+        `);
+    await queryRunner.query(`
+            ALTER TABLE "users" DROP COLUMN "name"
         `);
     await queryRunner.query(`
             ALTER TABLE "users" DROP COLUMN "phone_number"
@@ -26,16 +29,9 @@ export class createUsersTable1663786622031 implements MigrationInterface {
             ALTER TABLE "users"
             ALTER COLUMN "nickname" DROP NOT NULL
         `);
-    await queryRunner.query(`
-            ALTER TABLE "users" DROP CONSTRAINT "UQ_ad02a1be8707004cb805a4b5023"
-        `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`
-            ALTER TABLE "users"
-            ADD CONSTRAINT "UQ_ad02a1be8707004cb805a4b5023" UNIQUE ("nickname")
-        `);
     await queryRunner.query(`
             ALTER TABLE "users"
             ALTER COLUMN "nickname"
@@ -53,6 +49,10 @@ export class createUsersTable1663786622031 implements MigrationInterface {
     await queryRunner.query(`
             ALTER TABLE "users"
             ADD "phone_number" character varying NOT NULL
+        `);
+    await queryRunner.query(`
+            ALTER TABLE "users"
+            ADD "name" character varying NOT NULL
         `);
     await queryRunner.query(`
             ALTER TABLE "users"
