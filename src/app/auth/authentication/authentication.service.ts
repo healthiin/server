@@ -12,6 +12,7 @@ import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { UserService } from '@app/user/user.service';
 import {
   InvalidTokenException,
+  KakaOAuthTimeoutException,
   KakaoOAuthFailedException,
   UnSupportedVendorTypeException,
 } from '@domain/errors/auth.errors';
@@ -48,12 +49,18 @@ export class AuthenticationService {
   async getUserByKakaoAccessToken(
     accessToken: string,
   ): Promise<{ id: string; isFreshman: boolean }> {
-    const { data: userData } = await axios.get(
-      'https://kapi.kakao.com/v2/user/me',
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      },
-    );
+    axios({
+      timeout: 1000,
+    });
+    const axiosData = await axios.get('https://kapi.kakao.com/v2/user/me', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    if (axiosData.status == 503) {
+      throw new KakaOAuthTimeoutException();
+    }
+
+    const userData = axiosData.data;
 
     if (!userData) throw new KakaoOAuthFailedException();
 

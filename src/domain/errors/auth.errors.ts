@@ -4,6 +4,7 @@ export const AUTH_ERRORS = {
   TOKEN_INVALID: 'TOKEN_INVALID',
   UNAUTHORIZED: 'UNAUTHORIZED',
   KAKAO_OAUTH_FAILED: 'KAKAO_OAUTH_FAILED',
+  KAKAO_OAUTH_TIMEOUT: 'KAKAO_OAUTH_TIMEOUT',
   UNSUPPORTED_VENDOR_TYPE: 'UNSUPPORTED_VENDOR_TYPE',
 };
 
@@ -22,6 +23,15 @@ export class NeedAuthenticationException extends UnauthorizedException {
 export class KakaoOAuthFailedException extends UnauthorizedException {
   constructor() {
     super('카카오 로그인에 실패했습니다.', AUTH_ERRORS.KAKAO_OAUTH_FAILED);
+  }
+}
+
+export class KakaOAuthTimeoutException extends UnauthorizedException {
+  constructor() {
+    super(
+      '카카오 로그인 요청에 실패했습니다.',
+      AUTH_ERRORS.KAKAO_OAUTH_TIMEOUT,
+    );
   }
 }
 
