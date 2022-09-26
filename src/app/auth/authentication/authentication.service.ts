@@ -48,19 +48,19 @@ export class AuthenticationService {
   async getUserByKakaoAccessToken(
     accessToken: string,
   ): Promise<{ id: string; isFreshman: boolean }> {
-    const oAuthLoginData = await axios.get(
+    const { data: userData } = await axios.get(
       'https://kapi.kakao.com/v2/user/me',
       {
         headers: { Authorization: `Bearer ${accessToken}` },
       },
     );
 
-    if (!oAuthLoginData) throw new KakaoOAuthFailedException();
+    if (!userData) throw new KakaoOAuthFailedException();
 
-    const user = await this.userService.findByUsername(oAuthLoginData.data.id);
+    const user = await this.userService.findByUsername(userData.id);
     if (!user) {
       const createdUser = await this.userService.createUser({
-        username: oAuthLoginData.data.id,
+        username: userData.id,
       });
       return { id: createdUser.getUserId, isFreshman: createdUser.isFreshman };
     }
