@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UserCreateRequest {
   @ApiProperty()
@@ -10,6 +10,15 @@ export class UserCreateRequest {
   @ApiProperty()
   @IsOptional()
   @IsString()
-  @Length(2, 10)
-  nickname!: string;
+  email!: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  age_range!: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  gender!: string;
 }

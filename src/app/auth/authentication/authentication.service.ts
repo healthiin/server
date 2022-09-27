@@ -8,6 +8,7 @@ import { ACCESS_TOKEN_EXPIRE, REFRESH_TOKEN_EXPIRE } from '../../../constants';
 
 import { LoginRequest } from '@app/auth/authentication/commands/login.request';
 import { TokenResponse } from '@app/auth/authentication/dtos/token.response';
+import { UserKakaoResponse } from '@app/auth/authentication/dtos/user-kakao.response';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { UserService } from '@app/user/user.service';
 import {
@@ -67,13 +68,42 @@ export class AuthenticationService {
 
     const user = await this.userService.findByUsername('kakao:' + userData.id);
     if (!user) {
-      const createdUser = await this.userService.createUser({
-        username: 'kakao:' + userData.id,
-      });
+      const newUser = await this.transformKakaoDataToUser(userData);
+      const createdUser = await this.userService.createUser(newUser);
       return { id: createdUser.getUserId, isFreshman: createdUser.isFreshman };
     }
 
-    return { id: 'kakao:' + user.id, isFreshman: false };
+    return { id: user.id, isFreshman: false };
+  }
+
+  async transformKakaoDataToUser(data: any): Promise<UserKakaoResponse> {
+    let user: {
+      username: string;
+      userEmail: string | null;
+      ageRange: string | null;
+      gender: string | null;
+    };
+
+    user.username = 'kakao:' + data.id;
+    if (
+      data.kakao_account.has_email &&
+      data.kakao_account.email_needs_agreement
+    ) {
+      user.userEmail = data.email;
+    }
+    if (
+      data.kakao_account.has_age_range &&
+      data.kakao_account.age_range_needs_agreement
+    ) {
+      user.ageRange = data.kakao_account.age_range;
+    }
+    if (
+      data.kakao_account.gender_needs_agreement &&
+      data.kakao_account.has_gender
+    ) {
+      user.gender = data.kakao_account.gender;
+    }
+    return new UserKakaoResponse(user);
   }
 
   async oAuthLogin(
