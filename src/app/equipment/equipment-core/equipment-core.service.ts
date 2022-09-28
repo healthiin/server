@@ -1,4 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
+import * as QRCode from 'qrcode';
 import { Repository } from 'typeorm';
 import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
@@ -9,7 +10,10 @@ import {
   EquipmentUpdateCommand,
 } from '@app/equipment/equipment-core/equipment-core.command';
 import { Equipment } from '@domain/equipment/equipment.entity';
-import { EquipmentNotFoundException } from '@domain/equipment/equipment.errors';
+import {
+  EquipmentNotFoundException,
+  QrGenerationFailedException,
+} from '@domain/equipment/equipment.errors';
 
 export class EquipmentCoreService {
   constructor(
@@ -40,7 +44,14 @@ export class EquipmentCoreService {
   }
 
   async createEquipment(data: EquipmentCreateCommand): Promise<Equipment> {
-    return await this.equipmentRepository.save(data);
+    const equipment = await this.equipmentRepository.save({
+      ...data,
+    });
+
+    return await this.equipmentRepository.save({
+      ...equipment,
+      qrUrl: await this.generateQrCodeByEquipmentId(equipment.id),
+    });
   }
 
   async updateEquipment(data: EquipmentUpdateCommand): Promise<Equipment> {
@@ -52,9 +63,16 @@ export class EquipmentCoreService {
     });
   }
 
+  async generateQrCodeByEquipmentId(id: string): Promise<string> {
+    const qrUrl = await QRCode.toDataURL(id);
+    if (!qrUrl) {
+      throw new QrGenerationFailedException();
+    }
+    return qrUrl;
+  }
+
   async deleteEquipment(data: EquipmentDeleteCommand): Promise<boolean> {
     const equipment = await this.getEquipmentById(data.equipmentId);
-    console.log(equipment);
     const { affected } = await this.equipmentRepository.softDelete({
       id: equipment.id,
     });

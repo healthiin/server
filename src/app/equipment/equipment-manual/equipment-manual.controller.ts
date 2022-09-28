@@ -53,6 +53,18 @@ export class EquipmentManualController {
     return this.manualService.getManualsByType(type);
   }
 
+  @Get('equipment/:equipmentId')
+  @ApiOperation({ summary: '해당 기구를 사용하는 운동 목록을 조회합니다.' })
+  @ApiOkResponse({ type: [ManualProfileResponse] })
+  @ApiNotFoundResponse({
+    description: MANUAL_ERRORS.EQUIPMENT_MANUAL_NOT_FOUND,
+  })
+  async getManualsByEquipmentId(
+    @Param('equipmentId') equipmentId: string,
+  ): Promise<ManualProfileResponse[]> {
+    return this.manualService.getManualsByEquipmentId(equipmentId);
+  }
+
   @Post('/:equipmentId')
   @ApiOperation({ summary: '특정 헬스 기구에 대한 설명서를 등록합니다.' })
   @ApiCreatedResponse({ type: ManualProfileResponse })

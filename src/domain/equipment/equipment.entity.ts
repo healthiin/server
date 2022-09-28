@@ -27,12 +27,15 @@ export class Equipment {
   @Column({ nullable: true })
   description?: string | null;
 
-  @OneToMany(() => Manual, (manual) => manual)
+  @Column({ unique: true, nullable: true })
+  qrUrl?: string | null;
+
+  @OneToMany(() => Manual, (manuals) => manuals)
   manuals!: Manual[];
 
   @ManyToOne(() => GymEquipment, ({ equipments }) => equipments)
   @JoinColumn()
-  gymEquipment!: GymEquipment;
+  gymEquipment?: GymEquipment | null;
 
   @CreateDateColumn()
   createdAt!: Date;

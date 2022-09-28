@@ -21,8 +21,7 @@ export class ManualProfileResponse
   @ApiProperty({ description: '운동 부위' })
   type!: 'back' | 'shoulder' | 'chest' | 'arm' | 'lef' | 'abs';
 
-  @ApiProperty({ description: '운동 기구 명' })
-  equipment!: string;
+  equipmentId!: string;
 
   @ApiProperty({ description: '운동설명 생성일시' })
   createdAt!: Date;
@@ -32,6 +31,5 @@ export class ManualProfileResponse
 
   constructor(data: Manual) {
     Object.assign(this, data);
-    this.equipment = data.equipment.id;
   }
 }
