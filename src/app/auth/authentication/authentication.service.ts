@@ -53,18 +53,17 @@ export class AuthenticationService {
   ): Promise<{ id: string; isFreshman: boolean }> {
     axios.defaults.timeout = 1000;
 
-    const axiosData = await axios
+    const axiosData = axios
       .get('https://kapi.kakao.com/v2/user/me', {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .catch((error) => {
-        if (error.response.status === 503) {
+        if (error.code === 503) {
           throw new KakaOAuthTimeoutException();
         }
         throw new KakaoOAuthFailedException();
       });
-
-    const userData = axiosData.data;
+    const { data: userData } = axiosData;
 
     if (!userData) throw new KakaoOAuthFailedException();
 
