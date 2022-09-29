@@ -7,6 +7,7 @@ import axios from 'axios';
 import { ACCESS_TOKEN_EXPIRE, REFRESH_TOKEN_EXPIRE } from '../../../constants';
 
 import { LoginRequest } from '@app/auth/authentication/commands/login.request';
+import { KakaoUserProfileRequest } from '@app/auth/authentication/dtos/kakao-user-profile.request';
 import { TokenResponse } from '@app/auth/authentication/dtos/token.response';
 import { UserKakaoResponse } from '@app/auth/authentication/dtos/user-kakao.response';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
@@ -77,34 +78,15 @@ export class AuthenticationService {
     return { id: user.id, isFreshman: false };
   }
 
-  async transformKakaoDataToUser(data: any): Promise<UserKakaoResponse> {
-    let user: {
-      username: string;
-      userEmail: string | null;
-      ageRange: string | null;
-      gender: string | null;
-    };
-
-    user.username = 'kakao:' + data.id;
-    if (
-      data.kakao_account.has_email &&
-      data.kakao_account.email_needs_agreement
-    ) {
-      user.userEmail = data.email;
-    }
-    if (
-      data.kakao_account.has_age_range &&
-      data.kakao_account.age_range_needs_agreement
-    ) {
-      user.ageRange = data.kakao_account.age_range;
-    }
-    if (
-      data.kakao_account.gender_needs_agreement &&
-      data.kakao_account.has_gender
-    ) {
-      user.gender = data.kakao_account.gender;
-    }
-    return new UserKakaoResponse(user);
+  async transformKakaoDataToUser(
+    user: KakaoUserProfileRequest,
+  ): Promise<UserKakaoResponse> {
+    return new UserKakaoResponse({
+      username: 'kakao:' + user.id,
+      userEmail: user.kakao_account.email,
+      gender: user.kakao_account.gender,
+      ageRange: user.kakao_account.age_range,
+    });
   }
 
   async oAuthLogin(
