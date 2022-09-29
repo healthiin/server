@@ -16,7 +16,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { ManualCreateRequest } from '@app/equipment/equipment-manual/dtos/manual-create.request';
+import {
+  ManualCreateRequest,
+  ManualType,
+} from '@app/equipment/equipment-manual/dtos/manual-create.request';
 import { ManualProfileResponse } from '@app/equipment/equipment-manual/dtos/manual-profile.response';
 import { ManualUpdateRequest } from '@app/equipment/equipment-manual/dtos/manual-update.request';
 import { EquipmentManualService } from '@app/equipment/equipment-manual/equipment-manual.service';
@@ -48,7 +51,7 @@ export class EquipmentManualController {
   @ApiOkResponse({ type: [ManualProfileResponse] })
   async getManualsByType(
     @Param('category')
-    type: 'back' | 'shoulder' | 'chest' | 'arm' | 'lef' | 'abs',
+    type: ManualType,
   ): Promise<ManualProfileResponse[]> {
     return this.manualService.getManualsByType(type);
   }
@@ -75,10 +78,7 @@ export class EquipmentManualController {
     @Param('equipmentId', ParseUUIDPipe) equipmentId: string,
     @Body() data: ManualCreateRequest,
   ): Promise<ManualProfileResponse> {
-    const manual = await this.manualService.createManual({
-      equipmentId,
-      ...data,
-    });
+    const manual = await this.manualService.createManual(equipmentId, data);
     return new ManualProfileResponse(manual);
   }
 
@@ -92,10 +92,7 @@ export class EquipmentManualController {
     @Param('manualId', ParseUUIDPipe) manualId: string,
     @Body() data: ManualUpdateRequest,
   ): Promise<ManualProfileResponse> {
-    const manual = await this.manualService.updateManual({
-      manualId,
-      ...data,
-    });
+    const manual = await this.manualService.updateManual({ manualId, ...data });
 
     return new ManualProfileResponse(manual);
   }

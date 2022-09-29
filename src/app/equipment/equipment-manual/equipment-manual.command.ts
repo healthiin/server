@@ -1,11 +1,15 @@
 import { ManualProperties } from '@domain/equipment/equipment-manual';
 
-type EquipmentInfo = { equipmentId: string };
 type ManualInfo = { manualId: string };
+type EquipmentInfo = { equipmentId: string };
 
-export type ManualCreateCommand = EquipmentInfo &
-  Pick<ManualProperties, 'title' | 'enTitle' | 'description' | 'type'>;
+export type ManualCreateCommand = Pick<
+  ManualProperties,
+  'title' | 'enTitle' | 'description' | 'type' | 'precautions'
+>;
 
-export type ManualUpdateCommand = ManualInfo & Partial<ManualCreateCommand>;
+export type ManualUpdateCommand = ManualInfo &
+  Partial<EquipmentInfo> &
+  Partial<ManualCreateCommand>;
 
 export type ManualDeleteCommand = ManualInfo;

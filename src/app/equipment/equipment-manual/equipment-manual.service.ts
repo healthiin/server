@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
 import { EquipmentCoreService } from '@app/equipment/equipment-core/equipment-core.service';
+import { ManualType } from '@app/equipment/equipment-manual/dtos/manual-create.request';
 import { ManualProfileResponse } from '@app/equipment/equipment-manual/dtos/manual-profile.response';
 import {
   ManualCreateCommand,
@@ -25,9 +26,7 @@ export class EquipmentManualService {
     return manuals.map((manual) => new ManualProfileResponse(manual));
   }
 
-  async getManualsByType(
-    type: 'back' | 'shoulder' | 'chest' | 'arm' | 'lef' | 'abs',
-  ): Promise<ManualProfileResponse[]> {
+  async getManualsByType(type: ManualType): Promise<ManualProfileResponse[]> {
     const manuals = await this.manualRepository.findBy({ type });
 
     return manuals.map((manual) => new ManualProfileResponse(manual));
@@ -41,31 +40,41 @@ export class EquipmentManualService {
 
   async getManualsByEquipmentId(id: string): Promise<ManualProfileResponse[]> {
     const manuals = await this.manualRepository.findBy({ equipment: { id } });
+    const equipment = await this.equipmentCoreService.getEquipmentById(
+      manuals[0].equipment.id,
+    );
 
     return manuals.map(
       (manual) =>
         new ManualProfileResponse({
           ...manual,
-          equipmentId: id,
+          equipment,
         }),
     );
   }
 
-  async createManual(data: ManualCreateCommand): Promise<Manual> {
-    await this.equipmentCoreService.getEquipmentById(data.equipmentId);
+  async createManual(equipmentId, data: ManualCreateCommand): Promise<Manual> {
+    await this.equipmentCoreService.getEquipmentById(equipmentId);
 
     return await this.manualRepository.save({
       ...data,
-      equipment: { id: data.equipmentId },
+      equipment: { id: equipmentId },
     });
   }
 
   async updateManual(data: ManualUpdateCommand): Promise<Manual> {
-    if (!data.equipmentId == null) {
-      await this.equipmentCoreService.getEquipmentById(data.equipmentId);
-    }
-
     const manual = await this.findById(data.manualId);
+
+    if (data.equipmentId) {
+      const equipment = await this.equipmentCoreService.getEquipmentById(
+        data.equipmentId,
+      );
+      const manualAndEquipment = { ...manual, equipment };
+      return await this.manualRepository.save({
+        ...manualAndEquipment,
+        ...data,
+      });
+    }
 
     return await this.manualRepository.save({
       ...manual,

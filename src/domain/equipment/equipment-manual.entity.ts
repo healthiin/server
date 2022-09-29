@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ManualType } from '@app/equipment/equipment-manual/dtos/manual-create.request';
 import { ManualProperties } from '@domain/equipment/equipment-manual';
 import { Equipment } from '@domain/equipment/equipment.entity';
 import { Routine } from '@domain/routine/routine.entity';
@@ -24,17 +25,17 @@ export class Manual implements ManualProperties {
   @Column()
   enTitle: string;
 
-  @Column({ nullable: true })
-  description: string | null;
+  @Column()
+  description: string;
 
-  @Column({ nullable: true })
-  type: 'back' | 'shoulder' | 'chest' | 'arm' | 'lef' | 'abs';
+  @Column()
+  precautions: string;
+
+  @Column()
+  type: ManualType;
 
   @ManyToOne(() => Equipment, (equipment) => equipment.manuals)
   equipment: Equipment;
-
-  @Column({ nullable: true })
-  equipmentId: string | null;
 
   @ManyToOne(() => Routine, (routine) => routine.manuals)
   @JoinColumn()
