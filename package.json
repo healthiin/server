@@ -89,6 +89,7 @@
     "moduleDirectories": [
       "node_modules",
       "src"
+
     ],
     "moduleFileExtensions": [
       "js",
@@ -99,7 +100,7 @@
       "<rootDir>",
       "src"
     ],
-    "testRegex": ".*\\.spec\\.ts$",
+    "testRegex": ".*\\.e2e-spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
