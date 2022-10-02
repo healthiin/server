@@ -28,7 +28,7 @@ export class Post implements PostProperties {
   @ManyToOne(() => Board, ({ posts }) => posts)
   board!: Board;
 
-  @ManyToOne(() => User, ({ posts }) => posts)
+  @ManyToOne(() => User, ({ posts }) => posts, { eager: true })
   author!: User;
 
   @OneToMany(() => Comment, ({ post }) => post)
