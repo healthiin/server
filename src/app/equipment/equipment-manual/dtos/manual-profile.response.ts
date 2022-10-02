@@ -19,10 +19,20 @@ export class ManualProfileResponse
   @ApiProperty({ description: '운동에 대한 설명' })
   description!: string | null;
 
+  @ApiProperty({ description: '운동에 대한 주의사항' })
+  precaution!: string | null;
+
+  @ApiProperty({ description: '운동에 대한 주의사항' })
+  equipmentId!: string;
+
+  @ApiProperty({ description: '운동에 대한 설명 영상 URL' })
+  videoUrl!: string | null;
+
+  @ApiProperty({ description: '운동에 대한 설명 이미지 URL' })
+  imageUrl!: string | null;
+
   @ApiProperty({ description: '운동 부위' })
   type!: ManualType;
-
-  equipmentId!: string;
 
   @ApiProperty({ description: '운동설명 생성일시' })
   createdAt!: Date;
@@ -32,5 +42,6 @@ export class ManualProfileResponse
 
   constructor(data: Manual) {
     Object.assign(this, data);
+    this.equipmentId = data.equipment.id;
   }
 }
