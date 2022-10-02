@@ -29,13 +29,20 @@ export class Manual implements ManualProperties {
   description: string | null;
 
   @Column({ nullable: true })
+  precaution: string | null;
+
+  @Column({ nullable: true })
+  imageUrl: string | null;
+
+  @Column({ nullable: true })
+  videoUrl: string | null;
+
+  @Column()
   type: ManualType;
 
   @ManyToOne(() => Equipment, (equipment) => equipment.manuals)
+  @JoinColumn()
   equipment: Equipment;
-
-  @Column({ nullable: true })
-  equipmentId: string | null;
 
   @ManyToOne(() => Routine, (routine) => routine.manuals)
   @JoinColumn()

@@ -6,7 +6,10 @@ export type ManualProperties = {
   id: string;
   title: string;
   enTitle: string;
-  description: string | null;
+  description: string;
+  precaution: string | null;
+  imageUrl: string | null;
+  videoUrl: string | null;
   type: ManualType;
   equipment: Equipment;
   routine: Routine;
