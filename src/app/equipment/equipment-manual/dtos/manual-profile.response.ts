@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { ManualProperties } from '@domain/equipment/equipment-manual';
 import { Manual } from '@domain/equipment/equipment-manual.entity';
+import { ManualType } from '@domain/equipment/equipment-type';
 
 export class ManualProfileResponse
   implements Omit<ManualProperties, 'equipment' | 'routine' | 'deletedAt'>
@@ -19,7 +20,7 @@ export class ManualProfileResponse
   description!: string | null;
 
   @ApiProperty({ description: '운동 부위' })
-  type!: 'back' | 'shoulder' | 'chest' | 'arm' | 'lef' | 'abs';
+  type!: ManualType;
 
   equipmentId!: string;
 
