@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 
 import { ManualProperties } from '@domain/equipment/equipment-manual';
+import { ManualType } from '@domain/equipment/equipment-type';
 import { Equipment } from '@domain/equipment/equipment.entity';
 import { Routine } from '@domain/routine/routine.entity';
 
@@ -28,7 +29,7 @@ export class Manual implements ManualProperties {
   description: string | null;
 
   @Column({ nullable: true })
-  type: 'back' | 'shoulder' | 'chest' | 'arm' | 'lef' | 'abs';
+  type: ManualType;
 
   @ManyToOne(() => Equipment, (equipment) => equipment.manuals)
   equipment: Equipment;

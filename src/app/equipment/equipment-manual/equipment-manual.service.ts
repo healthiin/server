@@ -10,6 +10,7 @@ import {
   ManualUpdateCommand,
 } from '@app/equipment/equipment-manual/equipment-manual.command';
 import { Manual } from '@domain/equipment/equipment-manual.entity';
+import { ManualType } from '@domain/equipment/equipment-type';
 import { ManualNotFoundException } from '@domain/equipment/manual.errors';
 
 export class EquipmentManualService {
@@ -25,9 +26,7 @@ export class EquipmentManualService {
     return manuals.map((manual) => new ManualProfileResponse(manual));
   }
 
-  async getManualsByType(
-    type: 'back' | 'shoulder' | 'chest' | 'arm' | 'lef' | 'abs',
-  ): Promise<ManualProfileResponse[]> {
+  async getManualsByType(type: ManualType): Promise<ManualProfileResponse[]> {
     const manuals = await this.manualRepository.findBy({ type });
 
     return manuals.map((manual) => new ManualProfileResponse(manual));

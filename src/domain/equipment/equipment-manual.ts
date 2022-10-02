@@ -1,3 +1,4 @@
+import { ManualType } from '@domain/equipment/equipment-type';
 import { Equipment } from '@domain/equipment/equipment.entity';
 import { Routine } from '@domain/routine/routine.entity';
 
@@ -6,7 +7,7 @@ export type ManualProperties = {
   title: string;
   enTitle: string;
   description: string | null;
-  type: 'back' | 'shoulder' | 'chest' | 'arm' | 'lef' | 'abs';
+  type: ManualType;
   equipment: Equipment;
   routine: Routine;
   createdAt: Date;
