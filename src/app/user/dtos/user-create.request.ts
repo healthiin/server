@@ -11,5 +11,5 @@ export class UserCreateRequest {
   @IsOptional()
   @IsString()
   @Length(2, 10)
-  nickname!: string;
+  nickname?: string | null;
 }

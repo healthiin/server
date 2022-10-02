@@ -25,7 +25,7 @@ export class PostService {
   ) {}
 
   /**
-   * 게시글 목록읋 조회합니다.
+   * 특정 게시판의 게시글 목록을 조회합니다.
    */
   async getPostsByBoardId(
     data: PostListQuery,
