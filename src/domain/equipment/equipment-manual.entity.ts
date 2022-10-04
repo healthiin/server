@@ -5,6 +5,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -12,7 +13,7 @@ import {
 import { ManualProperties } from '@domain/equipment/equipment-manual';
 import { ManualType } from '@domain/equipment/equipment-type';
 import { Equipment } from '@domain/equipment/equipment.entity';
-import { Routine } from '@domain/routine/routine.entity';
+import { RoutineManual } from '@domain/routine/routine-manual.entity';
 
 @Entity('manuals')
 export class Manual implements ManualProperties {
@@ -44,9 +45,8 @@ export class Manual implements ManualProperties {
   @JoinColumn()
   equipment: Equipment;
 
-  @ManyToOne(() => Routine, (routine) => routine.manuals)
-  @JoinColumn()
-  routine!: Routine;
+  @OneToMany(() => RoutineManual, (routineManual) => routineManual.manual)
+  routineManual: RoutineManual[];
 
   @CreateDateColumn()
   createdAt: Date;
