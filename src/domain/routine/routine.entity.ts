@@ -12,7 +12,9 @@ import {
 
 import { Manual } from '@domain/equipment/equipment-manual.entity';
 import { RoutineProperties } from '@domain/routine/routine';
+import { RoutineManual } from '@domain/routine/routine-manual.entity';
 import { User } from '@domain/user/user.entity';
+
 @Entity('routines')
 export class Routine implements RoutineProperties {
   @PrimaryGeneratedColumn('uuid')
@@ -28,8 +30,8 @@ export class Routine implements RoutineProperties {
   @JoinColumn()
   author: User;
 
-  @OneToMany(() => Manual, (manual) => manual.routine)
-  manuals: Manual[];
+  @OneToMany(() => RoutineManual, (routineManual) => routineManual.routine)
+  routineManuals: Manual[];
 
   @CreateDateColumn()
   createdAt!: Date;

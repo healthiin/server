@@ -1,6 +1,6 @@
 import { ManualType } from '@domain/equipment/equipment-type';
 import { Equipment } from '@domain/equipment/equipment.entity';
-import { Routine } from '@domain/routine/routine.entity';
+import { RoutineManual } from '@domain/routine/routine-manual.entity';
 
 export type ManualProperties = {
   id: string;
@@ -12,7 +12,7 @@ export type ManualProperties = {
   videoUrl: string | null;
   type: ManualType;
   equipment: Equipment;
-  routine: Routine;
+  routineManual: RoutineManual[];
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

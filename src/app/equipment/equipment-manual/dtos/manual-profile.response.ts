@@ -5,7 +5,8 @@ import { Manual } from '@domain/equipment/equipment-manual.entity';
 import { ManualType } from '@domain/equipment/equipment-type';
 
 export class ManualProfileResponse
-  implements Omit<ManualProperties, 'equipment' | 'routine' | 'deletedAt'>
+  implements
+    Omit<ManualProperties, 'equipment' | 'routineManual' | 'deletedAt'>
 {
   @ApiProperty()
   id!: string;
@@ -25,11 +26,11 @@ export class ManualProfileResponse
   @ApiProperty({ description: '운동에 대한 주의사항' })
   equipmentId!: string;
 
-  @ApiProperty({ description: '운동에 대한 설명 영상 URL' })
-  videoUrl!: string | null;
-
   @ApiProperty({ description: '운동에 대한 설명 이미지 URL' })
   imageUrl!: string | null;
+
+  @ApiProperty({ description: '운동에 대한 설명 영상 URL' })
+  videoUrl!: string | null;
 
   @ApiProperty({ description: '운동 부위' })
   type!: ManualType;

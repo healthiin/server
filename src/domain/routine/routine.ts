@@ -6,7 +6,7 @@ export type RoutineProperties = {
   title: string;
   description: string | null;
   author: User;
-  manuals: Manual[];
+  routineManuals: Manual[];
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
