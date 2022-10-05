@@ -40,6 +40,7 @@ export class PostService {
         where: {
           board: { id: data.boardId },
         },
+        relations: ['author'],
       },
     );
 
