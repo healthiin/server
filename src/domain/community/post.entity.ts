@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -28,7 +29,8 @@ export class Post implements PostProperties {
   @ManyToOne(() => Board, ({ posts }) => posts)
   board!: Board;
 
-  @ManyToOne(() => User, ({ posts }) => posts, { eager: true })
+  @ManyToOne(() => User, ({ posts }) => posts)
+  @JoinColumn({ name: 'author_id' })
   author!: User;
 
   @OneToMany(() => Comment, ({ post }) => post)
