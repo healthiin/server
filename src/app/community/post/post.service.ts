@@ -40,8 +40,11 @@ export class PostService {
         where: {
           board: { id: data.boardId },
         },
+        relations: ['author'],
       },
     );
+
+    console.log(items);
 
     return {
       items: items.map((item) => new PostProfileResponse(item)),

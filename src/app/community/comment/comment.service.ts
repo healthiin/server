@@ -40,8 +40,11 @@ export class CommentService {
         where: {
           post: { id: data.postId },
         },
+        relations: ['author'],
       },
     );
+
+    console.log(items);
 
     return {
       items: items.map((item) => new CommentProfileResponse(item)),
