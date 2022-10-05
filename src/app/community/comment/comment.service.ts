@@ -44,8 +44,6 @@ export class CommentService {
       },
     );
 
-    console.log(items);
-
     return {
       items: items.map((item) => new CommentProfileResponse(item)),
       meta,

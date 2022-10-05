@@ -44,8 +44,6 @@ export class PostService {
       },
     );
 
-    console.log(items);
-
     return {
       items: items.map((item) => new PostProfileResponse(item)),
       meta,
