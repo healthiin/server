@@ -10,7 +10,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Manual } from '@domain/equipment/equipment-manual.entity';
 import { RoutineProperties } from '@domain/routine/routine';
 import { RoutineManual } from '@domain/routine/routine-manual.entity';
 import { User } from '@domain/user/user.entity';
@@ -18,20 +17,20 @@ import { User } from '@domain/user/user.entity';
 @Entity('routines')
 export class Routine implements RoutineProperties {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  title: string;
+  title!: string;
 
   @Column()
-  description: string | null;
+  description!: string | null;
 
   @ManyToOne(() => User, ({ routines }) => routines)
   @JoinColumn()
-  author: User;
+  author!: User;
 
   @OneToMany(() => RoutineManual, (routineManual) => routineManual.routine)
-  routineManuals: Manual[];
+  routineManuals!: RoutineManual[];
 
   @CreateDateColumn()
   createdAt!: Date;
