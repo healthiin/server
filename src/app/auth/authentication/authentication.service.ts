@@ -44,6 +44,21 @@ export class AuthenticationService {
     return new TokenResponse({ accessToken, isFreshman: user.isFreshman });
   }
 
+  async loginByUserId(userId: string, res): Promise<TokenResponse> {
+    const user = await this.userService.findById(userId);
+    const [accessToken, refreshToken] = await Promise.all([
+      this.generateAccessToken(user.id),
+      this.generateRefreshToken(user.id),
+    ]);
+
+    res.cookie('refresh_token', refreshToken, {
+      path: '/auth',
+      httpOnly: true,
+    });
+
+    return new TokenResponse({ accessToken });
+  }
+
   async getUserByKakaoAccessToken(
     accessToken: string,
   ): Promise<{ id: string; isFreshman: boolean }> {

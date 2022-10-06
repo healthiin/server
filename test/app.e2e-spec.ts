@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as request from 'supertest';
+import { Connection } from 'typeorm';
 
-import { dataSourceConfig } from '../src/data-source';
+import ormConfig from './orm-config';
 
-import { AppController } from '@app/app.controller';
 import { UserCreateRequest } from '@app/user/dtos/user-create.request';
 import { UserModule } from '@app/user/user.module';
 import { User } from '@domain/user/user.entity';
@@ -16,13 +16,14 @@ describe('App Module Integration', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forFeature([User]),
-        TypeOrmModule.forRoot(dataSourceConfig),
+        TypeOrmModule.forRoot(ormConfig),
         UserModule,
       ],
-      controllers: [AppController],
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    const connection = app.get(Connection);
+    await connection.synchronize(true);
     await app.init();
   });
 
