@@ -5,6 +5,8 @@ import { Connection } from 'typeorm';
 
 import ormConfig from './orm-config';
 
+import { AppController } from '@app/app.controller';
+import { AuthModule } from '@app/auth/auth.module';
 import { UserCreateRequest } from '@app/user/dtos/user-create.request';
 import { UserModule } from '@app/user/user.module';
 import { User } from '@domain/user/user.entity';
@@ -19,12 +21,18 @@ describe('App Module Integration', () => {
         TypeOrmModule.forRoot(ormConfig),
         UserModule,
       ],
+      controllers: [AppController],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     const connection = app.get(Connection);
     await connection.synchronize(true);
     await app.init();
+  });
+
+  afterEach(async () => {
+    const connection = app.get(Connection);
+    await connection.synchronize(true);
   });
 
   afterAll(async () => {
@@ -42,7 +50,7 @@ describe('App Module Integration', () => {
     describe('/user (POST)', () => {
       it('should return 201', async () => {
         const requestBody: UserCreateRequest = {
-          username: 'vendor:userId',
+          username: 'testUserName',
         };
         const response = await request(app.getHttpServer())
           .post('/users')
@@ -52,30 +60,43 @@ describe('App Module Integration', () => {
       });
 
       it('should return 400 given exist username', async () => {
-        const requestBody = {};
+        const requestBody1: UserCreateRequest = {
+          username: 'testUserName',
+        };
+        const response1 = await request(app.getHttpServer())
+          .post('/users')
+          .send(requestBody1);
+
+        expect(response1.status).toBe(201);
+
+        const requestBody: UserCreateRequest = {
+          username: 'testUserName',
+        };
 
         const response = await request(app.getHttpServer())
           .post('/users')
           .send(requestBody);
 
-        expect(response.status).toBe(400);
+        expect(response.status).toBe(409);
       });
     });
+
     describe('/users/${userId} (GET)', () => {
       it('should return 200', async () => {
-        const requestBody = {
-          username: 'vendor:userId',
+        const requestBody1: UserCreateRequest = {
+          username: 'testUserName',
         };
-        const postResponse = await request(app.getHttpServer())
+
+        const response1 = await request(app.getHttpServer())
           .post('/users')
-          .send(requestBody);
+          .send(requestBody1);
 
-        expect(postResponse.status).toBe(201);
+        expect(response1.status).toBe(201);
 
-        const userId = postResponse.body.id;
+        const userId = 'testUserName';
 
         const response = await request(app.getHttpServer()).get(
-          `/users${userId}`,
+          `/users/${userId}`,
         );
 
         expect(response.status).toBe(200);
