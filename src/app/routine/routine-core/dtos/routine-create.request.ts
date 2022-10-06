@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-import { RoutineCreateCommand } from '@app/routine/routine.command';
+import { RoutineCreateCommand } from '@app/routine/routine-core/routine.command';
 
 export class RoutineCreateRequest
   implements Omit<RoutineCreateCommand, 'routineId' | 'manualIds' | 'userId'>

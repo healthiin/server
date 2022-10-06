@@ -24,10 +24,10 @@ import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
 import { CheckPolicies } from '@app/auth/authorization/policy.decorator';
 import { PoliciesGuard } from '@app/auth/authorization/policy.guard';
 import { Action } from '@app/auth/authorization/types';
-import { RoutineCreateRequest } from '@app/routine/dtos/routine-create.request';
-import { RoutineProfileResponse } from '@app/routine/dtos/routine-profile.response';
-import { RoutineUpdateRequest } from '@app/routine/dtos/routine-update.request';
-import { RoutineService } from '@app/routine/routine.service';
+import { RoutineCreateRequest } from '@app/routine/routine-core/dtos/routine-create.request';
+import { RoutineProfileResponse } from '@app/routine/routine-core/dtos/routine-profile.response';
+import { RoutineUpdateRequest } from '@app/routine/routine-core/dtos/routine-update.request';
+import { RoutineCoreService } from '@app/routine/routine-core/routine-core.service';
 import { Routine as RoutineEntity } from '@domain/routine/routine.entity';
 import { Pagination } from '@infrastructure/types/pagination.types';
 import { Request } from '@infrastructure/types/request.types';
@@ -36,8 +36,8 @@ import { Request } from '@infrastructure/types/request.types';
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 @ApiTags('[루틴] 루틴')
-export class RoutineController {
-  constructor(private readonly routineService: RoutineService) {}
+export class RoutineCoreController {
+  constructor(private readonly routineService: RoutineCoreService) {}
 
   @Get('/:routineId')
   @ApiOperation({ summary: '특정 루틴의 내용을 조회합니다' })

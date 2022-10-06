@@ -3,19 +3,19 @@ import { paginate } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
-import { RoutineProfileResponse } from '@app/routine/dtos/routine-profile.response';
+import { RoutineProfileResponse } from '@app/routine/routine-core/dtos/routine-profile.response';
 import {
   RoutineCreateCommand,
   RoutineDeleteCommand,
   RoutineListQuery,
   RoutineUpdateCommand,
-} from '@app/routine/routine.command';
+} from '@app/routine/routine-core/routine.command';
 import { Manual } from '@domain/equipment/equipment-manual.entity';
 import { RoutineNotFoundException } from '@domain/errors/routine.errors';
 import { Routine } from '@domain/routine/routine.entity';
 import { Pagination } from '@infrastructure/types/pagination.types';
 
-export class RoutineService {
+export class RoutineCoreService {
   constructor(
     @InjectRepository(Routine)
     private readonly routineRepository: Repository<Routine>,
