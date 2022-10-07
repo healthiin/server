@@ -5,7 +5,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -23,8 +22,8 @@ export class RoutineManual implements RoutineManualProperties {
   @JoinColumn()
   manual: Manual;
 
-  @OneToMany(() => Routine, (routine) => routine.routineManuals)
-  routine: Routine[];
+  @ManyToOne(() => Routine, (routine) => routine.routineManuals)
+  routine: Routine;
 
   @Column({ nullable: true })
   targetNumber: number | null;

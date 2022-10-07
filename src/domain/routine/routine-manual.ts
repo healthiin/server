@@ -4,11 +4,14 @@ import { Routine } from '@domain/routine/routine.entity';
 export type RoutineManualProperties = {
   id: string;
   manual: Manual;
-  routine: Routine[];
+  routine: Routine;
   targetNumber: number | null;
   setNumber: number | null;
   weight: number | null;
   speed: number | null;
   playMinute: number | null;
   order: number;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
 };
