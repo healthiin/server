@@ -63,4 +63,7 @@ export class User {
 
   @OneToMany(() => Routine, ({ author }) => author)
   routines!: Routine[];
+
+  @OneToMany(() => Routine, ({ owner }) => owner)
+  possessionRoutines!: Routine[];
 }

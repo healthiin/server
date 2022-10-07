@@ -12,6 +12,7 @@ import {
 
 import { RoutineProperties } from '@domain/routine/routine';
 import { RoutineManual } from '@domain/routine/routine-manual.entity';
+import { RoutineType } from '@domain/routine/routine-type.entity';
 import { User } from '@domain/user/user.entity';
 
 @Entity('routines')
@@ -29,8 +30,21 @@ export class Routine implements RoutineProperties {
   @JoinColumn()
   author!: User;
 
+  @Column()
+  day!: number;
+
+  @ManyToOne(() => User, ({ routines }) => routines)
+  @JoinColumn()
+  owner!: User;
+
   @OneToMany(() => RoutineManual, (routineManual) => routineManual.routine)
   routineManuals!: RoutineManual[];
+
+  @Column()
+  status!: 'public' | 'private';
+
+  @OneToMany(() => RoutineType, (routineType) => routineType.routine)
+  types!: RoutineType[];
 
   @CreateDateColumn()
   createdAt!: Date;
