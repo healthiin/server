@@ -10,9 +10,8 @@ import {
 } from '@nestjs/common';
 
 import { RoutineUpdateRequest } from '@app/routine/routine-core/dtos/routine-update.request';
-import { RoutineCardioManaulProfileResponse } from '@app/routine/routine-manual/dtos/routine-cardio-manaul-profile.response';
 import { RoutineCardioManualCreateRequest } from '@app/routine/routine-manual/dtos/routine-cardio-manual-create.request';
-import { RoutineWeightManaulProfileResponse } from '@app/routine/routine-manual/dtos/routine-weight-manaul-profile.response';
+import { RoutineManualProfileResponse } from '@app/routine/routine-manual/dtos/routine-manual-profile.response';
 import { RoutineWeightManualCreateRequest } from '@app/routine/routine-manual/dtos/routine-weight-manual-create.request';
 import { RoutineManualService } from '@app/routine/routine-manual/routine-manual.service';
 
@@ -25,9 +24,7 @@ export class RoutineManualController {
     @Param('manualId', ParseUUIDPipe) manualId: string,
     @Body()
     data: RoutineCardioManualCreateRequest | RoutineWeightManualCreateRequest,
-  ): Promise<
-    RoutineWeightManaulProfileResponse | RoutineCardioManaulProfileResponse
-  > {
+  ): Promise<RoutineManualProfileResponse> {
     return this.routineManualService.createRoutineManual({
       manualId,
       ...data,
@@ -37,9 +34,7 @@ export class RoutineManualController {
   @Get(':routineManualId')
   async getRoutineManual(
     @Param('routineManualId', ParseUUIDPipe) routineManualId: string,
-  ): Promise<
-    RoutineWeightManaulProfileResponse | RoutineCardioManaulProfileResponse
-  > {
+  ): Promise<RoutineManualProfileResponse> {
     return this.routineManualService.getRoutineManual(routineManualId);
   }
 
@@ -47,9 +42,7 @@ export class RoutineManualController {
   async updateRoutineManual(
     @Param('routineManualId', ParseUUIDPipe) routineManualId: string,
     @Body() data: RoutineUpdateRequest,
-  ): Promise<
-    RoutineWeightManaulProfileResponse | RoutineCardioManaulProfileResponse
-  > {
+  ): Promise<RoutineManualProfileResponse> {
     return this.routineManualService.updateRoutineManual({
       routineManualId,
       ...data,

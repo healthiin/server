@@ -4,6 +4,7 @@ import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
 import { EquipmentManualService } from '@app/equipment/equipment-manual/equipment-manual.service';
 import { RoutineCardioManaulProfileResponse } from '@app/routine/routine-manual/dtos/routine-cardio-manaul-profile.response';
+import { RoutineManualProfileResponse } from '@app/routine/routine-manual/dtos/routine-manual-profile.response';
 import { RoutineWeightManaulProfileResponse } from '@app/routine/routine-manual/dtos/routine-weight-manaul-profile.response';
 import {
   RoutineCardioManualCreateCommand,
@@ -24,9 +25,7 @@ export class RoutineManualService {
 
   async createRoutineManual(
     data: RoutineCardioManualCreateCommand | RoutineWeightManualCreateCommand,
-  ): Promise<
-    RoutineWeightManaulProfileResponse | RoutineCardioManaulProfileResponse
-  > {
+  ): Promise<RoutineManualProfileResponse> {
     const { manualId, ...routineManualData } = data;
 
     const manual = await this.manualService.getManualById(manualId);
@@ -45,9 +44,7 @@ export class RoutineManualService {
 
   async getRoutineManual(
     routineManualId: string,
-  ): Promise<
-    RoutineWeightManaulProfileResponse | RoutineCardioManaulProfileResponse
-  > {
+  ): Promise<RoutineManualProfileResponse> {
     const routineManual = await this.findById(routineManualId);
 
     if (routineManual.manual.type === '유산소') {
@@ -58,9 +55,7 @@ export class RoutineManualService {
 
   async updateRoutineManual(
     updateData: RoutineManualUpdateCommand,
-  ): Promise<
-    RoutineWeightManaulProfileResponse | RoutineCardioManaulProfileResponse
-  > {
+  ): Promise<RoutineManualProfileResponse> {
     const originData = await this.findById(updateData.routineManualId);
 
     const manual = await this.manualService.getManualById(updateData.manualId);
