@@ -1,7 +1,8 @@
 import { RoutineProperties } from '@domain/routine/routine';
 
 type RoutineInfo = { routineId: string };
-type manualIds = { manualIds: string[] };
+type routineManualInfos = { routineManualIds: string[] };
+type dayInfo = { days: number[] };
 type UserInfo = { userId: string };
 
 export type RoutineListQuery = {
@@ -10,7 +11,8 @@ export type RoutineListQuery = {
 };
 
 export type RoutineCreateCommand = UserInfo &
-  manualIds &
+  dayInfo &
+  routineManualInfos &
   Pick<RoutineProperties, 'title' | 'description'>;
 
 export type RoutineUpdateCommand = UserInfo &

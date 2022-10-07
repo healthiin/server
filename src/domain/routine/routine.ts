@@ -1,4 +1,5 @@
 import { RoutineManual } from '@domain/routine/routine-manual.entity';
+import { RoutineType } from '@domain/routine/routine-type.entity';
 import { User } from '@domain/user/user.entity';
 
 export type RoutineProperties = {
@@ -7,6 +8,8 @@ export type RoutineProperties = {
   description: string | null;
   author: User;
   owner: User;
+  day: number;
+  types: RoutineType[];
   routineManuals: RoutineManual[];
   status: 'public' | 'private';
   createdAt: Date;

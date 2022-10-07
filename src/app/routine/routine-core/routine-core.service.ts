@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { paginate } from 'nestjs-typeorm-paginate';
+import { IPaginationMeta, paginate } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
@@ -10,10 +10,10 @@ import {
   RoutineListQuery,
   RoutineUpdateCommand,
 } from '@app/routine/routine-core/routine.command';
+import { UserService } from '@app/user/user.service';
 import { Manual } from '@domain/equipment/equipment-manual.entity';
 import { RoutineNotFoundException } from '@domain/errors/routine.errors';
 import { Routine } from '@domain/routine/routine.entity';
-import { Pagination } from '@infrastructure/types/pagination.types';
 
 export class RoutineCoreService {
   constructor(
@@ -21,6 +21,7 @@ export class RoutineCoreService {
     private readonly routineRepository: Repository<Routine>,
     @InjectRepository(Manual)
     private readonly manualRepository: Repository<Manual>,
+    private readonly userService: UserService,
   ) {}
 
   async getRoutineById(
@@ -35,34 +36,53 @@ export class RoutineCoreService {
     return routine;
   }
 
-  async getRoutines(
-    data: RoutineListQuery,
-  ): Promise<Pagination<RoutineProfileResponse>> {
-    const { items, meta } = await paginate(this.routineRepository, {
-      page: data.page,
-      limit: data.limit,
-    });
+  async getRoutines(data: RoutineListQuery): Promise<{
+    meta: IPaginationMeta;
+    items: Promise<RoutineProfileResponse>[];
+  }> {
+    const { items, meta } = await paginate(
+      this.routineRepository,
+      {
+        page: data.page,
+        limit: data.limit,
+      },
+      {
+        where: { status: 'public' },
+      },
+    );
 
     return {
-      items: items.map((routine) => new RoutineProfileResponse(routine)),
+      items: items.map(async (routine) => {
+        return new RoutineProfileResponse({
+          ...routine,
+          days: await this.getdays(routine.day),
+        });
+      }),
       meta,
     };
   }
 
   async createRoutine(data: RoutineCreateCommand): Promise<Routine> {
-    await this.validateManuals(data.manualIds);
+    const user = await this.userService.findById(data.userId);
+    await this.validateManuals(data.routineManualIds);
 
-    return this.routineRepository.save(data);
+    const days = await this.getBinaryDays(data.days);
+
+    return this.routineRepository.save({
+      author: user,
+      owner: user,
+      days,
+      ...data,
+    });
   }
 
   async editRoutine(data: RoutineUpdateCommand): Promise<Routine> {
-    await this.validateManuals(data.manualIds);
-
     const routine = await this.getRoutineById(data.routineId);
-
+    const days = await this.getBinaryDays(data.days);
     return this.routineRepository.save({
       ...routine,
       ...data,
+      days,
     });
   }
 
@@ -81,5 +101,30 @@ export class RoutineCoreService {
         where: { id: manualId },
       });
     });
+  }
+
+  protected async getBinaryDays(days: number[]): Promise<number> {
+    let i;
+    let binaryDays = 0;
+    for (i = 0; i < 7; i++) {
+      if (days[i] === 1) {
+        binaryDays += 2 ** i;
+      }
+    }
+    return binaryDays;
+  }
+
+  async getdays(binaryDays: number): Promise<number[]> {
+    let i;
+    const days = [];
+    for (i = 0; i < 7; i++) {
+      if (binaryDays >= 2 ** i) {
+        binaryDays -= 2 ** i;
+        days.push(1);
+      } else {
+        days.push(0);
+      }
+    }
+    return days;
   }
 }

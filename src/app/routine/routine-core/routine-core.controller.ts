@@ -19,6 +19,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { IPaginationMeta } from 'nestjs-typeorm-paginate';
 
 import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
 import { CheckPolicies } from '@app/auth/authorization/policy.decorator';
@@ -29,7 +30,6 @@ import { RoutineProfileResponse } from '@app/routine/routine-core/dtos/routine-p
 import { RoutineUpdateRequest } from '@app/routine/routine-core/dtos/routine-update.request';
 import { RoutineCoreService } from '@app/routine/routine-core/routine-core.service';
 import { Routine as RoutineEntity } from '@domain/routine/routine.entity';
-import { Pagination } from '@infrastructure/types/pagination.types';
 import { Request } from '@infrastructure/types/request.types';
 
 @Controller('routines')
@@ -46,7 +46,8 @@ export class RoutineCoreController {
     @Param('routineId', ParseUUIDPipe) routineId: string,
   ): Promise<RoutineProfileResponse> {
     const routine = await this.routineService.getRoutineById(routineId);
-    return new RoutineProfileResponse(routine);
+    const days = await this.routineService.getdays(routine.day);
+    return new RoutineProfileResponse({ ...routine, days });
   }
 
   @Get()
@@ -55,7 +56,10 @@ export class RoutineCoreController {
   async getRoutines(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
-  ): Promise<Pagination<RoutineProfileResponse>> {
+  ): Promise<{
+    meta: IPaginationMeta;
+    items: Promise<RoutineProfileResponse>[];
+  }> {
     return this.routineService.getRoutines({ page, limit });
   }
 
@@ -63,14 +67,16 @@ export class RoutineCoreController {
   @ApiOperation({ summary: '루틴을 생성합니다' })
   @ApiOkResponse({ type: RoutineProfileResponse })
   async createRoutine(
-    @Body() data: RoutineCreateRequest,
+    @Body()
+    data: RoutineCreateRequest,
     @Req() { user }: Request,
   ): Promise<RoutineProfileResponse> {
     const routine = await this.routineService.createRoutine({
       userId: user.id,
       ...data,
     });
-    return new RoutineProfileResponse(routine);
+    const days = await this.routineService.getdays(routine.day);
+    return new RoutineProfileResponse({ ...routine, days });
   }
 
   @Patch('/:routineId')
@@ -88,7 +94,9 @@ export class RoutineCoreController {
       userId: user.id,
       ...data,
     });
-    return new RoutineProfileResponse(routine);
+    const days = await this.routineService.getdays(routine.day);
+
+    return new RoutineProfileResponse({ ...routine, days });
   }
 
   @Delete('/:routineId')

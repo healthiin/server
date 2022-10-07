@@ -1,19 +1,23 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 import { RoutineCreateCommand } from '@app/routine/routine-core/routine.command';
 
 export class RoutineCreateRequest
-  implements Omit<RoutineCreateCommand, 'routineId' | 'manualIds' | 'userId'>
+  implements Omit<RoutineCreateCommand, 'routineId' | 'userId'>
 {
   @IsNotEmpty()
   @IsString()
-  title: string;
+  title!: string;
 
   @IsNotEmpty()
   @IsString()
-  description: string;
+  description!: string;
 
   @IsNotEmpty()
-  @IsString()
-  manualIds: string[];
+  @IsNumber({}, { each: true })
+  days!: number[];
+
+  @IsNotEmpty()
+  @IsString({ each: true })
+  routineManualIds!: string[];
 }
