@@ -7,6 +7,7 @@ import {
 } from '@nestjs/platform-fastify';
 import { SwaggerModule } from '@nestjs/swagger';
 import * as AWS from 'aws-sdk';
+import * as fastifyMultipart from 'fastify-multipart';
 
 import { MainModule } from './main.module';
 
@@ -41,5 +42,6 @@ import generateSwaggerDocument from '@infrastructure/swagger/swagger.generator';
   });
 
   await app.register(fastifyCookie, { secret: process.env.APP_SECRET || '' });
+  await app.register(fastifyMultipart);
   await app.listen(process.env.APP_PORT || 3000, '0.0.0.0');
 })();

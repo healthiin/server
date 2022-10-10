@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MealController } from '@app/meal/meal.controller';
 import { MealService } from '@app/meal/meal.service';
 import { MealAiClient } from '@app/meal/utils/meal-ai.client';
+import { MealPhotoClient } from '@app/meal/utils/meal-photo.client';
 import { Meal } from '@domain/meal/meal.entity';
 
 @Module({
@@ -13,6 +14,7 @@ import { Meal } from '@domain/meal/meal.entity';
     TypeOrmModule.forFeature([Meal]),
     HttpModule.registerAsync({
       imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         baseURL: 'https://api-2445582032290.production.gw.apicast.io/v1',
         params: {
@@ -23,6 +25,16 @@ import { Meal } from '@domain/meal/meal.entity';
     }),
   ],
   controllers: [MealController],
-  providers: [MealService, MealAiClient],
+  providers: [
+    MealService,
+    {
+      provide: 'MealAiClient',
+      useClass: MealAiClient,
+    },
+    {
+      provide: 'MealPhotoClient',
+      useClass: MealPhotoClient,
+    },
+  ],
 })
 export class MealModule {}

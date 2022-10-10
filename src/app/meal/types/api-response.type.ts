@@ -23,7 +23,7 @@ type Nutrition = {
   transFat?: number;
 };
 
-type FoodItem = {
+export type FoodItem = {
   servingSizes: ServingSize[];
   score: number;
   nutrition: Nutrition;
