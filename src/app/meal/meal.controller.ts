@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -78,5 +79,14 @@ export class MealController {
   ): Promise<MealMenuProfileResponse> {
     const result = await this.mealService.updateMealMenu(mealId, data);
     return new MealMenuProfileResponse(result);
+  }
+
+  @Delete(':mealId')
+  @ApiOperation({ summary: '식단 메뉴를 삭제합니다.' })
+  @ApiOkResponse({ type: Boolean })
+  async deleteMealMenu(
+    @Param('mealId', ParseUUIDPipe) mealId: string,
+  ): Promise<boolean> {
+    return this.mealService.deleteMealMenu(mealId);
   }
 }

@@ -75,4 +75,12 @@ export class MealService {
       },
     });
   }
+
+  async deleteMealMenu(id: string): Promise<boolean> {
+    const meal = await this.getMealMenu(id);
+
+    const { affected } = await this.mealRepository.delete({ id: meal.id });
+
+    return affected > 0;
+  }
 }
