@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Post,
   Req,
@@ -20,6 +21,8 @@ import { memoryStorage } from 'multer';
 import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
 import { MealInspectRequest } from '@app/meal/dtos/meal-inspect.request';
 import { MealInspectResponse } from '@app/meal/dtos/meal-inspect.response';
+import { MealMenuCreateRequest } from '@app/meal/dtos/meal-menu-create.request';
+import { MealMenuProfileResponse } from '@app/meal/dtos/meal-menu-profile.response';
 import { MealService } from '@app/meal/meal.service';
 import { Request } from '@infrastructure/types/request.types';
 
@@ -46,5 +49,19 @@ export class MealController {
     @UploadedFile() file: Express.Multer.File,
   ): Promise<MealInspectResponse> {
     return this.mealService.inspectIngredients(user.id, file.buffer);
+  }
+
+  @Post()
+  @ApiOperation({ summary: '식단 메뉴를 등록합니다.' })
+  @ApiOkResponse({ type: MealMenuProfileResponse })
+  async createMealMenu(
+    @Body() data: MealMenuCreateRequest,
+    @Req() { user }: Request,
+  ): Promise<MealMenuProfileResponse> {
+    const result = await this.mealService.createMealMenu({
+      userId: user.id,
+      ...data,
+    });
+    return new MealMenuProfileResponse(result);
   }
 }
