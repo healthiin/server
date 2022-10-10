@@ -2,11 +2,12 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { CreateMealData } from '@app/meal/commands/create-meal.data';
 import { InspectResultData } from '@app/meal/commands/inspect-result.data';
+import { CreateMealData, UpdateMealData } from '@app/meal/meal.command';
 import { MealAiClient } from '@app/meal/utils/meal-ai.client';
 import { MealPhotoClient } from '@app/meal/utils/meal-photo.client';
 import { Meal } from '@domain/meal/meal.entity';
+import { MealNotFoundException } from '@domain/meal/meal.errors';
 
 @Injectable()
 export class MealService {
@@ -34,6 +35,16 @@ export class MealService {
     return { photoId, results: results.slice(0, 3) };
   }
 
+  async getMealMenu(id: string): Promise<Meal> {
+    const meal = await this.mealRepository.findOne({
+      where: { id },
+    });
+
+    if (!meal) throw new MealNotFoundException();
+
+    return meal;
+  }
+
   async createMealMenu(data: CreateMealData): Promise<Meal> {
     return this.mealRepository.save({
       title: data.title,
@@ -47,6 +58,20 @@ export class MealService {
         fat: data.fat,
         carbohydrate: data.carbohydrate,
         calories: data.calories,
+      },
+    });
+  }
+
+  async updateMealMenu(id: string, data: UpdateMealData): Promise<Meal> {
+    const meal = await this.getMealMenu(id);
+
+    const { title, ...nutrients } = data;
+    return this.mealRepository.save({
+      ...meal,
+      title: title || meal.title,
+      nutrients: {
+        ...meal.nutrients,
+        ...nutrients,
       },
     });
   }

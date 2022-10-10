@@ -1,6 +1,9 @@
 import {
   Body,
   Controller,
+  Param,
+  ParseUUIDPipe,
+  Patch,
   Post,
   Req,
   UploadedFile,
@@ -23,6 +26,7 @@ import { MealInspectRequest } from '@app/meal/dtos/meal-inspect.request';
 import { MealInspectResponse } from '@app/meal/dtos/meal-inspect.response';
 import { MealMenuCreateRequest } from '@app/meal/dtos/meal-menu-create.request';
 import { MealMenuProfileResponse } from '@app/meal/dtos/meal-menu-profile.response';
+import { MealMenuUpdateRequest } from '@app/meal/dtos/meal-menu-update.request';
 import { MealService } from '@app/meal/meal.service';
 import { Request } from '@infrastructure/types/request.types';
 
@@ -62,6 +66,17 @@ export class MealController {
       userId: user.id,
       ...data,
     });
+    return new MealMenuProfileResponse(result);
+  }
+
+  @Patch(':mealId')
+  @ApiOperation({ summary: '식단 메뉴를 수정합니다.' })
+  @ApiOkResponse({ type: MealMenuProfileResponse })
+  async updateMealMenu(
+    @Param('mealId', ParseUUIDPipe) mealId: string,
+    @Body() data: MealMenuUpdateRequest,
+  ): Promise<MealMenuProfileResponse> {
+    const result = await this.mealService.updateMealMenu(mealId, data);
     return new MealMenuProfileResponse(result);
   }
 }
