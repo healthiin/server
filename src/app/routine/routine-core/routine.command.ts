@@ -19,3 +19,5 @@ export type RoutineUpdateCommand = UserInfo &
   RoutineInfo &
   Partial<RoutineCreateCommand>;
 export type RoutineDeleteCommand = RoutineInfo;
+
+export type RoutineProfileProperties = RoutineProperties & { days: number[] };

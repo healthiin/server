@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 import { ManualCreateCommand } from '@app/equipment/equipment-manual/equipment-manual.command';
-import { ManualType } from '@domain/equipment/equipment-type';
+import { ManualType } from '@domain/equipment/manual-type';
 
 export class ManualCreateRequest
   implements Omit<ManualCreateCommand, 'equipmentId'>
@@ -39,6 +39,6 @@ export class ManualCreateRequest
 
   @ApiProperty({ description: '운동 부위' })
   @IsNotEmpty()
-  @IsString()
+  @IsEnum(ManualType)
   type!: ManualType;
 }

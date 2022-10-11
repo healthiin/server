@@ -10,7 +10,7 @@ import {
   ManualUpdateCommand,
 } from '@app/equipment/equipment-manual/equipment-manual.command';
 import { Manual } from '@domain/equipment/equipment-manual.entity';
-import { ManualType } from '@domain/equipment/equipment-type';
+import { ManualType } from '@domain/equipment/manual-type';
 import { ManualNotFoundException } from '@domain/equipment/manual.errors';
 
 export class EquipmentManualService {
@@ -33,7 +33,8 @@ export class EquipmentManualService {
   }
 
   async getManualById(id: string): Promise<ManualProfileResponse> {
-    const manual = await this.manualRepository.findOne({ where: { id } });
+    const manual = await this.findById(id);
+    console.log(manual);
 
     return new ManualProfileResponse(manual);
   }
@@ -52,7 +53,7 @@ export class EquipmentManualService {
       (manual) =>
         new ManualProfileResponse({
           ...manual,
-          equipment: equipment,
+          equipment,
         }),
     );
   }
@@ -102,6 +103,7 @@ export class EquipmentManualService {
     const manual = await this.manualRepository.findOne({
       where: { id },
       select,
+      relations: ['equipment'],
     });
 
     if (!manual) throw new ManualNotFoundException();

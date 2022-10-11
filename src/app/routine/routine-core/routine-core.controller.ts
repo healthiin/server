@@ -19,7 +19,6 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { IPaginationMeta } from 'nestjs-typeorm-paginate';
 
 import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
 import { CheckPolicies } from '@app/auth/authorization/policy.decorator';
@@ -29,7 +28,9 @@ import { RoutineCreateRequest } from '@app/routine/routine-core/dtos/routine-cre
 import { RoutineProfileResponse } from '@app/routine/routine-core/dtos/routine-profile.response';
 import { RoutineUpdateRequest } from '@app/routine/routine-core/dtos/routine-update.request';
 import { RoutineCoreService } from '@app/routine/routine-core/routine-core.service';
+import { ManualType } from '@domain/equipment/manual-type';
 import { Routine as RoutineEntity } from '@domain/routine/routine.entity';
+import { Pagination } from '@infrastructure/types/pagination.types';
 import { Request } from '@infrastructure/types/request.types';
 
 @Controller('routines')
@@ -46,7 +47,7 @@ export class RoutineCoreController {
     @Param('routineId', ParseUUIDPipe) routineId: string,
   ): Promise<RoutineProfileResponse> {
     const routine = await this.routineService.getRoutineById(routineId);
-    const days = await this.routineService.getdays(routine.day);
+    const days = this.routineService.getDays(routine.day);
     return new RoutineProfileResponse({ ...routine, days });
   }
 
@@ -56,26 +57,35 @@ export class RoutineCoreController {
   async getRoutines(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
-  ): Promise<{
-    meta: IPaginationMeta;
-    items: Promise<RoutineProfileResponse>[];
-  }> {
+  ): Promise<Pagination<RoutineProfileResponse>> {
     return this.routineService.getRoutines({ page, limit });
+  }
+
+  @Get('/type/:manualType')
+  @ApiOperation({ summary: '타입을 통해 루틴 목록을 조회합니다' })
+  @ApiOkResponse({ type: RoutineProfileResponse })
+  async getRoutinesByType(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
+    @Param('manualType') manualType: ManualType,
+  ): Promise<Pagination<RoutineProfileResponse>> {
+    return this.routineService.getRoutinesByType({ page, limit }, manualType);
   }
 
   @Post()
   @ApiOperation({ summary: '루틴을 생성합니다' })
   @ApiOkResponse({ type: RoutineProfileResponse })
   async createRoutine(
+    @Req() { user }: Request,
     @Body()
     data: RoutineCreateRequest,
-    @Req() { user }: Request,
   ): Promise<RoutineProfileResponse> {
     const routine = await this.routineService.createRoutine({
       userId: user.id,
       ...data,
     });
-    const days = await this.routineService.getdays(routine.day);
+    const days = this.routineService.getDays(routine.day);
+
     return new RoutineProfileResponse({ ...routine, days });
   }
 
@@ -94,7 +104,7 @@ export class RoutineCoreController {
       userId: user.id,
       ...data,
     });
-    const days = await this.routineService.getdays(routine.day);
+    const days = this.routineService.getDays(routine.day);
 
     return new RoutineProfileResponse({ ...routine, days });
   }

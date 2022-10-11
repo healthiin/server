@@ -9,25 +9,28 @@ import {
   Post,
 } from '@nestjs/common';
 
-import { RoutineUpdateRequest } from '@app/routine/routine-core/dtos/routine-update.request';
 import { RoutineCardioManualCreateRequest } from '@app/routine/routine-manual/dtos/routine-cardio-manual-create.request';
+import { RoutineCardioManualUpdateRequest } from '@app/routine/routine-manual/dtos/routine-cardio-manual-update.request';
 import { RoutineManualProfileResponse } from '@app/routine/routine-manual/dtos/routine-manual-profile.response';
 import { RoutineWeightManualCreateRequest } from '@app/routine/routine-manual/dtos/routine-weight-manual-create.request';
+import { RoutineWeightManualUpdateRequest } from '@app/routine/routine-manual/dtos/routine-weight-manual-update.request';
 import { RoutineManualService } from '@app/routine/routine-manual/routine-manual.service';
 
-@Controller('routine-manual')
+@Controller('routine-manuals')
 export class RoutineManualController {
   constructor(private readonly routineManualService: RoutineManualService) {}
 
-  @Post(':manualId')
+  @Post(':manualId/routine/:routineId')
   async createRoutineManual(
     @Param('manualId', ParseUUIDPipe) manualId: string,
+    @Param('routineId', ParseUUIDPipe) routineId: string,
     @Body()
     data: RoutineCardioManualCreateRequest | RoutineWeightManualCreateRequest,
   ): Promise<RoutineManualProfileResponse> {
     return this.routineManualService.createRoutineManual({
       manualId,
       ...data,
+      routineId,
     });
   }
 
@@ -41,7 +44,8 @@ export class RoutineManualController {
   @Patch(':routineManualId')
   async updateRoutineManual(
     @Param('routineManualId', ParseUUIDPipe) routineManualId: string,
-    @Body() data: RoutineUpdateRequest,
+    @Body()
+    data: RoutineCardioManualUpdateRequest | RoutineWeightManualUpdateRequest,
   ): Promise<RoutineManualProfileResponse> {
     return this.routineManualService.updateRoutineManual({
       routineManualId,

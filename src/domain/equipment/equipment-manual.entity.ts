@@ -3,7 +3,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -11,8 +10,8 @@ import {
 } from 'typeorm';
 
 import { ManualProperties } from '@domain/equipment/equipment-manual';
-import { ManualType } from '@domain/equipment/equipment-type';
 import { Equipment } from '@domain/equipment/equipment.entity';
+import { ManualType } from '@domain/equipment/manual-type';
 import { RoutineManual } from '@domain/routine/routine-manual.entity';
 
 @Entity('manuals')
@@ -41,11 +40,10 @@ export class Manual implements ManualProperties {
   @Column()
   type: ManualType;
 
-  @ManyToOne(() => Equipment, (equipment) => equipment.manuals)
-  @JoinColumn()
-  equipment: Equipment;
+  @ManyToOne(() => Equipment, ({ manuals }) => manuals)
+  equipment!: Equipment;
 
-  @OneToMany(() => RoutineManual, (routineManual) => routineManual.manual)
+  @OneToMany(() => RoutineManual, ({ manual }) => manual)
   routineManual: RoutineManual[];
 
   @CreateDateColumn()

@@ -26,7 +26,7 @@ export class Routine implements RoutineProperties {
   @Column()
   description!: string | null;
 
-  @ManyToOne(() => User, ({ routines }) => routines)
+  @ManyToOne(() => User, (routines) => routines)
   @JoinColumn()
   author!: User;
 
@@ -37,13 +37,13 @@ export class Routine implements RoutineProperties {
   @JoinColumn()
   owner!: User;
 
-  @OneToMany(() => RoutineManual, (routineManual) => routineManual.routine)
+  @OneToMany(() => RoutineManual, ({ routine }) => routine)
   routineManuals!: RoutineManual[];
 
   @Column()
   status!: 'public' | 'private';
 
-  @OneToMany(() => RoutineType, (routineType) => routineType.routine)
+  @OneToMany(() => RoutineType, ({ routine }) => routine)
   types!: RoutineType[];
 
   @CreateDateColumn()

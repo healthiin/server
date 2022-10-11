@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
 
 import { ManualUpdateCommand } from '@app/equipment/equipment-manual/equipment-manual.command';
-import { ManualType } from '@domain/equipment/equipment-type';
+import { ManualType } from '@domain/equipment/manual-type';
 
 export class ManualUpdateRequest
   implements Omit<ManualUpdateCommand, 'manualId'>

@@ -20,7 +20,7 @@ import { ManualCreateRequest } from '@app/equipment/equipment-manual/dtos/manual
 import { ManualProfileResponse } from '@app/equipment/equipment-manual/dtos/manual-profile.response';
 import { ManualUpdateRequest } from '@app/equipment/equipment-manual/dtos/manual-update.request';
 import { EquipmentManualService } from '@app/equipment/equipment-manual/equipment-manual.service';
-import { ManualType } from '@domain/equipment/equipment-type';
+import { ManualType } from '@domain/equipment/manual-type';
 import { MANUAL_ERRORS } from '@domain/equipment/manual.errors';
 
 @Controller('manuals')

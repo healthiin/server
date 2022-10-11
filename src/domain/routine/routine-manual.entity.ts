@@ -3,7 +3,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -18,12 +17,11 @@ export class RoutineManual implements RoutineManualProperties {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Manual, (manual) => manual.routineManual)
-  @JoinColumn()
-  manual: Manual;
+  @ManyToOne(() => Manual, ({ routineManual }) => routineManual)
+  manual!: Manual;
 
-  @ManyToOne(() => Routine, (routine) => routine.routineManuals)
-  routine: Routine;
+  @ManyToOne(() => Routine, ({ routineManuals }) => routineManuals)
+  routine!: Routine;
 
   @Column({ nullable: true })
   targetNumber: number | null;

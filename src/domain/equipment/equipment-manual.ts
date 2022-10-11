@@ -1,5 +1,5 @@
-import { ManualType } from '@domain/equipment/equipment-type';
 import { Equipment } from '@domain/equipment/equipment.entity';
+import { ManualType } from '@domain/equipment/manual-type';
 import { RoutineManual } from '@domain/routine/routine-manual.entity';
 
 export type ManualProperties = {

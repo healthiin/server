@@ -1,7 +1,7 @@
 import { RoutineManualProperties } from '@domain/routine/routine-manual';
 import { RoutineManual } from '@domain/routine/routine-manual.entity';
 
-export class RoutineWeightManaulProfileResponse
+export class RoutineWeightManualProfileResponse
   implements
     Omit<
       RoutineManualProperties,

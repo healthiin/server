@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { ManualProperties } from '@domain/equipment/equipment-manual';
 import { Manual } from '@domain/equipment/equipment-manual.entity';
-import { ManualType } from '@domain/equipment/equipment-type';
+import { ManualType } from '@domain/equipment/manual-type';
 
 export class ManualProfileResponse
   implements
