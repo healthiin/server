@@ -7,8 +7,8 @@ import { InspectResultData } from '@app/meal/commands/inspect-result.data';
 import { MealDailyReportResponse } from '@app/meal/dtos/meal-daily-report.response';
 import { MealMenuProfileResponse } from '@app/meal/dtos/meal-menu-profile.response';
 import { CreateMealData, UpdateMealData } from '@app/meal/meal.command';
-import { MealAiClient } from '@app/meal/utils/meal-ai.client';
-import { MealPhotoClient } from '@app/meal/utils/meal-photo.client';
+import { AiClient } from '@app/meal/types/ai.client';
+import { PhotoClient } from '@app/meal/types/photo.client';
 import { Meal } from '@domain/meal/meal.entity';
 import { MealNotFoundException } from '@domain/meal/meal.errors';
 
@@ -16,9 +16,9 @@ import { MealNotFoundException } from '@domain/meal/meal.errors';
 export class MealService {
   constructor(
     @Inject('MealAiClient')
-    private readonly mealAiClient: MealAiClient,
+    private readonly mealAiClient: AiClient,
     @Inject('MealPhotoClient')
-    private readonly mealPhotoClient: MealPhotoClient,
+    private readonly mealPhotoClient: PhotoClient,
     @InjectRepository(Meal)
     private readonly mealRepository: Repository<Meal>,
   ) {}
