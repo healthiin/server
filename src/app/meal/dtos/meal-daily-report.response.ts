@@ -17,10 +17,7 @@ export class MealDailyReportResponse {
     [MealType.SNACK]: MealMenuProfileResponse[];
   };
 
-  constructor(
-    statistics: MealDailyStatisticsResponse,
-    meals: MealMenuProfileResponse[],
-  ) {
+  constructor(meals: MealMenuProfileResponse[]) {
     this.statistics = {
       carbohydrate: meals.reduce((sum, { carbohydrate: val }) => sum + val, 0),
       protein: meals.reduce((sum, { protein: val }) => sum + val, 0),

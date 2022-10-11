@@ -52,7 +52,6 @@ export class MealService {
     });
 
     return new MealDailyReportResponse(
-      {},
       meals.map((meal) => new MealMenuProfileResponse(meal)),
     );
   }
