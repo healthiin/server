@@ -12,6 +12,7 @@ import { Comment } from '@domain/community/comment.entity';
 import { Post } from '@domain/community/post.entity';
 import { GymNotice } from '@domain/gym/entities/gym-notice.entity';
 import { GymUser } from '@domain/gym/entities/gym-user.entity';
+import { Meal } from '@domain/meal/meal.entity';
 import { Routine } from '@domain/routine/routine.entity';
 
 @Entity('users')
@@ -63,4 +64,7 @@ export class User {
 
   @OneToMany(() => Routine, ({ author }) => author)
   routines!: Routine[];
+
+  @OneToMany(() => Meal, ({ user }) => user)
+  meals!: Meal[];
 }
