@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -23,6 +24,7 @@ import { FileFastifyInterceptor } from 'fastify-file-interceptor';
 import { memoryStorage } from 'multer';
 
 import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
+import { MealDailyReportResponse } from '@app/meal/dtos/meal-daily-report.response';
 import { MealInspectRequest } from '@app/meal/dtos/meal-inspect.request';
 import { MealInspectResponse } from '@app/meal/dtos/meal-inspect.response';
 import { MealMenuCreateRequest } from '@app/meal/dtos/meal-menu-create.request';
@@ -54,6 +56,16 @@ export class MealController {
     @UploadedFile() file: Express.Multer.File,
   ): Promise<MealInspectResponse> {
     return this.mealService.inspectIngredients(user.id, file.buffer);
+  }
+
+  @Get(':date')
+  @ApiOperation({ summary: '일별 식단을 조회합니다.' })
+  @ApiOkResponse({ type: MealDailyReportResponse })
+  async getDailyMeal(
+    @Param('date') date: string,
+    @Req() { user }: Request,
+  ): Promise<MealDailyReportResponse> {
+    return this.mealService.getDailyMeal(date, user.id);
   }
 
   @Post()

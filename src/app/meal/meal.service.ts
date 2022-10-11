@@ -1,8 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { parse } from 'date-fns';
 import { Repository } from 'typeorm';
 
 import { InspectResultData } from '@app/meal/commands/inspect-result.data';
+import { MealDailyReportResponse } from '@app/meal/dtos/meal-daily-report.response';
+import { MealMenuProfileResponse } from '@app/meal/dtos/meal-menu-profile.response';
 import { CreateMealData, UpdateMealData } from '@app/meal/meal.command';
 import { MealAiClient } from '@app/meal/utils/meal-ai.client';
 import { MealPhotoClient } from '@app/meal/utils/meal-photo.client';
@@ -33,6 +36,25 @@ export class MealService {
     );
 
     return { photoId, results: results.slice(0, 3) };
+  }
+
+  async getDailyMeal(
+    date: string,
+    userId: string,
+  ): Promise<MealDailyReportResponse> {
+    const parsedDate = parse(date, 'yyyy-MM-dd', new Date());
+
+    const meals = await this.mealRepository.find({
+      where: {
+        date: parsedDate,
+        user: { id: userId },
+      },
+    });
+
+    return new MealDailyReportResponse(
+      {},
+      meals.map((meal) => new MealMenuProfileResponse(meal)),
+    );
   }
 
   async getMealMenu(id: string): Promise<Meal> {
