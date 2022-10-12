@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -25,6 +26,7 @@ import { UserModule } from '@app/user/user.module';
       },
     }),
     UserModule,
+    HttpModule,
   ],
   controllers: [AuthenticationController],
   providers: [AuthenticationService, JwtStrategy],

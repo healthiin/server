@@ -1,8 +1,8 @@
+import { HttpService } from '@nestjs/axios';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
-import axios from 'axios';
 
 import { ACCESS_TOKEN_EXPIRE, REFRESH_TOKEN_EXPIRE } from '../../../constants';
 
@@ -24,6 +24,7 @@ import { Request } from '@infrastructure/types/request.types';
 @Injectable()
 export class AuthenticationService {
   constructor(
+    private readonly httpService: HttpService,
     private readonly userService: UserService,
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
@@ -47,7 +48,7 @@ export class AuthenticationService {
   async getUserByKakaoAccessToken(
     accessToken: string,
   ): Promise<{ id: string; isFreshman: boolean }> {
-    const oAuthLoginData = await axios.get(
+    const oAuthLoginData = await this.httpService.axiosRef.get(
       'https://kapi.kakao.com/v2/user/me',
       {
         headers: { Authorization: `Bearer ${accessToken}` },
