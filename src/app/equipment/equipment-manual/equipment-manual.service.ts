@@ -10,6 +10,7 @@ import {
   ManualUpdateCommand,
 } from '@app/equipment/equipment-manual/equipment-manual.command';
 import { Manual } from '@domain/equipment/equipment-manual.entity';
+import { ManualType } from '@domain/equipment/manual-type';
 import { ManualNotFoundException } from '@domain/equipment/manual.errors';
 
 export class EquipmentManualService {
@@ -25,47 +26,60 @@ export class EquipmentManualService {
     return manuals.map((manual) => new ManualProfileResponse(manual));
   }
 
-  async getManualsByType(
-    type: 'back' | 'shoulder' | 'chest' | 'arm' | 'lef' | 'abs',
-  ): Promise<ManualProfileResponse[]> {
+  async getManualsByType(type: ManualType): Promise<ManualProfileResponse[]> {
     const manuals = await this.manualRepository.findBy({ type });
 
     return manuals.map((manual) => new ManualProfileResponse(manual));
   }
 
   async getManualById(id: string): Promise<ManualProfileResponse> {
-    const manual = await this.manualRepository.findOne({ where: { id } });
+    const manual = await this.findById(id);
+    console.log(manual);
 
     return new ManualProfileResponse(manual);
   }
 
-  async getManualsByEquipmentId(id: string): Promise<ManualProfileResponse[]> {
-    const manuals = await this.manualRepository.findBy({ equipment: { id } });
+  async getManualsByEquipmentId(
+    equipmentId: string,
+  ): Promise<ManualProfileResponse[]> {
+    const equipment = await this.equipmentCoreService.getEquipmentById(
+      equipmentId,
+    );
+    const manuals = await this.manualRepository.findBy({
+      equipment: { id: equipment.id },
+    });
 
     return manuals.map(
       (manual) =>
         new ManualProfileResponse({
           ...manual,
-          equipmentId: id,
+          equipment,
         }),
     );
   }
 
   async createManual(data: ManualCreateCommand): Promise<Manual> {
-    await this.equipmentCoreService.getEquipmentById(data.equipmentId);
+    const { equipmentId, ...rest } = data;
+    const equipment = await this.equipmentCoreService.getEquipmentById(
+      equipmentId,
+    );
 
     return await this.manualRepository.save({
-      ...data,
-      equipment: { id: data.equipmentId },
+      ...rest,
+      equipment: { id: equipment.id },
     });
   }
 
   async updateManual(data: ManualUpdateCommand): Promise<Manual> {
     if (!data.equipmentId == null) {
-      await this.equipmentCoreService.getEquipmentById(data.equipmentId);
+      const equipment = await this.equipmentCoreService.getEquipmentById(
+        data.equipmentId,
+      );
+      data.equipmentId = equipment.id;
     }
 
     const manual = await this.findById(data.manualId);
+    if (!manual) throw new ManualNotFoundException();
 
     return await this.manualRepository.save({
       ...manual,
@@ -75,6 +89,7 @@ export class EquipmentManualService {
 
   async withdrawManual(data: ManualDeleteCommand): Promise<boolean> {
     const manual = await this.findById(data.manualId);
+    if (!manual) throw new ManualNotFoundException();
 
     const { affected } = await this.manualRepository.softDelete(manual.id);
 
@@ -88,6 +103,7 @@ export class EquipmentManualService {
     const manual = await this.manualRepository.findOne({
       where: { id },
       select,
+      relations: ['equipment'],
     });
 
     if (!manual) throw new ManualNotFoundException();

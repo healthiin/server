@@ -10,5 +10,6 @@ import { Manual } from '@domain/equipment/equipment-manual.entity';
   imports: [TypeOrmModule.forFeature([Manual]), EquipmentCoreModule],
   controllers: [EquipmentManualController],
   providers: [EquipmentManualService],
+  exports: [EquipmentManualService],
 })
 export class EquipmentManualModule {}

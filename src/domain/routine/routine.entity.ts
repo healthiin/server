@@ -10,26 +10,41 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Manual } from '@domain/equipment/equipment-manual.entity';
 import { RoutineProperties } from '@domain/routine/routine';
+import { RoutineManual } from '@domain/routine/routine-manual.entity';
+import { RoutineType } from '@domain/routine/routine-type.entity';
 import { User } from '@domain/user/user.entity';
+
 @Entity('routines')
 export class Routine implements RoutineProperties {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  title: string;
+  title!: string;
 
   @Column()
-  description: string | null;
+  description!: string | null;
+
+  @ManyToOne(() => User, (routines) => routines)
+  @JoinColumn()
+  author!: User;
+
+  @Column()
+  day!: number;
 
   @ManyToOne(() => User, ({ routines }) => routines)
   @JoinColumn()
-  author: User;
+  owner!: User;
 
-  @OneToMany(() => Manual, (manual) => manual.routine)
-  manuals: Manual[];
+  @OneToMany(() => RoutineManual, ({ routine }) => routine)
+  routineManuals!: RoutineManual[];
+
+  @Column()
+  status!: 'public' | 'private';
+
+  @OneToMany(() => RoutineType, ({ routine }) => routine)
+  types!: RoutineType[];
 
   @CreateDateColumn()
   createdAt!: Date;

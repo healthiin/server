@@ -24,10 +24,11 @@ import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
 import { CheckPolicies } from '@app/auth/authorization/policy.decorator';
 import { PoliciesGuard } from '@app/auth/authorization/policy.guard';
 import { Action } from '@app/auth/authorization/types';
-import { RoutineCreateRequest } from '@app/routine/dtos/routine-create.request';
-import { RoutineProfileResponse } from '@app/routine/dtos/routine-profile.response';
-import { RoutineUpdateRequest } from '@app/routine/dtos/routine-update.request';
-import { RoutineService } from '@app/routine/routine.service';
+import { RoutineCreateRequest } from '@app/routine/routine-core/dtos/routine-create.request';
+import { RoutineProfileResponse } from '@app/routine/routine-core/dtos/routine-profile.response';
+import { RoutineUpdateRequest } from '@app/routine/routine-core/dtos/routine-update.request';
+import { RoutineCoreService } from '@app/routine/routine-core/routine-core.service';
+import { ManualType } from '@domain/equipment/manual-type';
 import { Routine as RoutineEntity } from '@domain/routine/routine.entity';
 import { Pagination } from '@infrastructure/types/pagination.types';
 import { Request } from '@infrastructure/types/request.types';
@@ -36,8 +37,8 @@ import { Request } from '@infrastructure/types/request.types';
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 @ApiTags('[루틴] 루틴')
-export class RoutineController {
-  constructor(private readonly routineService: RoutineService) {}
+export class RoutineCoreController {
+  constructor(private readonly routineService: RoutineCoreService) {}
 
   @Get('/:routineId')
   @ApiOperation({ summary: '특정 루틴의 내용을 조회합니다' })
@@ -46,7 +47,8 @@ export class RoutineController {
     @Param('routineId', ParseUUIDPipe) routineId: string,
   ): Promise<RoutineProfileResponse> {
     const routine = await this.routineService.getRoutineById(routineId);
-    return new RoutineProfileResponse(routine);
+    const days = this.routineService.getDays(routine.day);
+    return new RoutineProfileResponse({ ...routine, days });
   }
 
   @Get()
@@ -59,18 +61,32 @@ export class RoutineController {
     return this.routineService.getRoutines({ page, limit });
   }
 
+  @Get('/type/:manualType')
+  @ApiOperation({ summary: '타입을 통해 루틴 목록을 조회합니다' })
+  @ApiOkResponse({ type: RoutineProfileResponse })
+  async getRoutinesByType(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
+    @Param('manualType') manualType: ManualType,
+  ): Promise<Pagination<RoutineProfileResponse>> {
+    return this.routineService.getRoutinesByType({ page, limit }, manualType);
+  }
+
   @Post()
   @ApiOperation({ summary: '루틴을 생성합니다' })
   @ApiOkResponse({ type: RoutineProfileResponse })
   async createRoutine(
-    @Body() data: RoutineCreateRequest,
     @Req() { user }: Request,
+    @Body()
+    data: RoutineCreateRequest,
   ): Promise<RoutineProfileResponse> {
     const routine = await this.routineService.createRoutine({
       userId: user.id,
       ...data,
     });
-    return new RoutineProfileResponse(routine);
+    const days = this.routineService.getDays(routine.day);
+
+    return new RoutineProfileResponse({ ...routine, days });
   }
 
   @Patch('/:routineId')
@@ -88,7 +104,9 @@ export class RoutineController {
       userId: user.id,
       ...data,
     });
-    return new RoutineProfileResponse(routine);
+    const days = this.routineService.getDays(routine.day);
+
+    return new RoutineProfileResponse({ ...routine, days });
   }
 
   @Delete('/:routineId')

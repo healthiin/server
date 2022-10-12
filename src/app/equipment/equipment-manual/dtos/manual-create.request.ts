@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 import { ManualCreateCommand } from '@app/equipment/equipment-manual/equipment-manual.command';
+import { ManualType } from '@domain/equipment/manual-type';
 
 export class ManualCreateRequest
   implements Omit<ManualCreateCommand, 'equipmentId'>
@@ -16,13 +17,28 @@ export class ManualCreateRequest
   @IsString()
   enTitle!: string;
 
-  @ApiProperty({ description: '운동 부위' })
-  @IsNotEmpty()
-  @IsString()
-  type!: 'back' | 'shoulder' | 'chest' | 'arm' | 'lef' | 'abs';
-
   @ApiProperty({ description: '운동에 대한 설명' })
   @IsNotEmpty()
   @IsString()
   description!: string;
+
+  @ApiProperty({ description: '운동에 대한 주의사항' })
+  @IsOptional()
+  @IsString()
+  precaution!: string | null;
+
+  @ApiProperty({ description: '운동에 대한 이미지' })
+  @IsOptional()
+  @IsString()
+  imageUrl!: string | null;
+
+  @ApiProperty({ description: '운동에 대한 동영상' })
+  @IsOptional()
+  @IsString()
+  videoUrl!: string | null;
+
+  @ApiProperty({ description: '운동 부위' })
+  @IsNotEmpty()
+  @IsEnum(ManualType)
+  type!: ManualType;
 }

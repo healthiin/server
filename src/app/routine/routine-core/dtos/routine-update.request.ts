@@ -1,6 +1,6 @@
 import { IsOptional, IsString } from 'class-validator';
 
-import { RoutineUpdateCommand } from '@app/routine/routine.command';
+import { RoutineUpdateCommand } from '@app/routine/routine-core/routine.command';
 
 export class RoutineUpdateRequest
   implements Omit<RoutineUpdateCommand, 'userId' | 'routineId' | 'manuals'>
