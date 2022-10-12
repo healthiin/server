@@ -24,7 +24,7 @@ import { ManualType } from '@domain/equipment/manual-type';
 import { MANUAL_ERRORS } from '@domain/equipment/manual.errors';
 
 @Controller('manuals')
-@ApiTags('[헬스 기구] 설명서')
+@ApiTags('[메뉴얼] 메뉴얼')
 export class EquipmentManualController {
   constructor(private readonly manualService: EquipmentManualService) {}
 
