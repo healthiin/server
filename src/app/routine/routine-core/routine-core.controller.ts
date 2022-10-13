@@ -36,7 +36,7 @@ import { Request } from '@infrastructure/types/request.types';
 @Controller('routines')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
-@ApiTags('[루틴] 루틴')
+@ApiTags('[메뉴얼] 루틴')
 export class RoutineCoreController {
   constructor(private readonly routineService: RoutineCoreService) {}
 

@@ -21,7 +21,9 @@ export class EquipmentManualService {
   ) {}
 
   async getAllManuals(): Promise<ManualProfileResponse[]> {
-    const manuals = await this.manualRepository.find();
+    const manuals = await this.manualRepository.find({
+      relations: ['equipment'],
+    });
 
     return manuals.map((manual) => new ManualProfileResponse(manual));
   }
