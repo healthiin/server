@@ -10,6 +10,9 @@ import { GymEquipment } from '@domain/gym/entities/gym-equipment.entity';
 import { GymNotice } from '@domain/gym/entities/gym-notice.entity';
 import { GymUser } from '@domain/gym/entities/gym-user.entity';
 import { Gym } from '@domain/gym/entities/gym.entity';
+import { Meal } from '@domain/meal/meal.entity';
+import { RoutineManual } from '@domain/routine/routine-manual.entity';
+import { RoutineType } from '@domain/routine/routine-type.entity';
 import { Routine } from '@domain/routine/routine.entity';
 import { User } from '@domain/user/user.entity';
 
@@ -32,6 +35,9 @@ const ormConfig: TypeOrmModuleOptions = {
     GymEquipment,
     Manual,
     Routine,
+    RoutineManual,
+    RoutineType,
+    Meal,
   ],
   migrations: [__dirname, '../src/migration/*.ts'],
   namingStrategy: new SnakeNamingStrategy(),
