@@ -43,7 +43,7 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Get()
-  @ApiOperation({ summary: '게시글 목록을 조회합니다' })
+  @ApiOperation({ summary: '특정 게시판의 게시글 목록을 조회합니다' })
   @ApiOkResponse({ type: [PostProfileResponse] })
   async getPostsByBoardId(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
