@@ -20,10 +20,11 @@ import { ManualCreateRequest } from '@app/equipment/equipment-manual/dtos/manual
 import { ManualProfileResponse } from '@app/equipment/equipment-manual/dtos/manual-profile.response';
 import { ManualUpdateRequest } from '@app/equipment/equipment-manual/dtos/manual-update.request';
 import { EquipmentManualService } from '@app/equipment/equipment-manual/equipment-manual.service';
+import { ManualType } from '@domain/equipment/manual-type';
 import { MANUAL_ERRORS } from '@domain/equipment/manual.errors';
 
 @Controller('manuals')
-@ApiTags('[헬스 기구] 설명서')
+@ApiTags('[메뉴얼] 메뉴얼')
 export class EquipmentManualController {
   constructor(private readonly manualService: EquipmentManualService) {}
 
@@ -48,7 +49,7 @@ export class EquipmentManualController {
   @ApiOkResponse({ type: [ManualProfileResponse] })
   async getManualsByType(
     @Param('category')
-    type: 'back' | 'shoulder' | 'chest' | 'arm' | 'lef' | 'abs',
+    type: ManualType,
   ): Promise<ManualProfileResponse[]> {
     return this.manualService.getManualsByType(type);
   }

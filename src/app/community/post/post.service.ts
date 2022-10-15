@@ -34,12 +34,13 @@ export class PostService {
       this.postRepository,
       {
         page: data.page,
-        limit: data.page,
+        limit: data.limit,
       },
       {
         where: {
           board: { id: data.boardId },
         },
+        relations: ['author'],
       },
     );
 

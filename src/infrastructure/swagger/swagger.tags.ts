@@ -10,6 +10,12 @@ export const tags: SwaggerTag[] = [
   { name: '[헬스장] 코어', description: '헬스장 관련 기능' },
   { name: '[헬스장] 구성원', description: '헬스장 관련 기능' },
   { name: '[헬스장] 공지사항', description: '헬스장 관련 기능' },
+  // 메뉴얼 태그 태그
+  { name: '[메뉴얼] 루틴', description: '루틴 관련 기능' },
+  { name: '[메뉴얼] 메뉴얼', description: '메뉴얼 관련 기능' },
+  { name: '[메뉴얼] 루틴 메뉴얼', description: '루틴 메뉴얼 관련 기능' },
+  // 기록 태그
+  { name: '[기록] 식단', description: '식단 기록 관련 기능' },
 ];
 
 type SwaggerTag = { name: string; description: string };

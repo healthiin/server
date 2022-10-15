@@ -1,14 +1,18 @@
 import { Equipment } from '@domain/equipment/equipment.entity';
-import { Routine } from '@domain/routine/routine.entity';
+import { ManualType } from '@domain/equipment/manual-type';
+import { RoutineManual } from '@domain/routine/routine-manual.entity';
 
 export type ManualProperties = {
   id: string;
   title: string;
   enTitle: string;
-  description: string | null;
-  type: 'back' | 'shoulder' | 'chest' | 'arm' | 'lef' | 'abs';
+  description: string;
+  precaution: string | null;
+  imageUrl: string | null;
+  videoUrl: string | null;
+  type: ManualType;
   equipment: Equipment;
-  routine: Routine;
+  routineManual: RoutineManual[];
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

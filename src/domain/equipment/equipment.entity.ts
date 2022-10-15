@@ -3,7 +3,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -34,7 +33,6 @@ export class Equipment {
   manuals!: Manual[];
 
   @ManyToOne(() => GymEquipment, ({ equipments }) => equipments)
-  @JoinColumn()
   gymEquipment?: GymEquipment | null;
 
   @CreateDateColumn()

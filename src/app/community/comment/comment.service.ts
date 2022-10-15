@@ -40,6 +40,7 @@ export class CommentService {
         where: {
           post: { id: data.postId },
         },
+        relations: ['author'],
       },
     );
 

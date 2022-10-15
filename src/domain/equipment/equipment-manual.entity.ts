@@ -3,15 +3,16 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { ManualProperties } from '@domain/equipment/equipment-manual';
 import { Equipment } from '@domain/equipment/equipment.entity';
-import { Routine } from '@domain/routine/routine.entity';
+import { ManualType } from '@domain/equipment/manual-type';
+import { RoutineManual } from '@domain/routine/routine-manual.entity';
 
 @Entity('manuals')
 export class Manual implements ManualProperties {
@@ -28,17 +29,22 @@ export class Manual implements ManualProperties {
   description: string | null;
 
   @Column({ nullable: true })
-  type: 'back' | 'shoulder' | 'chest' | 'arm' | 'lef' | 'abs';
-
-  @ManyToOne(() => Equipment, (equipment) => equipment.manuals)
-  equipment: Equipment;
+  precaution: string | null;
 
   @Column({ nullable: true })
-  equipmentId: string | null;
+  imageUrl: string | null;
 
-  @ManyToOne(() => Routine, (routine) => routine.manuals)
-  @JoinColumn()
-  routine!: Routine;
+  @Column({ nullable: true })
+  videoUrl: string | null;
+
+  @Column()
+  type: ManualType;
+
+  @ManyToOne(() => Equipment, ({ manuals }) => manuals)
+  equipment!: Equipment;
+
+  @OneToMany(() => RoutineManual, ({ manual }) => manual)
+  routineManual: RoutineManual[];
 
   @CreateDateColumn()
   createdAt: Date;
