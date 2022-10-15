@@ -66,6 +66,29 @@ export class AuthenticationService {
     return { id: user.id, isFreshman: false };
   }
 
+  async getUserByGoogleAccessToken(
+    accessToken: string,
+  ): Promise<{ id: string; isFreshman: boolean }> {
+    const oAuthLoginData = await this.httpService.axiosRef.get(
+      'https://www.googleapis.com/oauth2/v3/certs',
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      },
+    );
+    console.log(oAuthLoginData); // 해당 정보로 유저를 find/create 해야함
+
+    // const user = await this.userService.findByUsername(oAuthLoginData.data.id);
+    // if (!user) {
+    //   const createdUser = await this.userService.createUser({
+    //     username: oAuthLoginData.data.id,
+    //   });
+    //   return { id: createdUser.getUserId, isFreshman: createdUser.isFreshman };
+    // }
+    //
+    return { id: 'userId', isFreshman: false };
+    // return { id: user.id, isFreshman: false };
+  }
+
   async oAuthLogin(
     data: LoginRequest,
   ): Promise<{ id: string; isFreshman: boolean }> {
@@ -78,6 +101,13 @@ export class AuthenticationService {
         isFreshman = user.isFreshman;
         break;
       }
+      case 'google': {
+        const user = await this.getUserByGoogleAccessToken(data.accessToken);
+        id = user.id;
+        isFreshman = user.isFreshman;
+        break;
+      }
+
       default: {
         throw new UnSupportedVendorTypeException();
       }
