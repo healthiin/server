@@ -6,7 +6,6 @@ import { Connection } from 'typeorm';
 import ormConfig from './orm-config';
 
 import { AppController } from '@app/app.controller';
-import { AuthModule } from '@app/auth/auth.module';
 import { UserCreateRequest } from '@app/user/dtos/user-create.request';
 import { UserModule } from '@app/user/user.module';
 import { User } from '@domain/user/user.entity';
@@ -59,7 +58,7 @@ describe('App Module Integration', () => {
         expect(response.status).toBe(201);
       });
 
-      it('should return 400 given exist username', async () => {
+      it('should return 409 given exist username', async () => {
         const requestBody1: UserCreateRequest = {
           username: 'testUserName',
         };
@@ -81,26 +80,26 @@ describe('App Module Integration', () => {
       });
     });
 
-    describe('/users/${userId} (GET)', () => {
-      it('should return 200', async () => {
-        const requestBody1: UserCreateRequest = {
-          username: 'testUserName',
-        };
-
-        const response1 = await request(app.getHttpServer())
-          .post('/users')
-          .send(requestBody1);
-
-        expect(response1.status).toBe(201);
-
-        const userId = 'testUserName';
-
-        const response = await request(app.getHttpServer()).get(
-          `/users/${userId}`,
-        );
-
-        expect(response.status).toBe(200);
-      });
-    });
+    // describe('/users/${userId} (GET)', () => {
+    //   it('should return 200', async () => {
+    //     const requestBody1: UserCreateRequest = {
+    //       username: 'testUserName',
+    //     };
+    //
+    //     const response1 = await request(app.getHttpServer())
+    //       .post('/users')
+    //       .send(requestBody1);
+    //
+    //     expect(response1.status).toBe(201);
+    //
+    //     const userId = 'testUserName';
+    //
+    //     const response = await request(app.getHttpServer()).get(
+    //       `/users/${userId}`,
+    //     );
+    //
+    //     expect(response.status).toBe(200);
+    //   });
+    // });
   });
 });
