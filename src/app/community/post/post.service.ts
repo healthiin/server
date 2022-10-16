@@ -4,7 +4,7 @@ import { paginate } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 
 import { BoardService } from '@app/community/board/board.service';
-import { PostProfileResponse } from '@app/community/post/dtos/post-profile.response';
+import { PostPreviewResponse } from '@app/community/post/dtos/post-preview.response';
 import {
   PostCreateCommand,
   PostDeleteCommand,
@@ -29,7 +29,7 @@ export class PostService {
    */
   async getPostsByBoardId(
     data: PostListQuery,
-  ): Promise<Pagination<PostProfileResponse>> {
+  ): Promise<Pagination<PostPreviewResponse>> {
     const { items, meta } = await paginate(
       this.postRepository,
       {
@@ -45,7 +45,7 @@ export class PostService {
     );
 
     return {
-      items: items.map((item) => new PostProfileResponse(item)),
+      items: items.map((item) => new PostPreviewResponse({ ...item })),
       meta,
     };
   }

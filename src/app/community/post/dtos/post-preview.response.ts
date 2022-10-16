@@ -1,9 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+import { postPreviewType } from '@app/community/post/post.command';
 import { PostProperties } from '@domain/community/post';
 
-export class PostProfileResponse
-  implements Omit<PostProperties, 'author' | 'deletedAt'>
+export class PostPreviewResponse
+  implements
+    Omit<
+      PostProperties,
+      'author' | 'deletedAt' | 'content' | 'images' | 'updatedAt'
+    >
 {
   @ApiProperty()
   id!: string;
@@ -11,14 +16,8 @@ export class PostProfileResponse
   @ApiProperty({ description: '게시글 제목' })
   title!: string;
 
-  @ApiProperty({ description: '게시글 내용' })
-  content!: string;
-
   @ApiProperty({ description: '게시글 작성자 닉네임' })
   author!: string;
-
-  @ApiProperty({ description: '게시글 이미지' })
-  images!: string[];
 
   @ApiProperty({ description: '게시글 좋아요 수' })
   likesCount!: number;
@@ -32,9 +31,7 @@ export class PostProfileResponse
   @ApiProperty({ description: '게시글 작성 일시' })
   createdAt!: Date;
 
-  @ApiProperty({ description: '게시글 수정 일시' })
-  updatedAt!: Date;
-  constructor(data: Omit<PostProperties, 'content'>) {
+  constructor(data: postPreviewType) {
     Object.assign(this, data);
     this.author = data.author.nickname;
     this.hasImages = data.images.length > 0;

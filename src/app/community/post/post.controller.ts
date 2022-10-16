@@ -27,6 +27,7 @@ import { CheckPolicies } from '@app/auth/authorization/policy.decorator';
 import { PoliciesGuard } from '@app/auth/authorization/policy.guard';
 import { Action } from '@app/auth/authorization/types';
 import { PostCreateRequest } from '@app/community/post/dtos/post-create.request';
+import { PostPreviewResponse } from '@app/community/post/dtos/post-preview.response';
 import { PostProfileResponse } from '@app/community/post/dtos/post-profile.response';
 import { PostUpdateRequest } from '@app/community/post/dtos/post-update.request';
 import { PostService } from '@app/community/post/post.service';
@@ -44,12 +45,12 @@ export class PostController {
 
   @Get()
   @ApiOperation({ summary: '게시글 목록을 조회합니다' })
-  @ApiOkResponse({ type: [PostProfileResponse] })
+  @ApiOkResponse({ type: [PostPreviewResponse] })
   async getPostsByBoardId(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Param('boardId', ParseUUIDPipe) boardId: string,
-  ): Promise<Pagination<PostProfileResponse>> {
+  ): Promise<Pagination<PostPreviewResponse>> {
     return this.postService.getPostsByBoardId({ page, limit, boardId });
   }
 
