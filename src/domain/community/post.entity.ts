@@ -36,6 +36,12 @@ export class Post implements PostProperties {
   @OneToMany(() => Comment, ({ post }) => post)
   comments!: Comment[];
 
+  likesCount!: number;
+
+  commentsCount!: number;
+
+  images!: string[];
+
   @CreateDateColumn()
   createdAt!: Date;
 

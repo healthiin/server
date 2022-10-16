@@ -49,7 +49,7 @@ export class PostController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Param('boardId', ParseUUIDPipe) boardId: string,
-  ): Promise<Pagination<PostProfileResponse>> {
+  ): Promise<Pagination<PostPreviewResponse>> {
     return this.postService.getPostsByBoardId({ page, limit, boardId });
   }
 

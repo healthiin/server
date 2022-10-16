@@ -5,6 +5,9 @@ export type PostProperties = {
   title: string;
   content: string;
   author: User;
+  likesCount: number;
+  commentsCount: number;
+  images: string[];
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

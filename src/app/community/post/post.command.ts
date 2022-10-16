@@ -19,3 +19,8 @@ export type PostCreateCommand = UserInfo &
 export type PostUpdateCommand = PostQuery & Partial<PostCreateCommand>;
 
 export type PostDeleteCommand = PostQuery;
+
+export type postPreviewType = Omit<
+  PostProperties,
+  'content' | 'updatedAt' | 'deletedAt'
+>;
