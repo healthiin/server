@@ -7,7 +7,7 @@ export class PostPreviewResponse
   implements
     Omit<
       PostProperties,
-      'author' | 'deletedAt' | 'content' | 'images' | 'updatedAt'
+      'author' | 'deletedAt' | 'content' | 'images' | 'updatedAt' | 'board'
     >
 {
   @ApiProperty()

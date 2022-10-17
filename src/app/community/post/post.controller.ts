@@ -77,6 +77,7 @@ export class PostController {
       userId: user.id,
       boardId,
       ...data,
+      images: ['test1', 'test2'] || [],
     });
     return new PostProfileResponse(post);
   }

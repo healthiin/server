@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 import {
   CommentCreateCommand,
+  CommentCreateReplyCommand,
   CommentDeleteCommand,
   CommentListQuery,
   CommentQuery,
@@ -81,6 +82,25 @@ export class CommentService {
       ...data,
       post: { id: postId },
       author: { id: data.userId },
+    });
+  }
+
+  async createReplyComment(data: CommentCreateReplyCommand): Promise<Comment> {
+    const { id: postId } = await this.postService.getPostById({
+      postId: data.postId,
+      boardId: data.boardId,
+    });
+
+    const { id: replyId } = await this.getCommentById({
+      commentId: data.replyId,
+      postId: data.postId,
+      boardId: data.boardId,
+    });
+
+    return this.commentRepository.save({
+      ...data,
+      post: { id: postId },
+      replyTo: { id: replyId },
     });
   }
 

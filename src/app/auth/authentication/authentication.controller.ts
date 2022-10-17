@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Req,
@@ -30,6 +32,15 @@ export class AuthenticationController {
     @Res({ passthrough: true }) res,
   ): Promise<TokenResponse> {
     return this.authenticationService.login(data, res);
+  }
+
+  @Post('login/:userId')
+  @ApiOperation({ summary: '액세스 토큰을 발급합니다.' })
+  async loginByUserId(
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Res({ passthrough: true }) res,
+  ): Promise<TokenResponse> {
+    return this.authenticationService.loginByUserId(userId, res);
   }
 
   @Patch('refresh')

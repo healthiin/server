@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 
 import { Comment } from '@domain/community/comment.entity';
+import { PostLike } from '@domain/community/post-like.entity';
 import { Post } from '@domain/community/post.entity';
 import { GymNotice } from '@domain/gym/entities/gym-notice.entity';
 import { GymUser } from '@domain/gym/entities/gym-user.entity';
@@ -67,4 +68,7 @@ export class User {
 
   @OneToMany(() => Meal, ({ user }) => user)
   meals!: Meal[];
+
+  @OneToMany(() => PostLike, ({ user }) => user)
+  postLikes!: PostLike[];
 }

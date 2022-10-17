@@ -12,6 +12,8 @@ import {
   PostQuery,
   PostUpdateCommand,
 } from '@app/community/post/post.command';
+import { UserService } from '@app/user/user.service';
+import { PostImage } from '@domain/community/post-image.entity';
 import { Post } from '@domain/community/post.entity';
 import { PostNotFoundException } from '@domain/errors/community.errors';
 import { Pagination } from '@infrastructure/types/pagination.types';
@@ -21,11 +23,14 @@ export class PostService {
   constructor(
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
+    @InjectRepository(PostImage)
+    private readonly postImageRepository: Repository<PostImage>,
     private readonly boardService: BoardService,
+    private readonly userService: UserService,
   ) {}
 
   /**
-   * 게시글 목록읋 조회합니다.
+   * 게시글 목록을 조회합니다.
    */
   async getPostsByBoardId(
     data: PostListQuery,
@@ -74,12 +79,22 @@ export class PostService {
    */
   async createPost(data: PostCreateCommand): Promise<Post> {
     const board = await this.boardService.getBoardById(data.boardId);
+    const user = await this.userService.findById(data.userId);
+    const images = await this.postImageRepository.save(
+      data.images.map((image) =>
+        this.postImageRepository.create({ url: image }),
+      ),
+    );
 
-    return this.postRepository.save({
-      ...data,
+    const test = this.postRepository.save({
+      title: data.title,
+      content: data.content,
       board: { id: board.id },
-      author: { id: data.userId },
+      author: { id: user.id },
+      images,
     });
+    console.log(await test);
+    return test;
   }
 
   /**
@@ -91,10 +106,17 @@ export class PostService {
       postId: data.postId,
       boardId,
     });
+    p;
+    const images = await this.postImageRepository.save(
+      data.images.map((image) =>
+        this.postImageRepository.create({ url: image }),
+      ),
+    );
 
     return this.postRepository.save({
       ...post,
       ...data,
+      images,
     });
   }
 
