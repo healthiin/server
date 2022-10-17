@@ -72,6 +72,27 @@ export class CommentController {
     return new CommentProfileResponse(comment);
   }
 
+  @Post('/:replyId')
+  @ApiOperation({ summary: '대댓글을 작성합니다' })
+  @ApiCreatedResponse({ type: CommentProfileResponse })
+  async createReplyComment(
+    @Req() { user }: Request,
+    @Param('boardId', ParseUUIDPipe) boardId: string,
+    @Param('postId', ParseUUIDPipe) postId: string,
+    @Param('replyId', ParseUUIDPipe) replyId: string,
+    @Body() data: CommentCreateRequest,
+  ): Promise<CommentProfileResponse> {
+    const comment = await this.commentService.createReplyComment({
+      boardId,
+      postId,
+      replyId,
+      userId: user.id,
+      ...data,
+    });
+
+    return new CommentProfileResponse(comment);
+  }
+
   @Patch(':commentId')
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability) => ability.can(Action.Update, Comment))

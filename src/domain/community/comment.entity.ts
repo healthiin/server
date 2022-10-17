@@ -29,6 +29,9 @@ export class Comment implements CommentProperties {
   @JoinColumn({ name: 'author_id' })
   author!: User;
 
+  @ManyToOne(() => Comment, ({ replyTo }) => replyTo)
+  replyTo!: Comment;
+
   @CreateDateColumn()
   createdAt!: Date;
 
