@@ -77,7 +77,7 @@ export class PostController {
       userId: user.id,
       boardId,
       ...data,
-      images: ['test1', 'test2'] || [],
+      images: ['test1', 'test2'],
     });
     return new PostProfileResponse(post);
   }
@@ -89,6 +89,7 @@ export class PostController {
   @ApiOkResponse({ type: PostProfileResponse })
   @ApiNotFoundResponse({ description: COMMUNITY_ERRORS.POST_NOT_FOUND })
   async editPost(
+    @Req() { user }: Request,
     @Param('boardId', ParseUUIDPipe) boardId: string,
     @Param('postId', ParseUUIDPipe) postId: string,
     @Body() data: PostUpdateRequest,
@@ -96,7 +97,9 @@ export class PostController {
     const post = await this.postService.updatePost({
       boardId,
       postId,
+      userId: user.id,
       ...data,
+      images: ['updated1', 'updated2'],
     });
     return new PostProfileResponse(post);
   }

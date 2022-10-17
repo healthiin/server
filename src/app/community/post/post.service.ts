@@ -64,7 +64,7 @@ export class PostService {
         id: data.postId,
         board: { id: data.boardId },
       },
-      relations: ['author'],
+      relations: ['author', 'images', 'board'],
     });
 
     if (!post) {
@@ -86,15 +86,13 @@ export class PostService {
       ),
     );
 
-    const test = this.postRepository.save({
+    return this.postRepository.save({
       title: data.title,
       content: data.content,
       board: { id: board.id },
       author: { id: user.id },
       images,
     });
-    console.log(await test);
-    return test;
   }
 
   /**
@@ -107,7 +105,13 @@ export class PostService {
       boardId,
     });
 
-    const images = await this.postImageRepository.save(
+    const user = await this.userService.findById(data.userId);
+
+    await this.postImageRepository.delete({
+      post: { id: post.id },
+    });
+
+    const newImages = await this.postImageRepository.save(
       data.images.map((image) =>
         this.postImageRepository.create({ url: image }),
       ),
@@ -115,8 +119,11 @@ export class PostService {
 
     return this.postRepository.save({
       ...post,
-      ...data,
-      images,
+      title: data.title,
+      content: data.content,
+      board: { id: boardId },
+      author: { id: user.id },
+      images: newImages,
     });
   }
 

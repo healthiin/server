@@ -32,7 +32,6 @@ export class Post implements PostProperties {
   board!: Board;
 
   @ManyToOne(() => User, ({ posts }) => posts)
-  @JoinColumn({ name: 'author_id' })
   author!: User;
 
   @OneToMany(() => Comment, ({ post }) => post, { lazy: true })
