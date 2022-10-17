@@ -44,7 +44,6 @@ export class PostProfileResponse
     this.content = data.content;
     this.author = data.author.nickname;
     this.images = data.images.map((image: PostImage) => image.url);
-    this.author = data.author.nickname;
     this.boardId = data.board.id;
   }
 }
