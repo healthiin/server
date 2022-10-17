@@ -106,7 +106,7 @@ export class PostService {
       postId: data.postId,
       boardId,
     });
-    p;
+
     const images = await this.postImageRepository.save(
       data.images.map((image) =>
         this.postImageRepository.create({ url: image }),
