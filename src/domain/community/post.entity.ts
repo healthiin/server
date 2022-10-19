@@ -39,8 +39,10 @@ export class Post implements PostProperties {
   @OneToMany(() => PostLike, ({ post }) => post, { lazy: true })
   likes: PostLike[];
 
+  @Column({ type: 'int', default: 0 })
   likesCount!: number;
 
+  @Column({ type: 'int', default: 0 })
   commentsCount!: number;
 
   @OneToMany(() => PostImage, ({ post }) => post)
