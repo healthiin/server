@@ -14,6 +14,7 @@ export const tags: SwaggerTag[] = [
   { name: '[메뉴얼] 루틴', description: '루틴 관련 기능' },
   { name: '[메뉴얼] 메뉴얼', description: '메뉴얼 관련 기능' },
   { name: '[메뉴얼] 루틴 메뉴얼', description: '루틴 메뉴얼 관련 기능' },
+  { name: '[루틴] 운동 기록', description: '운동 기록 관련 기능' },
   // 기록 태그
   { name: '[기록] 식단', description: '식단 기록 관련 기능' },
 ];

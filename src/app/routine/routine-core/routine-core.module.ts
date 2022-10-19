@@ -20,5 +20,6 @@ import { Routine } from '@domain/routine/routine.entity';
   ],
   controllers: [RoutineCoreController],
   providers: [RoutineCoreService],
+  exports: [RoutineCoreService],
 })
 export class RoutineCoreModule {}
