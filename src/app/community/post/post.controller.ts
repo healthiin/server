@@ -115,4 +115,18 @@ export class PostController {
   ): Promise<boolean> {
     return this.postService.deletePost({ boardId, postId });
   }
+
+  @Post(':postId/like')
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability) => ability.can(Action.Update, PostEntity))
+  @ApiOperation({ summary: '게시글을 좋아요합니다' })
+  @ApiOkResponse({ type: Boolean })
+  @ApiNotFoundResponse({ description: COMMUNITY_ERRORS.POST_NOT_FOUND })
+  async likePost(
+    @Req() { user }: Request,
+    @Param('boardId', ParseUUIDPipe) boardId: string,
+    @Param('postId', ParseUUIDPipe) postId: string,
+  ): Promise<boolean> {
+    return this.postService.hitLike({ boardId, postId, userId: user.id });
+  }
 }
