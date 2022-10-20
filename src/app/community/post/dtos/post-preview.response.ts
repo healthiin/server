@@ -1,11 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+import { postPreviewType } from '@app/community/post/post.command';
 import { PostProperties } from '@domain/community/post';
-import { PostImage } from '@domain/community/post-image.entity';
 
-export class PostProfileResponse
+export class PostPreviewResponse
   implements
-    Omit<PostProperties, 'author' | 'deletedAt' | 'board' | 'images' | 'views'>
+    Omit<
+      PostProperties,
+      'author' | 'deletedAt' | 'content' | 'images' | 'updatedAt' | 'board'
+    >
 {
   @ApiProperty()
   id!: string;
@@ -13,14 +16,8 @@ export class PostProfileResponse
   @ApiProperty({ description: '게시글 제목' })
   title!: string;
 
-  @ApiProperty({ description: '게시글 내용' })
-  content!: string;
-
   @ApiProperty({ description: '게시글 작성자 닉네임' })
   author!: string;
-
-  @ApiProperty({ description: '게시글 이미지' })
-  images!: PostImage[] | null;
 
   @ApiProperty({ description: '게시글 좋아요 수' })
   likesCount!: number;
@@ -28,8 +25,8 @@ export class PostProfileResponse
   @ApiProperty({ description: '게시글 댓글 수' })
   commentsCount!: number;
 
-  @ApiProperty({ description: '게시판 아이디' })
-  boardId!: string;
+  @ApiProperty({ description: '게시글 조회수' })
+  views!: number;
 
   @ApiProperty({ description: '이미지 존재 여부' })
   hasImages!: boolean;
@@ -37,14 +34,11 @@ export class PostProfileResponse
   @ApiProperty({ description: '게시글 작성 일시' })
   createdAt!: Date;
 
-  @ApiProperty({ description: '게시글 수정 일시' })
-  updatedAt!: Date;
-  constructor(data: PostProperties) {
+  constructor(data: postPreviewType) {
     this.id = data.id;
     this.title = data.title;
-    this.content = data.content;
+    this.views = data.views;
     this.author = data.author.nickname;
-    this.images = data.images;
-    this.boardId = data.board.id;
+    this.hasImages = data.images.length > 0;
   }
 }

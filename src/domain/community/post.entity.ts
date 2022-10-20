@@ -3,7 +3,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -13,6 +12,8 @@ import {
 import { Board } from '@domain/community/board.entity';
 import { Comment } from '@domain/community/comment.entity';
 import { PostProperties } from '@domain/community/post';
+import { PostImage } from '@domain/community/post-image.entity';
+import { PostLike } from '@domain/community/post-like.entity';
 import { User } from '@domain/user/user.entity';
 
 @Entity('posts')
@@ -30,11 +31,25 @@ export class Post implements PostProperties {
   board!: Board;
 
   @ManyToOne(() => User, ({ posts }) => posts)
-  @JoinColumn({ name: 'author_id' })
   author!: User;
 
-  @OneToMany(() => Comment, ({ post }) => post)
+  @OneToMany(() => Comment, ({ post }) => post, { lazy: true })
   comments!: Comment[];
+
+  @OneToMany(() => PostLike, ({ post }) => post, { lazy: true })
+  likes: PostLike[];
+
+  @Column({ type: 'int', default: 0 })
+  views!: number;
+
+  @Column({ type: 'int', default: 0 })
+  likesCount!: number;
+
+  @Column({ type: 'int', default: 0 })
+  commentsCount!: number;
+
+  @OneToMany(() => PostImage, ({ post }) => post)
+  images!: PostImage[] | null;
 
   @CreateDateColumn()
   createdAt!: Date;

@@ -1,20 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { paginate } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 
 import {
   CommentCreateCommand,
+  CommentCreateReplyCommand,
   CommentDeleteCommand,
-  CommentListQuery,
   CommentQuery,
   CommentUpdateCommand,
 } from '@app/community/comment/comment.command';
 import { CommentProfileResponse } from '@app/community/comment/dtos/comment-profile.response';
 import { PostService } from '@app/community/post/post.service';
+import { UserService } from '@app/user/user.service';
 import { Comment } from '@domain/community/comment.entity';
 import { CommentNotFoundException } from '@domain/errors/community.errors';
-import { Pagination } from '@infrastructure/types/pagination.types';
 
 @Injectable()
 export class CommentService {
@@ -22,32 +21,34 @@ export class CommentService {
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
     private readonly postService: PostService,
+    private readonly userService: UserService,
   ) {}
 
   /**
    * 게시글의 댓글 목록을 조회합니다.
    */
-  async getCommentsByPostId(
-    data: CommentListQuery,
-  ): Promise<Pagination<CommentProfileResponse>> {
-    const { items, meta } = await paginate(
-      this.commentRepository,
-      {
-        page: data.page,
-        limit: data.limit,
-      },
-      {
-        where: {
-          post: { id: data.postId },
-        },
-        relations: ['author'],
-      },
-    );
+  async getCommentsByPostId(data: {
+    boardId: string;
+    postId: string;
+  }): Promise<CommentProfileResponse[]> {
+    const post = await this.postService.getPostById({
+      boardId: data.boardId,
+      postId: data.postId,
+    });
 
-    return {
-      items: items.map((item) => new CommentProfileResponse(item)),
-      meta,
-    };
+    const comments = await this.commentRepository.find({
+      where: {
+        post: { id: post.id },
+      },
+      relations: ['author', 'post', 'replyTo'],
+    });
+
+    return comments.map(
+      (comment) =>
+        new CommentProfileResponse({
+          ...comment,
+        }),
+    );
   }
 
   /**
@@ -81,6 +82,27 @@ export class CommentService {
       ...data,
       post: { id: postId },
       author: { id: data.userId },
+    });
+  }
+
+  async createReplyComment(data: CommentCreateReplyCommand): Promise<Comment> {
+    const { id: userId } = await this.userService.findById(data.userId);
+    const { id: postId } = await this.postService.getPostById({
+      postId: data.postId,
+      boardId: data.boardId,
+    });
+
+    const { id: replyId } = await this.getCommentById({
+      commentId: data.replyId,
+      postId: data.postId,
+      boardId: data.boardId,
+    });
+
+    return this.commentRepository.save({
+      ...data,
+      post: { id: postId },
+      replyTo: { id: replyId },
+      author: { id: userId },
     });
   }
 

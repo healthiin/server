@@ -27,6 +27,7 @@ import { CheckPolicies } from '@app/auth/authorization/policy.decorator';
 import { PoliciesGuard } from '@app/auth/authorization/policy.guard';
 import { Action } from '@app/auth/authorization/types';
 import { PostCreateRequest } from '@app/community/post/dtos/post-create.request';
+import { PostPreviewResponse } from '@app/community/post/dtos/post-preview.response';
 import { PostProfileResponse } from '@app/community/post/dtos/post-profile.response';
 import { PostUpdateRequest } from '@app/community/post/dtos/post-update.request';
 import { PostService } from '@app/community/post/post.service';
@@ -43,13 +44,13 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Get()
-  @ApiOperation({ summary: '특정 게시판의 게시글 목록을 조회합니다' })
-  @ApiOkResponse({ type: [PostProfileResponse] })
+  @ApiOperation({ summary: '게시글 목록을 조회합니다' })
+  @ApiOkResponse({ type: [PostPreviewResponse] })
   async getPostsByBoardId(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Param('boardId', ParseUUIDPipe) boardId: string,
-  ): Promise<Pagination<PostProfileResponse>> {
+  ): Promise<Pagination<PostPreviewResponse>> {
     return this.postService.getPostsByBoardId({ page, limit, boardId });
   }
 
@@ -76,6 +77,7 @@ export class PostController {
       userId: user.id,
       boardId,
       ...data,
+      images: ['test1', 'test2'],
     });
     return new PostProfileResponse(post);
   }
@@ -87,6 +89,7 @@ export class PostController {
   @ApiOkResponse({ type: PostProfileResponse })
   @ApiNotFoundResponse({ description: COMMUNITY_ERRORS.POST_NOT_FOUND })
   async editPost(
+    @Req() { user }: Request,
     @Param('boardId', ParseUUIDPipe) boardId: string,
     @Param('postId', ParseUUIDPipe) postId: string,
     @Body() data: PostUpdateRequest,
@@ -94,7 +97,9 @@ export class PostController {
     const post = await this.postService.updatePost({
       boardId,
       postId,
+      userId: user.id,
       ...data,
+      images: ['updated1', 'updated2'],
     });
     return new PostProfileResponse(post);
   }
@@ -110,5 +115,19 @@ export class PostController {
     @Param('postId', ParseUUIDPipe) postId: string,
   ): Promise<boolean> {
     return this.postService.deletePost({ boardId, postId });
+  }
+
+  @Post(':postId/like')
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability) => ability.can(Action.Update, PostEntity))
+  @ApiOperation({ summary: '게시글을 좋아요합니다' })
+  @ApiOkResponse({ type: Boolean })
+  @ApiNotFoundResponse({ description: COMMUNITY_ERRORS.POST_NOT_FOUND })
+  async likePost(
+    @Req() { user }: Request,
+    @Param('boardId', ParseUUIDPipe) boardId: string,
+    @Param('postId', ParseUUIDPipe) postId: string,
+  ): Promise<boolean> {
+    return this.postService.hitLike({ boardId, postId, userId: user.id });
   }
 }

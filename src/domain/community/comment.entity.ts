@@ -3,7 +3,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -22,12 +21,13 @@ export class Comment implements CommentProperties {
   content!: string;
 
   @ManyToOne(() => Post, ({ comments }) => comments)
-  @JoinColumn({ name: 'post_id' })
   post!: Post;
 
   @ManyToOne(() => User, ({ comments }) => comments)
-  @JoinColumn({ name: 'author_id' })
   author!: User;
+
+  @ManyToOne(() => Comment, ({ replyTo }) => replyTo)
+  replyTo!: Comment | null;
 
   @CreateDateColumn()
   createdAt!: Date;

@@ -5,6 +5,7 @@ import { AuthorizationModule } from '@app/auth/authorization/authorization.modul
 import { CommentController } from '@app/community/comment/comment.controller';
 import { CommentService } from '@app/community/comment/comment.service';
 import { PostModule } from '@app/community/post/post.module';
+import { UserModule } from '@app/user/user.module';
 import { Comment } from '@domain/community/comment.entity';
 
 @Module({
@@ -12,6 +13,7 @@ import { Comment } from '@domain/community/comment.entity';
     TypeOrmModule.forFeature([Comment]),
     AuthorizationModule,
     PostModule,
+    UserModule,
   ],
   controllers: [CommentController],
   providers: [CommentService],
