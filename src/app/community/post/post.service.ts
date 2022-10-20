@@ -49,7 +49,7 @@ export class PostService {
         where: {
           board: { id: data.boardId },
         },
-        relations: ['author'],
+        relations: ['author', 'images', 'board'],
       },
     );
 
@@ -74,6 +74,7 @@ export class PostService {
     if (!post) {
       throw new PostNotFoundException();
     }
+    await this.postRepository.increment({ id: post.id }, 'likesCount', 1);
 
     return post;
   }

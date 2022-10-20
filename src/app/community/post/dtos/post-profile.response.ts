@@ -4,7 +4,8 @@ import { PostProperties } from '@domain/community/post';
 import { PostImage } from '@domain/community/post-image.entity';
 
 export class PostProfileResponse
-  implements Omit<PostProperties, 'author' | 'deletedAt' | 'board' | 'images'>
+  implements
+    Omit<PostProperties, 'author' | 'deletedAt' | 'board' | 'images' | 'views'>
 {
   @ApiProperty()
   id!: string;
@@ -19,7 +20,7 @@ export class PostProfileResponse
   author!: string;
 
   @ApiProperty({ description: '게시글 이미지' })
-  images!: string[] | null;
+  images!: PostImage[] | null;
 
   @ApiProperty({ description: '게시글 좋아요 수' })
   likesCount!: number;
@@ -43,7 +44,7 @@ export class PostProfileResponse
     this.title = data.title;
     this.content = data.content;
     this.author = data.author.nickname;
-    this.images = data.images.map((image: PostImage) => image.url);
+    this.images = data.images;
     this.boardId = data.board.id;
   }
 }

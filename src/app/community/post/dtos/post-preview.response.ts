@@ -25,6 +25,9 @@ export class PostPreviewResponse
   @ApiProperty({ description: '게시글 댓글 수' })
   commentsCount!: number;
 
+  @ApiProperty({ description: '게시글 조회수' })
+  views!: number;
+
   @ApiProperty({ description: '이미지 존재 여부' })
   hasImages!: boolean;
 
@@ -32,7 +35,9 @@ export class PostPreviewResponse
   createdAt!: Date;
 
   constructor(data: postPreviewType) {
-    Object.assign(this, data);
+    this.id = data.id;
+    this.title = data.title;
+    this.views = data.views;
     this.author = data.author.nickname;
     this.hasImages = data.images.length > 0;
   }
