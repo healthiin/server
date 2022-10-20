@@ -61,6 +61,17 @@ export class RoutineCoreController {
     return this.routineService.getRoutines({ page, limit });
   }
 
+  @Get('/my-routines')
+  @ApiOperation({ summary: '나의 루틴 목록을 조회합니다' })
+  @ApiOkResponse({ type: RoutineProfileResponse })
+  async getMyRoutines(
+    @Req() { user }: Request,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
+  ): Promise<Pagination<RoutineProfileResponse>> {
+    return this.routineService.getMyRoutines({ userId: user.id, page, limit });
+  }
+
   @Get('/type/:manualType')
   @ApiOperation({ summary: '타입을 통해 루틴 목록을 조회합니다' })
   @ApiOkResponse({ type: RoutineProfileResponse })
