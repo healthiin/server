@@ -9,6 +9,7 @@ export type RoutineListQuery = {
   page: number;
   limit: number;
 };
+export type UserRoutineListQuery = RoutineListQuery & UserInfo;
 
 export type RoutineCreateCommand = UserInfo &
   dayInfo &

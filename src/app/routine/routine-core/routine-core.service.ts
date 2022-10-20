@@ -9,6 +9,7 @@ import {
   RoutineDeleteCommand,
   RoutineListQuery,
   RoutineUpdateCommand,
+  UserRoutineListQuery,
 } from '@app/routine/routine-core/routine.command';
 import { RoutineManualService } from '@app/routine/routine-manual/routine-manual.service';
 import { UserService } from '@app/user/user.service';
@@ -42,6 +43,32 @@ export class RoutineCoreService {
     });
     if (!routine) throw new RoutineNotFoundException();
     return routine;
+  }
+
+  async getMyRoutines(
+    data: UserRoutineListQuery,
+  ): Promise<Pagination<RoutineProfileResponse>> {
+    const { items, meta } = await paginate(
+      this.routineRepository,
+      {
+        page: data.page,
+        limit: data.limit,
+      },
+      {
+        where: { owner: { id: data.userId } },
+      },
+    );
+
+    return {
+      items: items.map(
+        (routine) =>
+          new RoutineProfileResponse({
+            ...routine,
+            days: this.getDays(routine.day),
+          }),
+      ),
+      meta,
+    };
   }
 
   async getRoutines(
