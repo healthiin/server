@@ -4,11 +4,13 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { Manual } from '@domain/equipment/equipment-manual.entity';
+import { RoutineLog } from '@domain/routine/routine-log.entity';
 import { RoutineManualProperties } from '@domain/routine/routine-manual';
 import { Routine } from '@domain/routine/routine.entity';
 
@@ -49,4 +51,7 @@ export class RoutineManual implements RoutineManualProperties {
 
   @DeleteDateColumn()
   deletedAt!: Date | null;
+
+  @OneToMany(() => RoutineLog, ({ manual }) => manual)
+  logs!: RoutineLog[];
 }

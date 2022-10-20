@@ -7,6 +7,7 @@ import { Post } from '@domain/community/post.entity';
 import { GymNotice } from '@domain/gym/entities/gym-notice.entity';
 import { GymUser } from '@domain/gym/entities/gym-user.entity';
 import { Gym } from '@domain/gym/entities/gym.entity';
+import { RoutineLog } from '@domain/routine/routine-log.entity';
 import { Routine } from '@domain/routine/routine.entity';
 import { User } from '@domain/user/user.entity';
 
@@ -19,6 +20,7 @@ const domains = [
   Post,
   Comment,
   Routine,
+  RoutineLog,
 ] as const;
 
 export enum Action {

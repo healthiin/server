@@ -22,7 +22,8 @@
       "@src/*": ["server/src/*"],
       "@app/*": ["src/app/*"],
       "@domain/*": ["src/domain/*"],
-      "@infrastructure/*": ["src/infrastructure/*"],
+      "@infrastructure/*": ["src/infrastructure/*"]
     },
+    "allowJs": true
   }
 }

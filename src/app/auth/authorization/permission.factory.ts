@@ -12,6 +12,7 @@ import { Board } from '@domain/community/board.entity';
 import { Comment } from '@domain/community/comment.entity';
 import { Post } from '@domain/community/post.entity';
 import { Gym } from '@domain/gym/entities/gym.entity';
+import { RoutineLog } from '@domain/routine/routine-log.entity';
 import { User } from '@domain/user/user.entity';
 
 export type AppAbility = Ability<[Action, Subjects]>;
@@ -64,6 +65,11 @@ export class PermissionFactory {
     this.builder.can(Action.Create, Comment, 'all');
     this.builder.can([Action.Update, Action.Delete], Comment, {
       author: { id: user.id },
+    });
+
+    this.builder.can(Action.Create, RoutineLog, 'all');
+    this.builder.can([Action.Read, Action.Update, Action.Delete], RoutineLog, {
+      user: { id: user.id },
     });
 
     return this.builder;
