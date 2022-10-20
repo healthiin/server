@@ -1,15 +1,12 @@
 import {
   Body,
   Controller,
-  DefaultValuePipe,
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   ParseUUIDPipe,
   Patch,
   Post,
-  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -32,7 +29,6 @@ import { CommentProfileResponse } from '@app/community/comment/dtos/comment-prof
 import { CommentUpdateRequest } from '@app/community/comment/dtos/comment-update.request';
 import { Comment } from '@domain/community/comment.entity';
 import { COMMUNITY_ERRORS } from '@domain/errors/community.errors';
-import { Pagination } from '@infrastructure/types/pagination.types';
 import { Request } from '@infrastructure/types/request.types';
 
 @Controller('boards/:boardId/posts/:postId/comments')
@@ -46,11 +42,10 @@ export class CommentController {
   @ApiOperation({ summary: '댓글 목록을 조회합니다' })
   @ApiOkResponse({ type: [CommentProfileResponse] })
   async getCommentsByPostId(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
+    @Param('boardId', ParseUUIDPipe) boardId: string,
     @Param('postId', ParseUUIDPipe) postId: string,
-  ): Promise<Pagination<CommentProfileResponse>> {
-    return this.commentService.getCommentsByPostId({ page, limit, postId });
+  ): Promise<CommentProfileResponse[]> {
+    return this.commentService.getCommentsByPostId({ boardId, postId });
   }
 
   @Post()

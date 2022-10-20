@@ -40,6 +40,9 @@ export class Post implements PostProperties {
   likes: PostLike[];
 
   @Column({ type: 'int', default: 0 })
+  views!: number;
+
+  @Column({ type: 'int', default: 0 })
   likesCount!: number;
 
   @Column({ type: 'int', default: 0 })

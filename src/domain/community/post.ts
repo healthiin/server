@@ -7,6 +7,7 @@ export type PostProperties = {
   title: string;
   content: string;
   author: User;
+  views: number;
   likesCount: number;
   commentsCount: number;
   images: PostImage[] | null;
