@@ -112,4 +112,20 @@ export class RoutineManualService {
 
     return routineManuals;
   }
+
+  // async getRoutineManualsByIds(ids: string[]): Promise<RoutineManual[]> {
+  //   const routineManuals = [];
+  //   ids.map((id) => {
+  //     const routineManual = this.routineManualRepository.find(
+  //       {where: {id}},
+  //         routine: { id },
+  //       },
+  //       relations: ['routine', 'manual'] ,
+  //     );
+  //     if (!routineManual) throw new RoutineManualNotFoundException();
+  //     routineManuals.push(routineManual);
+  //   });
+  //
+  //   return routineManuals;
+  // }
 }

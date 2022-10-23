@@ -40,105 +40,122 @@ export class RoutineCoreService {
     const routine = await this.routineRepository.findOne({
       where: { id },
       select,
+      relations: ['types', 'manuals', 'logs', 'author', 'owner'],
     });
+    console.log(routine);
     if (!routine) throw new RoutineNotFoundException();
     return routine;
   }
 
-  async getMyRoutines(
-    data: UserRoutineListQuery,
-  ): Promise<Pagination<RoutineProfileResponse>> {
-    const { items, meta } = await paginate(
-      this.routineRepository,
-      {
-        page: data.page,
-        limit: data.limit,
-      },
-      {
-        where: { owner: { id: data.userId } },
-      },
-    );
+  // async getMyRoutines(
+  //   data: UserRoutineListQuery,
+  // ): Promise<Pagination<RoutineProfileResponse>> {
+  //   const { items, meta } = await paginate(
+  //     this.routineRepository,
+  //     {
+  //       page: data.page,
+  //       limit: data.limit,
+  //     },
+  //     {
+  //       where: { owner: { id: data.userId } },
+  //     },
+  //   );
+  //
+  //   return {
+  //     items: items.map(
+  //       (routine) =>
+  //         new RoutineProfileResponse({
+  //           ...routine,
+  //           days: this.getDays(routine.day),
+  //         }),
+  //     ),
+  //     meta,
+  //   };
+  // }
 
-    return {
-      items: items.map(
-        (routine) =>
-          new RoutineProfileResponse({
-            ...routine,
-            days: this.getDays(routine.day),
-          }),
-      ),
-      meta,
-    };
-  }
+  // async getRoutines(
+  //   data: RoutineListQuery,
+  // ): Promise<Pagination<RoutineProfileResponse>> {
+  //   const { items, meta } = await paginate(
+  //     this.routineRepository,
+  //     {
+  //       page: data.page,
+  //       limit: data.limit,
+  //     },
+  //     {
+  //       where: { status: 'public' },
+  //     },
+  //   );
+  //
+  //   return {
+  //     items: items.map(
+  //       (routine) =>
+  //         new RoutineProfileResponse({
+  //           ...routine,
+  //           days: this.getDays(routine.day),
+  //         }),
+  //     ),
+  //     meta,
+  //   };
+  // }
 
-  async getRoutines(
-    data: RoutineListQuery,
-  ): Promise<Pagination<RoutineProfileResponse>> {
-    const { items, meta } = await paginate(
-      this.routineRepository,
-      {
-        page: data.page,
-        limit: data.limit,
-      },
-      {
-        where: { status: 'public' },
-      },
-    );
-
-    return {
-      items: items.map(
-        (routine) =>
-          new RoutineProfileResponse({
-            ...routine,
-            days: this.getDays(routine.day),
-          }),
-      ),
-      meta,
-    };
-  }
-
-  async getRoutinesByType(
-    data: RoutineListQuery,
-    type: ManualType,
-  ): Promise<Pagination<RoutineProfileResponse>> {
-    const repository = this.routineRepository
-      .createQueryBuilder('routine')
-      .leftJoinAndSelect('routine.types', 'types')
-      .where('types.type = :type', { type })
-      .andWhere('routine.status = :status', { status: 'public' });
-
-    const { items, meta } = await paginate(repository, {
-      page: data.page,
-      limit: data.limit,
-    });
-
-    return {
-      items: items.map(
-        (routine) =>
-          new RoutineProfileResponse({
-            ...routine,
-            days: this.getDays(routine.day),
-          }),
-      ),
-      meta,
-    };
-  }
+  // async getRoutinesByType(
+  //   data: RoutineListQuery,
+  //   type: ManualType,
+  // ): Promise<Pagination<RoutineProfileResponse>> {
+  //   const repository = this.routineRepository
+  //     .createQueryBuilder('routine')
+  //     .leftJoinAndSelect('routine.types', 'types')
+  //     .where('types.type = :type', { type })
+  //     .andWhere('routine.status = :status', { status: 'public' });
+  //
+  //   const { items, meta } = await paginate(repository, {
+  //     page: data.page,
+  //     limit: data.limit,
+  //   });
+  //
+  //   return {
+  //     items: items.map(
+  //       (routine) =>
+  //         new RoutineProfileResponse({
+  //           ...routine,
+  //           days: this.getDays(routine.day),
+  //         }),
+  //     ),
+  //     meta,
+  //   };
+  // }
 
   async createRoutine(data: RoutineCreateCommand): Promise<Routine> {
     const user = await this.userService.findById(data.userId);
     await this.validateManuals(data.routineManualIds);
-
+    const routineManuals = [];
+    data.routineManualIds.map(async (id) => {
+      const routineManual = await this.routineManualService.findById(id);
+      routineManuals.push({
+        ...routineManual,
+        ...routineManual.manual,
+        routineManualId: routineManual.id,
+        manualId: routineManual.manual.id,
+      });
+    });
     const days = await this.getBinaryDays(data.days);
-    console.log(days);
 
-    return this.routineRepository.save({
+    const routine = await this.routineRepository.save({
       author: user,
       owner: user,
       status: 'private',
       day: days,
       ...data,
     });
+    return { ...routine, routineManuals };
   }
+
+  // async copyRoutine(data: { userId; routineId }): Promise<Routine> {
+  //   const user = await this.userService.findById(data.userId);
+  //   const routine = await this.getRoutineById(data.routineId);
+  //   return routine;
+  // }
 
   async editRoutine(data: RoutineUpdateCommand): Promise<Routine> {
     const routine = await this.getRoutineById(data.routineId);

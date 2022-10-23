@@ -28,14 +28,12 @@ export class Routine implements RoutineProperties {
   description!: string | null;
 
   @ManyToOne(() => User, (routines) => routines)
-  @JoinColumn()
   author!: User;
 
   @Column()
   day!: number;
 
   @ManyToOne(() => User, ({ routines }) => routines)
-  @JoinColumn()
   owner!: User;
 
   @OneToMany(() => RoutineManual, ({ routine }) => routine)
