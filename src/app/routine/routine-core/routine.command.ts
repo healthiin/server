@@ -1,4 +1,6 @@
+import { ManualProperties } from '@domain/equipment/equipment-manual';
 import { RoutineProperties } from '@domain/routine/routine';
+import { RoutineManualProperties } from '@domain/routine/routine-manual';
 
 type RoutineInfo = { routineId: string };
 type routineManualInfos = { routineManualIds: string[] };
@@ -21,4 +23,16 @@ export type RoutineUpdateCommand = UserInfo &
   Partial<RoutineCreateCommand>;
 export type RoutineDeleteCommand = RoutineInfo;
 
-export type RoutineProfileProperties = RoutineProperties & { days: number[] };
+export type RoutineProfileProperties = Omit<
+  RoutineProperties,
+  'routineManuals'
+> & {
+  days: number[];
+  routineManuals: routineManualType[];
+};
+
+export type routineManualType = {
+  routineManualId: string;
+  manualId: string;
+} & Partial<RoutineManualProperties> &
+  Partial<ManualProperties>;

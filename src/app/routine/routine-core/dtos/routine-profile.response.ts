@@ -1,13 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { RoutineProperties } from '@domain/routine/routine';
-import { Routine } from '@domain/routine/routine.entity';
+import {
+  routineManualType,
+  RoutineProfileProperties,
+} from '@app/routine/routine-core/routine.command';
 
 export class RoutineProfileResponse
   implements
     Omit<
-      RoutineProperties,
-      'routineManuals' | 'author' | 'owner' | 'deletedAt' | 'day' | 'types'
+      RoutineProfileProperties,
+      'author' | 'owner' | 'types' | 'day' | 'logs' | 'deletedAt'
     >
 {
   @ApiProperty({ description: '루틴 id' })
@@ -19,20 +21,20 @@ export class RoutineProfileResponse
   @ApiProperty({ description: '루틴 설명' })
   description!: string;
 
-  @ApiProperty({ description: '루틴 작성자' })
+  @ApiProperty({ description: '루틴 작성자 닉네임' })
   author!: string;
 
-  @ApiProperty({ description: '루틴 소유자' })
+  @ApiProperty({ description: '루틴 소유자 닉네임' })
   owner!: string;
 
-  @ApiProperty({ description: '루틴 진행 날짜' })
+  @ApiProperty({ description: '루틴 진행 요일' })
   days!: number[];
 
-  @ApiProperty({ description: '루틴 상태' })
+  @ApiProperty({ description: '루틴 상태', default: 'public' })
   status!: 'public' | 'private';
 
-  @ApiProperty({ description: '루틴 메뉴얼 ID 어레이' })
-  manuals!: string[];
+  @ApiProperty({ description: '루틴 메뉴얼 어레이' })
+  routineManuals!: routineManualType[];
 
   @ApiProperty({ description: '루틴 타입 어레이' })
   types!: string[];
@@ -43,11 +45,12 @@ export class RoutineProfileResponse
   @ApiProperty({ description: '루틴 업데이트일' })
   updatedAt!: Date;
 
-  constructor(data: Routine & { days: number[] }) {
-    Object.assign(this, data);
+  constructor(data: RoutineProfileProperties) {
+    this.title = data.title;
+    this.description = data.description;
     this.author = data.author.nickname;
     this.owner = data.owner.nickname;
-    this.manuals = data.routineManuals.map((manual) => manual.id);
+    this.routineManuals = data.routineManuals;
     this.types = data.types.map((type) => type.type);
     this.days = data.days;
   }
