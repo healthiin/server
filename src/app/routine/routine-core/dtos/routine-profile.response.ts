@@ -34,7 +34,7 @@ export class RoutineProfileResponse
   status!: 'public' | 'private';
 
   @ApiProperty({ description: '루틴 메뉴얼 어레이' })
-  routineManuals!: routineManualType[];
+  routineManuals!: any[]; //routineManualType[];
 
   @ApiProperty({ description: '루틴 타입 어레이' })
   types!: string[];
@@ -51,7 +51,7 @@ export class RoutineProfileResponse
     this.author = data.author.nickname;
     this.owner = data.owner.nickname;
     this.routineManuals = data.routineManuals;
-    this.types = data.types.map((type) => type.type);
+    this.types = data.types;
     this.days = data.days;
   }
 }

@@ -8,12 +8,11 @@ import { RoutineManualModule } from '@app/routine/routine-manual/routine-manual.
 import { UserModule } from '@app/user/user.module';
 import { Manual } from '@domain/equipment/equipment-manual.entity';
 import { RoutineManual } from '@domain/routine/routine-manual.entity';
-import { RoutineType } from '@domain/routine/routine-type.entity';
 import { Routine } from '@domain/routine/routine.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Routine, Manual, RoutineType, RoutineManual]),
+    TypeOrmModule.forFeature([Routine, Manual, RoutineManual]),
     AuthorizationModule,
     UserModule,
     RoutineManualModule,

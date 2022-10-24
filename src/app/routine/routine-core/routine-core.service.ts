@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
 import { RoutineProfileResponse } from '@app/routine/routine-core/dtos/routine-profile.response';
+import { RoutinePreviewResponse } from '@app/routine/routine-core/dtos/routine.preview.response';
 import {
   RoutineCreateCommand,
   RoutineDeleteCommand,
@@ -14,10 +15,8 @@ import {
 import { RoutineManualService } from '@app/routine/routine-manual/routine-manual.service';
 import { UserService } from '@app/user/user.service';
 import { Manual } from '@domain/equipment/equipment-manual.entity';
-import { ManualType } from '@domain/equipment/manual-type';
 import { RoutineNotFoundException } from '@domain/errors/routine.errors';
 import { RoutineManual } from '@domain/routine/routine-manual.entity';
-import { RoutineType } from '@domain/routine/routine-type.entity';
 import { Routine } from '@domain/routine/routine.entity';
 import { Pagination } from '@infrastructure/types/pagination.types';
 
@@ -25,8 +24,8 @@ export class RoutineCoreService {
   constructor(
     @InjectRepository(Routine)
     private readonly routineRepository: Repository<Routine>,
-    @InjectRepository(RoutineType)
-    private readonly routineTypeRepository: Repository<RoutineType>,
+    // @InjectRepository(RoutineType)
+    // private readonly routineTypeRepository: Repository<RoutineType>,
     @InjectRepository(Manual)
     private readonly manualRepository: Repository<Manual>,
     private readonly userService: UserService,
@@ -47,84 +46,66 @@ export class RoutineCoreService {
     return routine;
   }
 
-  // async getMyRoutines(
-  //   data: UserRoutineListQuery,
-  // ): Promise<Pagination<RoutineProfileResponse>> {
-  //   const { items, meta } = await paginate(
-  //     this.routineRepository,
-  //     {
-  //       page: data.page,
-  //       limit: data.limit,
-  //     },
-  //     {
-  //       where: { owner: { id: data.userId } },
-  //     },
-  //   );
-  //
-  //   return {
-  //     items: items.map(
-  //       (routine) =>
-  //         new RoutineProfileResponse({
-  //           ...routine,
-  //           days: this.getDays(routine.day),
-  //         }),
-  //     ),
-  //     meta,
-  //   };
-  // }
+  async getMyRoutines(
+    data: UserRoutineListQuery,
+  ): Promise<Pagination<RoutineProfileResponse>> {
+    const { items, meta } = await paginate(
+      this.routineRepository,
+      {
+        page: data.page,
+        limit: data.limit,
+      },
+      {
+        where: { owner: { id: data.userId } },
+      },
+    );
 
-  // async getRoutines(
-  //   data: RoutineListQuery,
-  // ): Promise<Pagination<RoutineProfileResponse>> {
-  //   const { items, meta } = await paginate(
-  //     this.routineRepository,
-  //     {
-  //       page: data.page,
-  //       limit: data.limit,
-  //     },
-  //     {
-  //       where: { status: 'public' },
-  //     },
-  //   );
-  //
-  //   return {
-  //     items: items.map(
-  //       (routine) =>
-  //         new RoutineProfileResponse({
-  //           ...routine,
-  //           days: this.getDays(routine.day),
-  //         }),
-  //     ),
-  //     meta,
-  //   };
-  // }
+    return {
+      items: items.map(
+        (routine) =>
+          new RoutineProfileResponse({
+            ...routine,
+            days: this.getDays(routine.day),
+            types: routine.routineManuals.map(
+              (routineManual) => routineManual.manual.type,
+            ),
+          }),
+      ),
+      meta,
+    };
+  }
 
-  // async getRoutinesByType(
-  //   data: RoutineListQuery,
-  //   type: ManualType,
-  // ): Promise<Pagination<RoutineProfileResponse>> {
-  //   const repository = this.routineRepository
-  //     .createQueryBuilder('routine')
-  //     .leftJoinAndSelect('routine.types', 'types')
-  //     .where('types.type = :type', { type })
-  //     .andWhere('routine.status = :status', { status: 'public' });
-  //
-  //   const { items, meta } = await paginate(repository, {
-  //     page: data.page,
-  //     limit: data.limit,
-  //   });
-  //
-  //   return {
-  //     items: items.map(
-  //       (routine) =>
-  //         new RoutineProfileResponse({
-  //           ...routine,
-  //           days: this.getDays(routine.day),
-  //         }),
-  //     ),
-  //     meta,
-  //   };
-  // }
+  async getRoutines(
+    data: RoutineListQuery,
+  ): Promise<Pagination<RoutinePreviewResponse>> {
+    const { items, meta } = await paginate(
+      this.routineRepository,
+      {
+        page: data.page,
+        limit: data.limit,
+      },
+      {
+        where: { status: 'public' },
+        relations: ['routineManuals'],
+      },
+    );
+    console.log(items);
+
+    return {
+      items: items.map(
+        (routine) =>
+          new RoutinePreviewResponse({
+            id: routine.id,
+            title: routine.title,
+            days: this.getDays(routine.day),
+            types: routine.routineManuals.map(
+              (routineManual) => routineManual.manual.type,
+            ),
+          }),
+      ),
+      meta,
+    };
+  }
 
   async createRoutine(data: RoutineCreateCommand): Promise<Routine> {
     const user = await this.userService.findById(data.userId);
@@ -144,10 +125,11 @@ export class RoutineCoreService {
     const routine = await this.routineRepository.save({
       author: user,
       owner: user,
-      status: 'private',
+      status: 'public',
       day: days,
       ...data,
     });
+
     return { ...routine, routineManuals };
   }
 

@@ -27,6 +27,7 @@ import { Action } from '@app/auth/authorization/types';
 import { RoutineCreateRequest } from '@app/routine/routine-core/dtos/routine-create.request';
 import { RoutineProfileResponse } from '@app/routine/routine-core/dtos/routine-profile.response';
 import { RoutineUpdateRequest } from '@app/routine/routine-core/dtos/routine-update.request';
+import { RoutinePreviewResponse } from '@app/routine/routine-core/dtos/routine.preview.response';
 import { RoutineCoreService } from '@app/routine/routine-core/routine-core.service';
 import { ManualType } from '@domain/equipment/manual-type';
 import { Routine as RoutineEntity } from '@domain/routine/routine.entity';
@@ -52,15 +53,15 @@ export class RoutineCoreController {
   // }
 
   // @Get()
-  // @ApiOperation({ summary: '루틴 목록을 조회합니다' })
-  // @ApiOkResponse({ type: RoutineProfileResponse })
+  // @ApiOperation({ summary: '공개 루틴 목록을 조회합니다' })
+  // @ApiOkResponse({ type: RoutinePreviewResponse })
   // async getRoutines(
   //   @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
   //   @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
-  // ): Promise<Pagination<RoutineProfileResponse>> {
+  // ): Promise<Pagination<RoutinePreviewResponse>> {
   //   return this.routineService.getRoutines({ page, limit });
   // }
-
+  //
   // @Get('/my-routines')
   // @ApiOperation({ summary: '나의 루틴 목록을 조회합니다' })
   // @ApiOkResponse({ type: RoutineProfileResponse })
@@ -70,17 +71,6 @@ export class RoutineCoreController {
   //   @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
   // ): Promise<Pagination<RoutineProfileResponse>> {
   //   return this.routineService.getMyRoutines({ userId: user.id, page, limit });
-  // }
-
-  // @Get('/type/:manualType')
-  // @ApiOperation({ summary: '타입을 통해 루틴 목록을 조회합니다' })
-  // @ApiOkResponse({ type: RoutineProfileResponse })
-  // async getRoutinesByType(
-  //   @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-  //   @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
-  //   @Param('manualType') manualType: ManualType,
-  // ): Promise<Pagination<RoutineProfileResponse>> {
-  //   return this.routineService.getRoutinesByType({ page, limit }, manualType);
   // }
 
   @Post()
@@ -96,7 +86,15 @@ export class RoutineCoreController {
       ...data,
     });
     const days = this.routineService.getDays(routine.day);
-    return new RoutineProfileResponse({ ...routine, days });
+    const types = routine.routineManuals.map(
+      (routineManual) => routineManual.manual.type,
+    );
+
+    return new RoutineProfileResponse({
+      ...routine,
+      days,
+      types,
+    });
   }
 
   // @Post('/copy/:routineId')
@@ -145,3 +143,8 @@ export class RoutineCoreController {
   //   return this.routineService.deleteRoutine({ routineId });
   // }
 }
+
+// 'day',
+// 'userId',
+// 'routineManualIds',
+// 'deletedAt',

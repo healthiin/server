@@ -27,8 +27,9 @@ export type RoutineProfileProperties = Omit<
   RoutineProperties,
   'routineManuals'
 > & {
+  types: string[];
   days: number[];
-  routineManuals: routineManualType[];
+  routineManuals: any[]; //routineManualType[];
 };
 
 export type routineManualType = {
