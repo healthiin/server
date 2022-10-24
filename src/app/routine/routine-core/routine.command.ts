@@ -1,6 +1,4 @@
-import { ManualProperties } from '@domain/equipment/equipment-manual';
 import { RoutineProperties } from '@domain/routine/routine';
-import { RoutineManualProperties } from '@domain/routine/routine-manual';
 
 type RoutineInfo = { routineId: string };
 type routineManualInfos = { routineManualIds: string[] };

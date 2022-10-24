@@ -24,8 +24,6 @@ export class RoutineCoreService {
   constructor(
     @InjectRepository(Routine)
     private readonly routineRepository: Repository<Routine>,
-    // @InjectRepository(RoutineType)
-    // private readonly routineTypeRepository: Repository<RoutineType>,
     @InjectRepository(Manual)
     private readonly manualRepository: Repository<Manual>,
     private readonly userService: UserService,
@@ -39,9 +37,8 @@ export class RoutineCoreService {
     const routine = await this.routineRepository.findOne({
       where: { id },
       select,
-      relations: ['types', 'manuals', 'logs', 'author', 'owner'],
+      relations: ['manuals', 'logs', 'author', 'owner'],
     });
-    console.log(routine);
     if (!routine) throw new RoutineNotFoundException();
     return routine;
   }

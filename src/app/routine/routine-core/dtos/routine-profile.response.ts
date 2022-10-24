@@ -27,7 +27,7 @@ export class RoutineProfileResponse
   @ApiProperty({ description: '루틴 소유자 닉네임' })
   owner!: string;
 
-  @ApiProperty({ description: '루틴 진행 요일' })
+  @ApiProperty({ description: '루틴 진행 날짜' })
   days!: number[];
 
   @ApiProperty({ description: '루틴 상태', default: 'public' })

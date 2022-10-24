@@ -143,8 +143,3 @@ export class RoutineCoreController {
   //   return this.routineService.deleteRoutine({ routineId });
   // }
 }
-
-// 'day',
-// 'userId',
-// 'routineManualIds',
-// 'deletedAt',
