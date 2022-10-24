@@ -14,6 +14,7 @@ import {
   ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 
@@ -42,6 +43,18 @@ export class RoutineLogController {
     @Req() { user }: Request,
   ): Promise<RoutineLogProfileResponse[]> {
     const result = await this.routineLogService.getLogList(user.id);
+    return result.map((log) => new RoutineLogProfileResponse(log));
+  }
+
+  @Get(':date')
+  @CheckPolicies((ability) => ability.can(Action.Read, RoutineLog))
+  @ApiOperation({ summary: '일자별 운동 기록을 조회합니다.' })
+  @ApiParam({ name: 'date', example: 'yyyy-MM-dd' })
+  async getLogByDate(
+    @Req() { user }: Request,
+    @Param('date') date: string,
+  ): Promise<RoutineLogProfileResponse[]> {
+    const result = await this.routineLogService.getLogsByDate(user.id, date);
     return result.map((log) => new RoutineLogProfileResponse(log));
   }
 

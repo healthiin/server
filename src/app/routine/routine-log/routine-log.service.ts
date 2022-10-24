@@ -1,5 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { isDateString } from 'class-validator';
+import { parse } from 'date-fns';
 import { Repository } from 'typeorm';
 
 import { RoutineCoreService } from '@app/routine/routine-core/routine-core.service';
@@ -28,6 +30,26 @@ export class RoutineLogService {
       order: { startedAt: 'ASC', endedAt: 'ASC' },
       relations: ['routine', 'manual'],
     });
+  }
+
+  async getLogsByDate(userId: string, date: string): Promise<RoutineLog[]> {
+    if (!isDateString(date))
+      throw new BadRequestException('Use yyyy-MM-dd format');
+
+    const createdDate = parse(date, 'yyyy-MM-dd', new Date());
+
+    return this.routineLogRepository
+      .createQueryBuilder('log')
+      .where('log.user_id = :userId', { userId })
+      .andWhere('log.started_at BETWEEN :start AND :end', {
+        start: new Date(createdDate.setHours(0, 0, 0, 0)),
+        end: new Date(createdDate.setHours(23, 59, 0, 0)),
+      })
+      .leftJoinAndSelect('log.routine', 'routine')
+      .leftJoinAndSelect('log.manual', 'manual')
+      .orderBy('log.started_at', 'ASC')
+      .addOrderBy('log.ended_at', 'ASC')
+      .getMany();
   }
 
   async getLog(logId: string, userId?: string): Promise<RoutineLog> {
