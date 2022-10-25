@@ -29,6 +29,7 @@ import { RoutineProfileResponse } from '@app/routine/routine-core/dtos/routine-p
 import { RoutineUpdateRequest } from '@app/routine/routine-core/dtos/routine-update.request';
 import { RoutinePreviewResponse } from '@app/routine/routine-core/dtos/routine.preview.response';
 import { RoutineCoreService } from '@app/routine/routine-core/routine-core.service';
+import { RoutineManualProfileResponse } from '@app/routine/routine-manual/dtos/routine-manual-profile.response';
 import { ManualType } from '@domain/equipment/manual-type';
 import { Routine as RoutineEntity } from '@domain/routine/routine.entity';
 import { Pagination } from '@infrastructure/types/pagination.types';
@@ -41,27 +42,41 @@ import { Request } from '@infrastructure/types/request.types';
 export class RoutineCoreController {
   constructor(private readonly routineService: RoutineCoreService) {}
 
-  // @Get('/:routineId')
-  // @ApiOperation({ summary: '특정 루틴의 내용을 조회합니다' })
-  // @ApiOkResponse({ type: RoutineProfileResponse })
-  // async getRoutineProfile(
-  //   @Param('routineId', ParseUUIDPipe) routineId: string,
-  // ): Promise<RoutineProfileResponse> {
-  //   const routine = await this.routineService.getRoutineById(routineId);
-  //   const days = this.routineService.getDays(routine.day);
-  //   return new RoutineProfileResponse({ ...routine, days });
-  // }
+  @Get('/:routineId')
+  @ApiOperation({ summary: '특정 루틴의 내용을 조회합니다' })
+  @ApiOkResponse({ type: RoutineProfileResponse })
+  async getRoutineProfile(
+    @Param('routineId', ParseUUIDPipe) routineId: string,
+  ): Promise<RoutineProfileResponse> {
+    const routine = await this.routineService.getRoutineById(routineId);
+    const days = this.routineService.getDays(routine.day);
+    const types = routine.routineManuals.map(
+      (routineManual) => routineManual.manual.type,
+    );
+    return new RoutineProfileResponse({
+      ...routine,
+      routineManuals: routine.routineManuals.map(
+        (routineManual) =>
+          new RoutineManualProfileResponse({
+            ...routineManual,
+            type: routineManual.manual.type,
+          }),
+      ),
+      types,
+      days,
+    });
+  }
 
-  // @Get()
-  // @ApiOperation({ summary: '공개 루틴 목록을 조회합니다' })
-  // @ApiOkResponse({ type: RoutinePreviewResponse })
-  // async getRoutines(
-  //   @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-  //   @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
-  // ): Promise<Pagination<RoutinePreviewResponse>> {
-  //   return this.routineService.getRoutines({ page, limit });
-  // }
-  //
+  @Get()
+  @ApiOperation({ summary: '공개 루틴 목록을 조회합니다' })
+  @ApiOkResponse({ type: RoutinePreviewResponse })
+  async getRoutines(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
+  ): Promise<Pagination<RoutinePreviewResponse>> {
+    return this.routineService.getRoutines({ page, limit });
+  }
+
   // @Get('/my-routines')
   // @ApiOperation({ summary: '나의 루틴 목록을 조회합니다' })
   // @ApiOkResponse({ type: RoutineProfileResponse })
@@ -92,6 +107,13 @@ export class RoutineCoreController {
 
     return new RoutineProfileResponse({
       ...routine,
+      routineManuals: routine.routineManuals.map(
+        (routineManual) =>
+          new RoutineManualProfileResponse({
+            ...routineManual,
+            type: routineManual.manual.type,
+          }),
+      ),
       days,
       types,
     });

@@ -41,9 +41,6 @@ export class Routine implements RoutineProperties {
   @Column()
   status!: 'public' | 'private';
 
-  // @OneToMany(() => RoutineType, ({ routine }) => routine)
-  // types!: RoutineType[];
-
   @OneToMany(() => RoutineLog, ({ routine }) => routine)
   logs!: RoutineLog[];
 

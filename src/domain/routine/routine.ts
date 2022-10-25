@@ -9,7 +9,6 @@ export type RoutineProperties = {
   author: User;
   owner: User;
   day: number;
-  // types: RoutineType[];
   routineManuals: RoutineManual[];
   logs: RoutineLog[];
   status: 'public' | 'private';

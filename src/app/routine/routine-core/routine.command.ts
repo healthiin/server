@@ -1,3 +1,4 @@
+import { RoutineManualProfileResponse } from '@app/routine/routine-manual/dtos/routine-manual-profile.response';
 import { RoutineProperties } from '@domain/routine/routine';
 
 type RoutineInfo = { routineId: string };
@@ -27,11 +28,5 @@ export type RoutineProfileProperties = Omit<
 > & {
   types: string[];
   days: number[];
-  routineManuals: any[]; //routineManualType[];
+  routineManuals: RoutineManualProfileResponse[];
 };
-
-export type routineManualType = {
-  routineManualId: string;
-  manualId: string;
-} & Partial<RoutineManualProperties> &
-  Partial<ManualProperties>;

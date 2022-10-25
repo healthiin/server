@@ -39,38 +39,39 @@ export class RoutineCoreService {
       select,
       relations: ['manuals', 'logs', 'author', 'owner'],
     });
+
     if (!routine) throw new RoutineNotFoundException();
     return routine;
   }
 
-  async getMyRoutines(
-    data: UserRoutineListQuery,
-  ): Promise<Pagination<RoutineProfileResponse>> {
-    const { items, meta } = await paginate(
-      this.routineRepository,
-      {
-        page: data.page,
-        limit: data.limit,
-      },
-      {
-        where: { owner: { id: data.userId } },
-      },
-    );
-
-    return {
-      items: items.map(
-        (routine) =>
-          new RoutineProfileResponse({
-            ...routine,
-            days: this.getDays(routine.day),
-            types: routine.routineManuals.map(
-              (routineManual) => routineManual.manual.type,
-            ),
-          }),
-      ),
-      meta,
-    };
-  }
+  // async getMyRoutines(
+  //   data: UserRoutineListQuery,
+  // ): Promise<Pagination<RoutineProfileResponse>> {
+  //   const { items, meta } = await paginate(
+  //     this.routineRepository,
+  //     {
+  //       page: data.page,
+  //       limit: data.limit,
+  //     },
+  //     {
+  //       where: { owner: { id: data.userId } },
+  //     },
+  //   );
+  //
+  //   return {
+  //     items: items.map(
+  //       (routine) =>
+  //         new RoutineProfileResponse({
+  //           ...routine,
+  //           days: this.getDays(routine.day),
+  //           types: routine.routineManuals.map(
+  //             (routineManual) => routineManual.manual.type,
+  //           ),
+  //         }),
+  //     ),
+  //     meta,
+  //   };
+  // }
 
   async getRoutines(
     data: RoutineListQuery,
@@ -86,6 +87,11 @@ export class RoutineCoreService {
         relations: ['routineManuals'],
       },
     );
+    items.map(async (routine) => {
+      routine.routineManuals = await this.routineManualService.findByRoutineId(
+        routine.id,
+      );
+    });
     console.log(items);
 
     return {

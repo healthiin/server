@@ -1,9 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import {
-  routineManualType,
-  RoutineProfileProperties,
-} from '@app/routine/routine-core/routine.command';
+import { RoutineProfileProperties } from '@app/routine/routine-core/routine.command';
+import { RoutineManualProfileResponse } from '@app/routine/routine-manual/dtos/routine-manual-profile.response';
 
 export class RoutineProfileResponse
   implements
@@ -34,7 +32,7 @@ export class RoutineProfileResponse
   status!: 'public' | 'private';
 
   @ApiProperty({ description: '루틴 메뉴얼 어레이' })
-  routineManuals!: any[]; //routineManualType[];
+  routineManuals!: RoutineManualProfileResponse[];
 
   @ApiProperty({ description: '루틴 타입 어레이' })
   types!: string[];
