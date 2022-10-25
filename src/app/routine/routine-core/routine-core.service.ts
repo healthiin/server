@@ -112,17 +112,6 @@ export class RoutineCoreService {
 
   async createRoutine(data: RoutineCreateCommand): Promise<Routine> {
     const user = await this.userService.findById(data.userId);
-    await this.validateManuals(data.routineManualIds);
-    const routineManuals = [];
-    data.routineManualIds.map(async (id) => {
-      const routineManual = await this.routineManualService.findById(id);
-      routineManuals.push({
-        ...routineManual,
-        ...routineManual.manual,
-        routineManualId: routineManual.id,
-        manualId: routineManual.manual.id,
-      });
-    });
     const days = await this.getBinaryDays(data.days);
 
     const routine = await this.routineRepository.save({
@@ -133,7 +122,7 @@ export class RoutineCoreService {
       ...data,
     });
 
-    return { ...routine, routineManuals };
+    return { ...routine, routineManuals: [] };
   }
 
   // async copyRoutine(data: { userId; routineId }): Promise<Routine> {

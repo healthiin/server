@@ -15,6 +15,8 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -69,7 +71,10 @@ export class RoutineCoreController {
 
   @Get()
   @ApiOperation({ summary: '공개 루틴 목록을 조회합니다' })
-  @ApiOkResponse({ type: RoutinePreviewResponse })
+  @ApiOkResponse({
+    type: RoutinePreviewResponse,
+    description: '공개된 루틴들입니다. 페이지네이션으로 반환됩니다.',
+  })
   async getRoutines(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
@@ -89,8 +94,14 @@ export class RoutineCoreController {
   // }
 
   @Post()
-  @ApiOperation({ summary: '루틴을 생성합니다' })
-  @ApiOkResponse({ type: RoutineProfileResponse })
+  @ApiOperation({
+    summary: '루틴을 생성합니다',
+  })
+  @ApiOkResponse({
+    type: RoutineProfileResponse,
+    description:
+      '첫 루틴 생성 시에는 루틴 메뉴얼이 비어있습니다. 루틴 메뉴얼 POST API를 통해서 루틴 메뉴얼을 추가할 수 있습니다.',
+  })
   async createRoutine(
     @Req() { user }: Request,
     @Body()
