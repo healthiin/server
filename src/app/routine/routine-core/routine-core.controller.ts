@@ -52,6 +52,7 @@ export class RoutineCoreController {
   ): Promise<RoutineProfileResponse> {
     const routine = await this.routineService.getRoutineById(routineId);
     const days = this.routineService.getDays(routine.day);
+    console.log(routine);
     const types = routine.routineManuals.map(
       (routineManual) => routineManual.manual.type,
     );

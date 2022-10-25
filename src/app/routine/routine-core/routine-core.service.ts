@@ -37,7 +37,7 @@ export class RoutineCoreService {
     const routine = await this.routineRepository.findOne({
       where: { id },
       select,
-      relations: ['manuals', 'logs', 'author', 'owner'],
+      relations: ['routineManuals', 'routineManuals.manual', 'author', 'owner'],
     });
 
     if (!routine) throw new RoutineNotFoundException();
@@ -84,7 +84,7 @@ export class RoutineCoreService {
       },
       {
         where: { status: 'public' },
-        relations: ['routineManuals'],
+        relations: ['routineManuals', 'routineManuals.manual'],
       },
     );
     items.map(async (routine) => {
