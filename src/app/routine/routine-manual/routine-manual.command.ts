@@ -9,6 +9,7 @@ import { RoutineManualProperties } from '@domain/routine/routine-manual';
 type RoutineManualInfo = { routineManualId: string };
 type RoutineInfo = { routineId: string };
 type ManualInfo = { manualId: string };
+type ManualTitle = { manualTitle: string };
 
 export type RoutineCardioManualCreateCommand = Pick<
   RoutineManualProperties,
@@ -28,15 +29,9 @@ export type RoutineManualUpdateCommand = RoutineManualInfo &
 
 export type RoutineManualDeleteCommand = RoutineManualInfo;
 
-export type RoutineManualResponseType = {
-  manual: Manual;
-  targetNumber?: number;
-  setNumber?: number;
-  weight?: number;
-  speed?: number;
-  playMinute?: number;
-  order: number;
-  type: ManualType;
+export type RoutineManualResponseType = RoutineManualProperties & {
+  routineManualId: Manual;
+  manualId: string;
 };
 
 export type RoutineManualUpdateRequest =
