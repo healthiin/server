@@ -3,7 +3,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -11,6 +10,7 @@ import {
 } from 'typeorm';
 
 import { RoutineProperties } from '@domain/routine/routine';
+import { RoutineLike } from '@domain/routine/routine-like.entity';
 import { RoutineLog } from '@domain/routine/routine-log.entity';
 import { RoutineManual } from '@domain/routine/routine-manual.entity';
 import { User } from '@domain/user/user.entity';
@@ -40,6 +40,12 @@ export class Routine implements RoutineProperties {
 
   @Column()
   status!: 'public' | 'private';
+
+  @Column({ type: 'int', default: 0 })
+  likeCount!: number;
+
+  @OneToMany(() => RoutineLike, ({ routine }) => routine, { lazy: true })
+  likes!: RoutineLike[];
 
   @OneToMany(() => RoutineLog, ({ routine }) => routine)
   logs!: RoutineLog[];

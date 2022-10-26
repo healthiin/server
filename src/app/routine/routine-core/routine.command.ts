@@ -1,4 +1,5 @@
 import { RoutineManualProfileResponse } from '@app/routine/routine-manual/dtos/routine-manual-profile.response';
+import { ManualType } from '@domain/equipment/manual-type';
 import { RoutineProperties } from '@domain/routine/routine';
 
 type RoutineInfo = { routineId: string };
@@ -12,8 +13,13 @@ export type RoutineListQuery = {
 export type UserRoutineListQuery = RoutineListQuery & UserInfo;
 
 export type RoutineCreateCommand = UserInfo &
-  dayInfo &
   Pick<RoutineProperties, 'title' | 'description'>;
+
+export type MyRoutineCreateCommand = UserInfo &
+  dayInfo &
+  Pick<RoutineProperties, 'title'>;
+
+export type RoutineCopyCommand = UserInfo & RoutineInfo & dayInfo;
 
 export type RoutineUpdateCommand = UserInfo &
   RoutineInfo &
@@ -21,11 +27,8 @@ export type RoutineUpdateCommand = UserInfo &
 
 export type RoutineDeleteCommand = RoutineInfo;
 
-export type RoutineProfileProperties = Omit<
-  RoutineProperties,
-  'routineManuals'
-> & {
-  types: string[];
-  days: number[];
+export type RoutineResponseProperties = {
+  types: ManualType[];
   routineManuals: RoutineManualProfileResponse[];
-};
+} & Omit<RoutineProperties, 'routineManuals'> &
+  dayInfo;

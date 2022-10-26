@@ -1,11 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { RoutineManualResponseType } from '@app/routine/routine-manual/routine-manual.command';
 import { ManualType } from '@domain/equipment/manual-type';
+import { RoutineManualProperties } from '@domain/routine/routine-manual';
 
-export class RoutineManualProfileResponse {
+export class RoutineManualProfileResponse
+  implements
+    Omit<
+      RoutineManualProperties,
+      'manual' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'routine'
+    >
+{
+  @ApiProperty({
+    description: '루틴 메뉴얼 ID',
+  })
+  id!: string;
+
   @ApiProperty({ description: '메뉴얼 ID' })
   manualId!: string;
+
+  @ApiProperty({ description: '메뉴얼 제목' })
+  manualTitle!: string;
 
   @ApiProperty({ description: '루틴 메뉴얼 ID' })
   routineManualId!: string;
@@ -31,14 +45,21 @@ export class RoutineManualProfileResponse {
   @ApiProperty({ description: '운동 종류', enum: ManualType })
   type!: ManualType;
 
-  constructor(data: RoutineManualResponseType) {
+  constructor(
+    data: Omit<
+      RoutineManualProperties,
+      'createdAt' | 'updatedAt' | 'deletedAt' | 'routine'
+    >,
+  ) {
+    this.routineManualId = data.id;
     this.manualId = data.manual.id;
+    this.manualTitle = data.manual.title;
     this.targetNumber = data.targetNumber || null;
     this.setNumber = data.setNumber || null;
     this.weight = data.weight || null;
     this.speed = data.speed || null;
     this.playMinute = data.playMinute || null;
-    this.order = data.order || null;
+    this.order = data.order;
     this.type = data.manual.type;
   }
 }

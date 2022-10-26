@@ -11,9 +11,11 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  getSchemaPath,
 } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
@@ -31,6 +33,36 @@ export class RoutineManualController {
   constructor(private readonly routineManualService: RoutineManualService) {}
 
   @Post(':manualId/routine/:routineId')
+  @ApiBody({
+    description: '운동 종류에 따라 다른 데이터를 입력합니다.',
+    schema: {
+      oneOf: [
+        {
+          $ref: getSchemaPath(RoutineWeightManualCreateRequest),
+        },
+        {
+          $ref: getSchemaPath(RoutineCardioManualCreateRequest),
+        },
+      ],
+    },
+    examples: {
+      weight: {
+        value: {
+          weight: 20,
+          setNumber: 3,
+          targetNumber: 15,
+          order: 1,
+        },
+      },
+      cardio: {
+        value: {
+          speed: 7,
+          playMinute: 30,
+          order: 1,
+        },
+      },
+    },
+  })
   @ApiOperation({
     summary: '루틴 메뉴얼을 생성합니다.',
   })
