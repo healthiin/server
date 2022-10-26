@@ -36,19 +36,10 @@ import { Request } from '@infrastructure/types/request.types';
 export class RoutineLogController {
   constructor(private readonly routineLogService: RoutineLogService) {}
 
-  @Get()
-  @CheckPolicies((ability) => ability.can(Action.Read, RoutineLog))
-  @ApiOperation({ summary: '운동 기록을 조회합니다.' })
-  async getLogList(
-    @Req() { user }: Request,
-  ): Promise<RoutineLogProfileResponse[]> {
-    const result = await this.routineLogService.getLogList(user.id);
-    return result.map((log) => new RoutineLogProfileResponse(log));
-  }
-
   @Get(':date')
   @CheckPolicies((ability) => ability.can(Action.Read, RoutineLog))
   @ApiOperation({ summary: '일자별 운동 기록을 조회합니다.' })
+  @ApiOkResponse({ type: [RoutineLogProfileResponse] })
   @ApiParam({ name: 'date', example: 'yyyy-MM-dd' })
   async getLogByDate(
     @Req() { user }: Request,
