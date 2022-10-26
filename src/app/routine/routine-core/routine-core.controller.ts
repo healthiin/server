@@ -83,7 +83,7 @@ export class RoutineCoreController {
     @Req() { user }: Request,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
-  ): Promise<Pagination<MyRoutinePreviewResponse>> {
+  ): Promise<MyRoutinePreviewResponse[]> {
     return this.routineService.getMyRoutines({
       userId: user.id,
       page,
@@ -125,20 +125,20 @@ export class RoutineCoreController {
     });
   }
 
-  @Post('/copy/:routineId')
-  @ApiOperation({ summary: '레퍼런스 루틴을 나의 루틴으로 복사합니다' })
-  @ApiOkResponse({ type: MyRoutineProfileResponse })
-  async copyRoutine(
-    @Req() { user }: Request,
-    @Param('routineId', ParseUUIDPipe) routineId: string,
-    @Body() data: { days: number[] },
-  ): Promise<MyRoutineProfileResponse> {
-    return await this.routineService.copyRoutine({
-      userId: user.id,
-      routineId,
-      days: data.days,
-    });
-  }
+  // @Post('/copy/:routineId')
+  // @ApiOperation({ summary: '레퍼런스 루틴을 나의 루틴으로 복사합니다' })
+  // @ApiOkResponse({ type: MyRoutineProfileResponse })
+  // async copyRoutine(
+  //   @Req() { user }: Request,
+  //   @Param('routineId', ParseUUIDPipe) routineId: string,
+  //   @Body() data: { days: number[] },
+  // ): Promise<MyRoutineProfileResponse> {
+  //   return await this.routineService.copyRoutine({
+  //     userId: user.id,
+  //     routineId,
+  //     days: data.days,
+  //   });
+  // }
 
   @Post('/my-routines')
   @ApiOperation({
@@ -174,14 +174,14 @@ export class RoutineCoreController {
   //   });
   // }
 
-  @Delete('/:routineId')
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability) => ability.can(Action.Delete, RoutineEntity))
-  @ApiOperation({ summary: '루틴을 삭제합니다' })
-  @ApiOkResponse({ type: Boolean })
-  async deleteRoutine(
-    @Param('routineId', ParseUUIDPipe) routineId: string,
-  ): Promise<boolean> {
-    return this.routineService.deleteRoutine({ routineId });
-  }
+  // @Delete('/:routineId')
+  // @UseGuards(PoliciesGuard)
+  // @CheckPolicies((ability) => ability.can(Action.Delete, RoutineEntity))
+  // @ApiOperation({ summary: '루틴을 삭제합니다' })
+  // @ApiOkResponse({ type: Boolean })
+  // async deleteRoutine(
+  //   @Param('routineId', ParseUUIDPipe) routineId: string,
+  // ): Promise<boolean> {
+  //   return this.routineService.deleteRoutine({ routineId });
+  // }
 }

@@ -113,19 +113,31 @@ export class RoutineManualService {
     return routineManuals;
   }
 
-  // async getRoutineManualsByIds(ids: string[]): Promise<RoutineManual[]> {
-  //   const routineManuals = [];
-  //   ids.map((id) => {
-  //     const routineManual = this.routineManualRepository.find(
-  //       {where: {id}},
-  //         routine: { id },
-  //       },
-  //       relations: ['routine', 'manual'] ,
-  //     );
-  //     if (!routineManual) throw new RoutineManualNotFoundException();
-  //     routineManuals.push(routineManual);
-  //   });
-  //
-  //   return routineManuals;
-  // }
+  async copyRoutineManuals(routineId: string): Promise<boolean> {
+    const routineManuals = await this.routineManualRepository.find({
+      where: { routine: { id: routineId } },
+      relations: ['manual'],
+    });
+
+    routineManuals.map((routineManual) => {
+      const targetNumber = routineManual.targetNumber;
+      const setNumber = routineManual.setNumber;
+      const weight = routineManual.weight;
+      const speed = routineManual.speed;
+      const playMinute = routineManual.playMinute;
+      const order = routineManual.order;
+      const manualId = routineManual.manual.id;
+      this.routineManualRepository.save({
+        targetNumber,
+        setNumber,
+        weight,
+        speed,
+        playMinute,
+        order,
+        routine: { id: routineId },
+        manual: { id: manualId },
+      });
+    });
+    return true;
+  }
 }

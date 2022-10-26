@@ -103,30 +103,22 @@ export class RoutineCoreService {
 
   async getMyRoutines(
     data: UserRoutineListQuery,
-  ): Promise<Pagination<MyRoutinePreviewResponse>> {
-    const { items, meta } = await paginate(
-      this.routineRepository,
-      {
-        page: data.page,
-        limit: data.limit,
-      },
-      {
-        where: { owner: { id: data.userId } },
-      },
-    );
+  ): Promise<MyRoutinePreviewResponse[]> {
+    const user = await this.userService.findById(data.userId);
+    const routines = await this.routineRepository.find({
+      where: { owner: { id: user.id } },
+      relations: ['routineManuals', 'routineManuals.manual'],
+    });
 
-    return {
-      items: items.map(
-        (routine) =>
-          new MyRoutinePreviewResponse({
-            id: routine.id,
-            title: routine.title,
-            days: this.getDays(routine.day),
-            types: this.getRoutineTypes(routine),
-          }),
-      ),
-      meta,
-    };
+    return routines.map(
+      (routine) =>
+        new MyRoutinePreviewResponse({
+          id: routine.id,
+          title: routine.title,
+          days: this.getDays(routine.day),
+          types: this.getRoutineTypes(routine),
+        }),
+    );
   }
 
   async getReferenceRoutines(
@@ -216,15 +208,19 @@ export class RoutineCoreService {
     data: RoutineCopyCommand,
   ): Promise<MyRoutineProfileResponse> {
     const user = await this.userService.findById(data.userId);
-    const originRoutine = await this.getRoutineById(data.routineId);
+    const { id, ...originRoutine } = await this.getRoutineById(data.routineId);
     const day = this.getBinaryDays(data.days);
 
-    const routine = await this.routineRepository.save({
+    const routineTemp = await this.routineRepository.save({
       owner: user,
       status: 'private',
       day,
       ...originRoutine,
     });
+
+    await this.routineManualService.copyRoutineManuals(routineTemp.id);
+
+    const routine = await this.getRoutineById(routineTemp.id);
 
     return new MyRoutineProfileResponse({
       id: routine.id,
