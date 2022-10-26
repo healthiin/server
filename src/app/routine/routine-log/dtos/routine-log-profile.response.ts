@@ -33,6 +33,9 @@ export class RoutineLogProfileResponse {
   @ApiProperty({ description: '기록 시각' })
   createdAt: Date;
 
+  @ApiProperty({ nullable: true })
+  manualId: string | null;
+
   constructor(data: RoutineLog) {
     this.id = data.id;
     this.routineTitle = data.routine.title;
@@ -45,5 +48,9 @@ export class RoutineLogProfileResponse {
     this.startedAt = data.startedAt;
     this.endedAt = data.endedAt;
     this.createdAt = data.createdAt;
+
+    if (data.manual) {
+      this.manualId = data.manual.id;
+    }
   }
 }
