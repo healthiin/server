@@ -9,21 +9,17 @@ import {
   Post,
 } from '@nestjs/common';
 import {
-  ApiBody,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
-  getSchemaPath,
 } from '@nestjs/swagger';
 
 import { ManualCreateRequest } from '@app/equipment/equipment-manual/dtos/manual-create.request';
 import { ManualProfileResponse } from '@app/equipment/equipment-manual/dtos/manual-profile.response';
 import { ManualUpdateRequest } from '@app/equipment/equipment-manual/dtos/manual-update.request';
 import { EquipmentManualService } from '@app/equipment/equipment-manual/equipment-manual.service';
-import { RoutineCardioManualCreateRequest } from '@app/routine/routine-manual/dtos/routine-cardio-manual-create.request';
-import { RoutineWeightManualCreateRequest } from '@app/routine/routine-manual/dtos/routine-weight-manual-create.request';
 import { ManualType } from '@domain/equipment/manual-type';
 import { MANUAL_ERRORS } from '@domain/equipment/manual.errors';
 
@@ -72,36 +68,6 @@ export class EquipmentManualController {
 
   @Post('/:equipmentId')
   @ApiOperation({ summary: '특정 헬스 기구에 대한 설명서를 등록합니다.' })
-  @ApiBody({
-    description: '운동 종류에 따라 다른 데이터를 입력합니다.',
-    schema: {
-      oneOf: [
-        {
-          $ref: getSchemaPath(RoutineWeightManualCreateRequest),
-        },
-        {
-          $ref: getSchemaPath(RoutineCardioManualCreateRequest),
-        },
-      ],
-    },
-    examples: {
-      무산소: {
-        value: {
-          weight: 20,
-          setNumber: 3,
-          targetNumber: 15,
-          order: 1,
-        },
-      },
-      유산소: {
-        value: {
-          speed: 7,
-          playMinute: 30,
-          order: 1,
-        },
-      },
-    },
-  })
   @ApiCreatedResponse({ type: ManualProfileResponse })
   @ApiNotFoundResponse({
     description: MANUAL_ERRORS.EQUIPMENT_MANUAL_NOT_FOUND,
