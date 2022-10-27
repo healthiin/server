@@ -26,6 +26,7 @@ import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
 import { CheckPolicies } from '@app/auth/authorization/policy.decorator';
 import { PoliciesGuard } from '@app/auth/authorization/policy.guard';
 import { Action } from '@app/auth/authorization/types';
+import { MyRoutineCopyRequest } from '@app/routine/routine-core/dtos/my-routine-copy.request';
 import { MyRoutineCreateRequest } from '@app/routine/routine-core/dtos/my-routine-create.request';
 import { MyRoutinePreviewResponse } from '@app/routine/routine-core/dtos/my-routine-preview.response';
 import { MyRoutineProfileResponse } from '@app/routine/routine-core/dtos/my-routine-profile.response';
@@ -125,20 +126,21 @@ export class RoutineCoreController {
     });
   }
 
-  // @Post('/copy/:routineId')
-  // @ApiOperation({ summary: '레퍼런스 루틴을 나의 루틴으로 복사합니다' })
-  // @ApiOkResponse({ type: MyRoutineProfileResponse })
-  // async copyRoutine(
-  //   @Req() { user }: Request,
-  //   @Param('routineId', ParseUUIDPipe) routineId: string,
-  //   @Body() data: { days: number[] },
-  // ): Promise<MyRoutineProfileResponse> {
-  //   return await this.routineService.copyRoutine({
-  //     userId: user.id,
-  //     routineId,
-  //     days: data.days,
-  //   });
-  // }
+  @Post('/copy/:routineId')
+  @ApiOperation({ summary: '레퍼런스 루틴을 나의 루틴으로 복사합니다' })
+  @ApiBody({ type: MyRoutineCopyRequest })
+  @ApiOkResponse({ type: MyRoutineProfileResponse })
+  async copyRoutine(
+    @Req() { user }: Request,
+    @Param('routineId', ParseUUIDPipe) routineId: string,
+    @Body() data: { days: number[] },
+  ): Promise<MyRoutineProfileResponse> {
+    return await this.routineService.copyRoutine({
+      userId: user.id,
+      routineId,
+      days: data.days,
+    });
+  }
 
   @Post('/my-routines')
   @ApiOperation({

@@ -209,16 +209,19 @@ export class RoutineCoreService {
   ): Promise<MyRoutineProfileResponse> {
     const user = await this.userService.findById(data.userId);
     const { id, ...originRoutine } = await this.getRoutineById(data.routineId);
-    const day = this.getBinaryDays(data.days);
+    const day = await this.getBinaryDays(data.days);
 
     const routineTemp = await this.routineRepository.save({
+      ...originRoutine,
       owner: user,
+      author: originRoutine.author,
       status: 'private',
       day,
-      ...originRoutine,
     });
 
-    await this.routineManualService.copyRoutineManuals(routineTemp.id);
+    // TODO: routineManuals 복사
+
+    await this.routineManualService.copyRoutineManuals(id);
 
     const routine = await this.getRoutineById(routineTemp.id);
 
