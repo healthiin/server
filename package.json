@@ -57,6 +57,7 @@
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "pg": "^8.7.3",
+    "pg-pool": "^3.5.2",
     "qrcode": "^1.5.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
@@ -100,7 +101,6 @@
     "moduleDirectories": [
       "node_modules",
       "src"
-
     ],
     "moduleFileExtensions": [
       "js",
