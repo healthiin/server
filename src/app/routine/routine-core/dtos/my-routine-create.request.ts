@@ -10,6 +10,6 @@ export class MyRoutineCreateRequest
   title: string;
 
   @IsNotEmpty()
-  @IsArray({ each: true })
+  @IsArray()
   days: number[];
 }
