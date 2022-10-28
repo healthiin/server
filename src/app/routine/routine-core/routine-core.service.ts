@@ -9,7 +9,6 @@ import { ReferenceRoutinePreviewResponse } from '@app/routine/routine-core/dtos/
 import { ReferenceRoutineProfileResponse } from '@app/routine/routine-core/dtos/reference-routine-profile.response';
 import {
   MyRoutineCreateCommand,
-  RoutineCopyCommand,
   RoutineCreateCommand,
   RoutineDeleteCommand,
   RoutineListQuery,
@@ -204,38 +203,23 @@ export class RoutineCoreService {
     });
   }
 
-  async copyRoutine(
-    data: RoutineCopyCommand,
+  async editRoutine(
+    data: RoutineUpdateCommand,
   ): Promise<MyRoutineProfileResponse> {
-    const user = await this.userService.findById(data.userId);
-    const { id: originRoutineId, ...originRoutine } = await this.getRoutineById(
-      data.routineId,
-    );
-    const day = await this.getBinaryDays(data.days);
+    const routine = await this.getRoutineById(data.routineId);
+    if (data.days) {
+      routine.day = await this.getBinaryDays(data.days);
+    }
 
-    const routineResult = await this.routineRepository.save({
-      ...originRoutine,
-      routineManuals: [],
-      owner: user,
-      author: originRoutine.author,
-      status: 'private',
-      day,
+    const updatedRoutine = await this.routineRepository.save({
+      ...routine,
+      ...data,
     });
 
-    // TODO: routineManuals 복사
-
-    await this.routineManualService.copyRoutineManuals(
-      originRoutineId,
-      routineResult.id,
-    );
-
-    const routine = await this.getRoutineById(routineResult.id);
-
     return new MyRoutineProfileResponse({
-      id: routine.id,
-      title: routine.title,
+      ...updatedRoutine,
+      days: this.getDays(updatedRoutine.day),
       types: this.getRoutineTypes(routine),
-      days: this.getDays(routine.day),
       routineManuals: routine.routineManuals.map(
         (routineManual) =>
           new RoutineManualProfileResponse({
@@ -245,16 +229,6 @@ export class RoutineCoreService {
     });
   }
 
-  // async editRoutine(data: RoutineUpdateCommand): Promise<Routine> {
-  //   const routine = await this.getRoutineById(data.routineId);
-  //   const days = await this.getBinaryDays(data.days);
-  //   return this.routineRepository.save({
-  //     ...routine,
-  //     ...data,
-  //     days,
-  //   });
-  // }
-
   async deleteRoutine(data: RoutineDeleteCommand): Promise<boolean> {
     const routine = await this.getRoutineById(data.routineId);
 
@@ -262,14 +236,6 @@ export class RoutineCoreService {
       id: routine.id,
     });
     return affected > 0;
-  }
-
-  protected async validateManuals(manualIds: string[]): Promise<void> {
-    manualIds.map(async (manualId) => {
-      await this.manualRepository.find({
-        where: { id: manualId },
-      });
-    });
   }
 
   protected async getBinaryDays(days: number[]): Promise<number> {
