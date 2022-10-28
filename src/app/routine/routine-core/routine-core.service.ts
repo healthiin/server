@@ -198,7 +198,7 @@ export class RoutineCoreService {
     return new MyRoutineProfileResponse({
       id: routine.id,
       title: routine.title,
-      days: data.days,
+      days: this.getDays(routine.day),
       types: [],
       routineManuals: [],
     });
@@ -208,11 +208,14 @@ export class RoutineCoreService {
     data: RoutineCopyCommand,
   ): Promise<MyRoutineProfileResponse> {
     const user = await this.userService.findById(data.userId);
-    const { id, ...originRoutine } = await this.getRoutineById(data.routineId);
+    const { id: originRoutineId, ...originRoutine } = await this.getRoutineById(
+      data.routineId,
+    );
     const day = await this.getBinaryDays(data.days);
 
-    const routineTemp = await this.routineRepository.save({
+    const routineResult = await this.routineRepository.save({
       ...originRoutine,
+      routineManuals: [],
       owner: user,
       author: originRoutine.author,
       status: 'private',
@@ -221,9 +224,12 @@ export class RoutineCoreService {
 
     // TODO: routineManuals 복사
 
-    await this.routineManualService.copyRoutineManuals(id);
+    await this.routineManualService.copyRoutineManuals(
+      originRoutineId,
+      routineResult.id,
+    );
 
-    const routine = await this.getRoutineById(routineTemp.id);
+    const routine = await this.getRoutineById(routineResult.id);
 
     return new MyRoutineProfileResponse({
       id: routine.id,
@@ -281,9 +287,10 @@ export class RoutineCoreService {
     let i;
     const days = [];
     for (i = 0; i < 7; i++) {
-      if (binaryDays >= 2 ** i) {
-        binaryDays -= 2 ** i;
-        days.push(1);
+      const k = binaryDays % 2;
+      if (binaryDays > 1 || binaryDays == 1) {
+        k === 0 ? days.push(0) : days.push(1);
+        binaryDays = binaryDays / 2;
       } else {
         days.push(0);
       }
