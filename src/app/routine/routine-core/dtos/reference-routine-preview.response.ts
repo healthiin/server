@@ -5,10 +5,10 @@ import { ManualType } from '@domain/equipment/manual-type';
 
 export class ReferenceRoutinePreviewResponse
   implements
+
     Pick<
       RoutineResponseProperties,
       'id' | 'title' | 'types' | 'description' | 'likeCount'
-    >
 {
   @ApiProperty({ description: '루틴 ID' })
   id!: string;
