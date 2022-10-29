@@ -16,17 +16,12 @@ import {
 import {
   ApiBearerAuth,
   ApiBody,
-  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
-import { CheckPolicies } from '@app/auth/authorization/policy.decorator';
-import { PoliciesGuard } from '@app/auth/authorization/policy.guard';
-import { Action } from '@app/auth/authorization/types';
-import { MyRoutineCopyRequest } from '@app/routine/routine-core/dtos/my-routine-copy.request';
 import { MyRoutineCreateRequest } from '@app/routine/routine-core/dtos/my-routine-create.request';
 import { MyRoutinePreviewResponse } from '@app/routine/routine-core/dtos/my-routine-preview.response';
 import { MyRoutineProfileResponse } from '@app/routine/routine-core/dtos/my-routine-profile.response';
@@ -35,9 +30,6 @@ import { ReferenceRoutinePreviewResponse } from '@app/routine/routine-core/dtos/
 import { ReferenceRoutineProfileResponse } from '@app/routine/routine-core/dtos/reference-routine-profile.response';
 import { RoutineUpdateRequest } from '@app/routine/routine-core/dtos/routine-update.request';
 import { RoutineCoreService } from '@app/routine/routine-core/routine-core.service';
-import { RoutineManualProfileResponse } from '@app/routine/routine-manual/dtos/routine-manual-profile.response';
-import { ManualType } from '@domain/equipment/manual-type';
-import { Routine as RoutineEntity } from '@domain/routine/routine.entity';
 import { Pagination } from '@infrastructure/types/pagination.types';
 import { Request } from '@infrastructure/types/request.types';
 
@@ -110,6 +102,7 @@ export class RoutineCoreController {
   @ApiOperation({
     summary: '루틴을 생성합니다',
   })
+  @ApiBody({ type: ReferenceRoutineCreateRequest })
   @ApiOkResponse({
     type: ReferenceRoutineProfileResponse,
     description:
@@ -126,26 +119,11 @@ export class RoutineCoreController {
     });
   }
 
-  @Post('/copy/:routineId')
-  @ApiOperation({ summary: '레퍼런스 루틴을 나의 루틴으로 복사합니다' })
-  @ApiBody({ type: MyRoutineCopyRequest })
-  @ApiOkResponse({ type: MyRoutineProfileResponse })
-  async copyRoutine(
-    @Req() { user }: Request,
-    @Param('routineId', ParseUUIDPipe) routineId: string,
-    @Body() data: { days: number[] },
-  ): Promise<MyRoutineProfileResponse> {
-    return await this.routineService.copyRoutine({
-      userId: user.id,
-      routineId,
-      days: data.days,
-    });
-  }
-
   @Post('/my-routines')
   @ApiOperation({
     summary: '내 루틴을 생성합니다',
   })
+  @ApiBody({ type: MyRoutineCreateRequest })
   @ApiOkResponse({
     type: MyRoutineProfileResponse,
   })
@@ -159,31 +137,28 @@ export class RoutineCoreController {
     });
   }
 
-  // @Patch('/:routineId')
-  // @UseGuards(PoliciesGuard)
-  // @CheckPolicies((ability) => ability.can(Action.Update, RoutineEntity))
-  // @ApiOperation({ summary: '루틴을 수정합니다' })
-  // @ApiOkResponse({ type: MyRoutineProfileResponse })
-  // async editRoutineProfile(
-  //   @Param('routineId', ParseUUIDPipe) routineId: string,
-  //   @Req() { user }: Request,
-  //   @Body() data: RoutineUpdateRequest,
-  // ): Promise<MyRoutineProfileResponse> {
-  //   return await this.routineService.editRoutine({
-  //     routineId,
-  //     userId: user.id,
-  //     ...data,
-  //   });
-  // }
+  @Patch('/:routineId')
+  @ApiOperation({ summary: '루틴을 수정합니다' })
+  @ApiBody({ type: RoutineUpdateRequest })
+  @ApiOkResponse({ type: MyRoutineProfileResponse })
+  async editRoutineProfile(
+    @Param('routineId', ParseUUIDPipe) routineId: string,
+    @Req() { user }: Request,
+    @Body() data: RoutineUpdateRequest,
+  ): Promise<MyRoutineProfileResponse> {
+    return await this.routineService.editRoutine({
+      ...data,
+      routineId,
+      userId: user.id,
+    });
+  }
 
-  // @Delete('/:routineId')
-  // @UseGuards(PoliciesGuard)
-  // @CheckPolicies((ability) => ability.can(Action.Delete, RoutineEntity))
-  // @ApiOperation({ summary: '루틴을 삭제합니다' })
-  // @ApiOkResponse({ type: Boolean })
-  // async deleteRoutine(
-  //   @Param('routineId', ParseUUIDPipe) routineId: string,
-  // ): Promise<boolean> {
-  //   return this.routineService.deleteRoutine({ routineId });
-  // }
+  @Delete('/:routineId')
+  @ApiOperation({ summary: '루틴을 삭제합니다' })
+  @ApiOkResponse({ type: Boolean })
+  async deleteRoutine(
+    @Param('routineId', ParseUUIDPipe) routineId: string,
+  ): Promise<boolean> {
+    return this.routineService.deleteRoutine({ routineId });
+  }
 }

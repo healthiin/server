@@ -114,27 +114,4 @@ export class RoutineManualService {
 
     return routineManuals;
   }
-
-  async copyRoutineManuals(routineId: string): Promise<boolean> {
-    const routineManuals = await this.routineManualRepository.find({
-      where: { routine: { id: routineId } },
-      relations: ['routine', 'manual'],
-    });
-
-    const x = routineManuals.map((routineManual) => {
-      this.routineManualRepository.save({
-        targetNumber: routineManual.targetNumber,
-        setNumber: routineManual.setNumber,
-        weight: routineManual.weight,
-        speed: routineManual.speed,
-        playMinute: routineManual.playMinute,
-        order: routineManual.order,
-        routine: { id: routineId },
-        manual: { id: routineManual.manual.id },
-      });
-    });
-    console.log(x);
-
-    return true;
-  }
 }

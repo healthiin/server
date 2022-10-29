@@ -23,7 +23,7 @@ export type RoutineCopyCommand = UserInfo & RoutineInfo & dayInfo;
 
 export type RoutineUpdateCommand = UserInfo &
   RoutineInfo &
-  Partial<RoutineCreateCommand>;
+  Partial<MyRoutineCreateCommand>;
 
 export type RoutineDeleteCommand = RoutineInfo;
 
