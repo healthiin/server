@@ -2,6 +2,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
+import { dataSource } from '../../../data-source';
+
 import { EquipmentManualService } from '@app/equipment/equipment-manual/equipment-manual.service';
 import { RoutineManualProfileResponse } from '@app/routine/routine-manual/dtos/routine-manual-profile.response';
 import {
