@@ -145,8 +145,8 @@ export class RoutineCoreService {
           new ReferenceRoutinePreviewResponse({
             id: routine.id,
             description: routine.description,
-            likeCount: routine.likeCount,
             title: routine.title,
+            likeCount: routine.likeCount,
             author: routine.author,
             types: this.getRoutineTypes(routine),
           }),
