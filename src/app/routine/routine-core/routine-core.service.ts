@@ -146,6 +146,7 @@ export class RoutineCoreService {
             id: routine.id,
             description: routine.description,
             title: routine.title,
+            likeCount: routine.likeCount,
             author: routine.author,
             types: this.getRoutineTypes(routine),
           }),
