@@ -21,7 +21,6 @@ import { UserService } from '@app/user/user.service';
 import { Manual } from '@domain/equipment/equipment-manual.entity';
 import { ManualType } from '@domain/equipment/manual-type';
 import { RoutineNotFoundException } from '@domain/errors/routine.errors';
-import { RoutineManual } from '@domain/routine/routine-manual.entity';
 import { Routine } from '@domain/routine/routine.entity';
 import { Pagination } from '@infrastructure/types/pagination.types';
 
@@ -131,7 +130,7 @@ export class RoutineCoreService {
       },
       {
         where: { status: 'public' },
-        relations: ['routineManuals', 'routineManuals.manual'],
+        relations: ['routineManuals', 'routineManuals.manual', 'author'],
       },
     );
     items.map(async (routine) => {
@@ -147,7 +146,7 @@ export class RoutineCoreService {
             id: routine.id,
             description: routine.description,
             title: routine.title,
-            days: this.getDays(routine.day),
+            author: routine.author,
             types: this.getRoutineTypes(routine),
           }),
       ),
@@ -268,11 +267,5 @@ export class RoutineCoreService {
     return routine.routineManuals.map(
       (routineManual) => routineManual.manual.type,
     );
-  }
-
-  async getRoutineManualsByRoutineId(
-    routineId: string,
-  ): Promise<RoutineManual[]> {
-    return this.routineManualService.findByRoutineId(routineId);
   }
 }
