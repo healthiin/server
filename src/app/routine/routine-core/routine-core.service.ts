@@ -131,7 +131,7 @@ export class RoutineCoreService {
       },
       {
         where: { status: 'public' },
-        relations: ['routineManuals', 'routineManuals.manual'],
+        relations: ['routineManuals', 'routineManuals.manual', 'author'],
       },
     );
     items.map(async (routine) => {
@@ -147,7 +147,7 @@ export class RoutineCoreService {
             id: routine.id,
             description: routine.description,
             title: routine.title,
-            days: this.getDays(routine.day),
+            author: routine.author,
             types: this.getRoutineTypes(routine),
           }),
       ),

@@ -5,10 +5,7 @@ import { ManualType } from '@domain/equipment/manual-type';
 
 export class ReferenceRoutinePreviewResponse
   implements
-    Pick<
-      RoutineResponseProperties,
-      'id' | 'title' | 'types' | 'days' | 'description'
-    >
+    Pick<RoutineResponseProperties, 'id' | 'title' | 'types' | 'description'>
 {
   @ApiProperty({ description: '루틴 ID' })
   id!: string;
@@ -22,10 +19,10 @@ export class ReferenceRoutinePreviewResponse
   description!: string;
 
   @ApiProperty({
-    description: '루틴을 진행할 요일',
-    example: [1, 1, 0, 0, 0, 0, 0],
+    description: '루틴 작성자 닉네임',
+    example: '닉네임',
   })
-  days!: number[];
+  author!: string;
 
   @ApiProperty({
     description: '루틴에 포함된 운동 종류들',
@@ -36,13 +33,13 @@ export class ReferenceRoutinePreviewResponse
   constructor(
     data: Pick<
       RoutineResponseProperties,
-      'id' | 'title' | 'types' | 'days' | 'description'
+      'id' | 'title' | 'author' | 'types' | 'description'
     >,
   ) {
     this.id = data.id;
     this.title = data.title;
+    this.author = data.author.nickname;
     this.description = data.description;
-    this.days = data.days;
     this.types = data.types;
   }
 }
