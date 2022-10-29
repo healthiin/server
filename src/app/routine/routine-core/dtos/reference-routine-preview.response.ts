@@ -5,7 +5,10 @@ import { ManualType } from '@domain/equipment/manual-type';
 
 export class ReferenceRoutinePreviewResponse
   implements
-    Pick<RoutineResponseProperties, 'id' | 'title' | 'types' | 'description'>
+
+    Pick<
+      RoutineResponseProperties,
+      'id' | 'title' | 'types' | 'description' | 'likeCount'
 {
   @ApiProperty({ description: '루틴 ID' })
   id!: string;
@@ -30,15 +33,22 @@ export class ReferenceRoutinePreviewResponse
   })
   types!: ManualType[];
 
+  @ApiProperty({
+    description: '좋아요 수',
+    example: 0,
+  })
+  likeCount!: number;
+
   constructor(
     data: Pick<
       RoutineResponseProperties,
-      'id' | 'title' | 'author' | 'types' | 'description'
+      'id' | 'title' | 'author' | 'types' | 'description' | 'likeCount'
     >,
   ) {
     this.id = data.id;
     this.title = data.title;
     this.author = data.author.nickname;
+    this.likeCount = data.likeCount;
     this.description = data.description;
     this.types = data.types;
   }
