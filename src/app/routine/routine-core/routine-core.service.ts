@@ -21,7 +21,6 @@ import { UserService } from '@app/user/user.service';
 import { Manual } from '@domain/equipment/equipment-manual.entity';
 import { ManualType } from '@domain/equipment/manual-type';
 import { RoutineNotFoundException } from '@domain/errors/routine.errors';
-import { RoutineManual } from '@domain/routine/routine-manual.entity';
 import { Routine } from '@domain/routine/routine.entity';
 import { Pagination } from '@infrastructure/types/pagination.types';
 
@@ -268,11 +267,5 @@ export class RoutineCoreService {
     return routine.routineManuals.map(
       (routineManual) => routineManual.manual.type,
     );
-  }
-
-  async getRoutineManualsByRoutineId(
-    routineId: string,
-  ): Promise<RoutineManual[]> {
-    return this.routineManualService.findByRoutineId(routineId);
   }
 }
