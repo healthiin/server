@@ -1,13 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { postPreviewType } from '@app/community/post/post.command';
-import { PostProperties } from '@domain/community/post';
 
 export class PostPreviewResponse
   implements
-    Omit<
-      PostProperties,
-      'author' | 'deletedAt' | 'content' | 'images' | 'updatedAt' | 'board'
+    Pick<
+      postPreviewType,
+      'id' | 'title' | 'views' | 'likesCount' | 'commentsCount' | 'createdAt'
     >
 {
   @ApiProperty()
@@ -25,6 +24,9 @@ export class PostPreviewResponse
   @ApiProperty({ description: '게시글 댓글 수' })
   commentsCount!: number;
 
+  @ApiProperty({ description: '이미지 존재 여부' })
+  hasImage!: boolean;
+
   @ApiProperty({ description: '게시글 조회수' })
   views!: number;
 
@@ -34,11 +36,26 @@ export class PostPreviewResponse
   @ApiProperty({ description: '게시글 작성 일시' })
   createdAt!: Date;
 
-  constructor(data: postPreviewType) {
+  constructor(
+    data: Pick<
+      postPreviewType,
+      | 'id'
+      | 'title'
+      | 'views'
+      | 'author'
+      | 'images'
+      | 'likesCount'
+      | 'commentsCount'
+      | 'createdAt'
+    >,
+  ) {
     this.id = data.id;
     this.title = data.title;
     this.views = data.views;
     this.author = data.author.nickname;
     this.hasImages = data.images.length > 0;
+    this.likesCount = data.likesCount;
+    this.commentsCount = data.commentsCount;
+    this.createdAt = data.createdAt;
   }
 }
