@@ -4,9 +4,14 @@ metadata:
   name: healthin-server-ingress
   namespace: healthin
   annotations:
+    # Ingress Core Settings
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
+    # SSL Settings
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:876456430036:certificate/d63f7334-14db-4c1b-ac4b-eb736268656a
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
 spec:
   rules:
     - host: api.be-healthy.life
