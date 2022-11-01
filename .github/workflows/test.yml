@@ -30,7 +30,7 @@ jobs:
       - name: Run tests
         env:
           APP_SECRET: secret
-        run: yarn test --coverage=reports
+        run: yarn test --coverage --coverageDirectory=reports
 
       - uses: actions/upload-artifact@v2
         if: success() || failure()
