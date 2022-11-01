@@ -22,7 +22,11 @@ jobs:
           --health-retries 5
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Download Source Codes
+        uses: actions/checkout@v3
+
+      - name: Cache dependencies
+        uses: c-hive/gha-yarn-cache@v2
 
       - name: Install dependencies
         run: yarn
@@ -30,9 +34,9 @@ jobs:
       - name: Run tests
         env:
           APP_SECRET: secret
-        run: yarn test --coverage | tee ./coverage.txt
+        run: yarn test --coverage --reporters=default --reporters=jest-junit
 
       - name: Jest Coverage Comment
         uses: MishaKav/jest-coverage-comment@main
         with:
-          coverage-path: ./coverage.txt
+          junitxml-path: ./junit.xml
