@@ -2,8 +2,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 
-import { dataSource } from '../../../data-source';
-
 import { EquipmentManualService } from '@app/equipment/equipment-manual/equipment-manual.service';
 import { RoutineManualProfileResponse } from '@app/routine/routine-manual/dtos/routine-manual-profile.response';
 import {
@@ -12,7 +10,10 @@ import {
   RoutineManualUpdateCommand,
 } from '@app/routine/routine-manual/routine-manual.command';
 import { ManualNotFoundException } from '@domain/equipment/manual.errors';
-import { RoutineManualNotFoundException } from '@domain/errors/routine.errors';
+import {
+  RoutineManualNotFoundException,
+  RoutineNotFoundException,
+} from '@domain/errors/routine.errors';
 import { RoutineManual } from '@domain/routine/routine-manual.entity';
 import { Routine } from '@domain/routine/routine.entity';
 
@@ -49,7 +50,6 @@ export class RoutineManualService {
     routineManualId: string,
   ): Promise<RoutineManualProfileResponse> {
     const routineManual = await this.findById(routineManualId);
-    console.log(routineManual);
     const manual = await this.manualService.findById(routineManual.manual.id);
 
     return new RoutineManualProfileResponse({
@@ -61,19 +61,38 @@ export class RoutineManualService {
   async updateRoutineManual(
     updateData: RoutineManualUpdateCommand,
   ): Promise<RoutineManualProfileResponse> {
-    const originData = await this.findById(updateData.routineManualId);
-
-    const manual = await this.manualService.getManualById(updateData.manualId);
-    if (!manual) throw new ManualNotFoundException();
-
-    const routineManual = await this.routineManualRepository.save({
+    const { routine, manual, ...originData } = await this.findById(
+      updateData.routineManualId,
+    );
+    let routineManual = await this.routineManualRepository.save({
       ...originData,
       ...updateData,
-      manual: { id: manual.id },
     });
 
+    if (updateData.routineId) {
+      const routine = await this.routineRepository.findOne({
+        where: { id: updateData.routineId },
+      });
+      if (!routine) throw new RoutineNotFoundException();
+
+      routineManual = await this.routineManualRepository.save({
+        ...routineManual,
+        routine: { id: routine.id },
+      });
+    }
+
+    if (updateData.manualId) {
+      const manual = await this.manualService.getManualById(
+        updateData.manualId,
+      );
+      if (!manual) throw new ManualNotFoundException();
+      routineManual = await this.routineManualRepository.save({
+        ...routineManual,
+        manual: { id: manual.id },
+      });
+    }
+
     return new RoutineManualProfileResponse({
-      ...manual,
       ...routineManual,
     });
   }

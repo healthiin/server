@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 import { RoutineManualUpdateCommand } from '@app/routine/routine-manual/routine-manual.command';
 
@@ -16,4 +16,8 @@ export class RoutineCardioManualUpdateRequest
   @IsOptional()
   @IsNumber()
   order?: number;
+
+  @IsOptional()
+  @IsString()
+  manualId?: string;
 }

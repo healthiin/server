@@ -20,9 +20,10 @@ import {
 
 import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
 import { RoutineCardioManualCreateRequest } from '@app/routine/routine-manual/dtos/routine-cardio-manual-create.request';
+import { RoutineCardioManualUpdateRequest } from '@app/routine/routine-manual/dtos/routine-cardio-manual-update.request';
 import { RoutineManualProfileResponse } from '@app/routine/routine-manual/dtos/routine-manual-profile.response';
 import { RoutineWeightManualCreateRequest } from '@app/routine/routine-manual/dtos/routine-weight-manual-create.request';
-import { RoutineManualUpdateRequest } from '@app/routine/routine-manual/routine-manual.command';
+import { RoutineWeightManualUpdateRequest } from '@app/routine/routine-manual/dtos/routine-weight-manual-update.request';
 import { RoutineManualService } from '@app/routine/routine-manual/routine-manual.service';
 
 @Controller('routine-manuals')
@@ -102,7 +103,7 @@ export class RoutineManualController {
   async updateRoutineManual(
     @Param('routineManualId', ParseUUIDPipe) routineManualId: string,
     @Body()
-    data: RoutineManualUpdateRequest,
+    data: RoutineCardioManualUpdateRequest | RoutineWeightManualUpdateRequest,
   ): Promise<RoutineManualProfileResponse> {
     return this.routineManualService.updateRoutineManual({
       routineManualId,
