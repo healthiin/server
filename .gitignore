@@ -36,3 +36,6 @@ lerna-debug.log*
 
 # Environments
 .env
+
+reports
+junit.xml

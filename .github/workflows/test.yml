@@ -1,0 +1,42 @@
+name: Run Test
+
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_DB: healthin_test
+          POSTGRES_USER: healthin_server
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Download Source Codes
+        uses: actions/checkout@v3
+
+      - name: Cache dependencies
+        uses: c-hive/gha-yarn-cache@v2
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Run tests
+        env:
+          APP_SECRET: secret
+        run: yarn test --coverage --reporters=default --reporters=jest-junit
+
+      - name: Jest Coverage Comment
+        uses: MishaKav/jest-coverage-comment@main
+        with:
+          junitxml-path: ./junit.xml

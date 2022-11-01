@@ -1,40 +1,35 @@
+import { ConfigModule } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as request from 'supertest';
-import { Connection } from 'typeorm';
 
 import ormConfig from './orm-config';
 
-import { AppController } from '@app/app.controller';
+import { AppModule } from '@app/app.module';
 import { UserCreateRequest } from '@app/user/dtos/user-create.request';
-import { UserModule } from '@app/user/user.module';
-import { User } from '@domain/user/user.entity';
+import { InfrastructureModule } from '@infrastructure/infrastructure.module';
 
 describe('App Module Integration', () => {
   let app;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forFeature([User]),
+        ConfigModule.forRoot({ isGlobal: true, cache: true }),
         TypeOrmModule.forRoot(ormConfig),
-        UserModule,
+        EventEmitterModule.forRoot(),
+        AppModule,
+        InfrastructureModule,
       ],
-      controllers: [AppController],
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    const connection = app.get(Connection);
-    await connection.synchronize(true);
+
     await app.init();
   });
 
   afterEach(async () => {
-    const connection = app.get(Connection);
-    await connection.synchronize(true);
-  });
-
-  afterAll(async () => {
     await app.close();
   });
 
@@ -79,27 +74,5 @@ describe('App Module Integration', () => {
         expect(response.status).toBe(409);
       });
     });
-
-    // describe('/users/${userId} (GET)', () => {
-    //   it('should return 200', async () => {
-    //     const requestBody1: UserCreateRequest = {
-    //       username: 'testUserName',
-    //     };
-    //
-    //     const response1 = await request(app.getHttpServer())
-    //       .post('/users')
-    //       .send(requestBody1);
-    //
-    //     expect(response1.status).toBe(201);
-    //
-    //     const userId = 'testUserName';
-    //
-    //     const response = await request(app.getHttpServer()).get(
-    //       `/users/${userId}`,
-    //     );
-    //
-    //     expect(response.status).toBe(200);
-    //   });
-    // });
   });
 });

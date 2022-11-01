@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { AppController } from '@app/app.controller';
 import { AuthModule } from '@app/auth/auth.module';
 import { CommunityModule } from '@app/community/community.module';
 import { EquipmentModule } from '@app/equipment/equipment.module';
@@ -18,5 +19,6 @@ import { UserModule } from '@app/user/user.module';
     RoutineModule,
     MealModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}
