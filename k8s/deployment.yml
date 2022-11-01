@@ -57,6 +57,21 @@ spec:
                 secretKeyRef:
                   name: secret-healthin-server
                   key: DB_PASSWORD
+            - name: FOOD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: secret-healthin-server
+                  key: FOOD_API_KEY
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: secret-healthin-server
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: secret-healthin-server
+                  key: AWS_SECRET_ACCESS_KEY
           imagePullPolicy: Always
 ---
 apiVersion: v1
