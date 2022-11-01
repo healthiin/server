@@ -28,6 +28,8 @@ jobs:
         run: yarn
 
       - name: Run tests
+        env:
+          APP_SECRET: secret
         run: yarn test
 
       - uses: actions/upload-artifact@v2
