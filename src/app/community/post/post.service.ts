@@ -75,7 +75,7 @@ export class PostService {
     if (!post) {
       throw new PostNotFoundException();
     }
-    await this.postRepository.increment({ id: post.id }, 'likesCount', 1);
+    await this.postRepository.increment({ id: post.id }, 'views', 1);
 
     return post;
   }
