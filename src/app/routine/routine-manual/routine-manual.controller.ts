@@ -97,6 +97,40 @@ export class RoutineManualController {
   }
 
   @Patch(':routineManualId')
+  @ApiBody({
+    description: '운동 종류에 따라 다른 데이터를 입력합니다.',
+    schema: {
+      oneOf: [
+        {
+          $ref: getSchemaPath(RoutineCardioManualUpdateRequest),
+        },
+        {
+          $ref: getSchemaPath(RoutineWeightManualUpdateRequest),
+        },
+      ],
+    },
+    examples: {
+      weight: {
+        value: {
+          weight: 20,
+          setNumber: 3,
+          targetNumber: 15,
+          order: 1,
+          manualId: '9683de37-28c1-4108-af86-0b36001e97f0',
+          days: [1, 1, 0, 0, 0, 0, 0],
+        },
+      },
+      cardio: {
+        value: {
+          speed: 7,
+          playMinute: 30,
+          order: 1,
+          manualId: '9683de37-28c1-4108-af86-0b36001e97f0',
+          days: [1, 1, 0, 0, 0, 0, 0],
+        },
+      },
+    },
+  })
   @ApiOperation({
     summary: '루틴 메뉴얼을 수정합니다.',
   })

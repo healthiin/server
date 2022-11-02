@@ -1,9 +1,9 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
 import { RoutineManualUpdateCommand } from '@app/routine/routine-manual/routine-manual.command';
 
 export class RoutineCardioManualUpdateRequest
-  implements Omit<RoutineManualUpdateCommand, 'manualId' | 'routineManualId'>
+  implements Omit<RoutineManualUpdateCommand, 'routineManualId'>
 {
   @IsOptional()
   @IsNumber()
@@ -20,4 +20,8 @@ export class RoutineCardioManualUpdateRequest
   @IsOptional()
   @IsString()
   manualId?: string;
+
+  @IsOptional()
+  @IsArray()
+  days?: Array<number>;
 }
