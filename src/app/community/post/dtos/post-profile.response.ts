@@ -31,14 +31,12 @@ export class PostProfileResponse
   @ApiProperty({ description: '게시판 아이디' })
   boardId!: string;
 
-  @ApiProperty({ description: '이미지 존재 여부' })
-  hasImages!: boolean;
-
   @ApiProperty({ description: '게시글 작성 일시' })
   createdAt!: Date;
 
   @ApiProperty({ description: '게시글 수정 일시' })
   updatedAt!: Date;
+
   constructor(data: PostProperties) {
     this.id = data.id;
     this.title = data.title;
@@ -46,5 +44,8 @@ export class PostProfileResponse
     this.author = data.author.nickname;
     this.images = data.images;
     this.boardId = data.board.id;
+    this.likesCount = data.likesCount;
+    this.commentsCount = data.commentsCount;
+    this.createdAt = data.createdAt;
   }
 }

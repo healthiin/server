@@ -50,6 +50,7 @@ export class PostService {
           board: { id: data.boardId },
         },
         relations: ['author', 'images', 'board'],
+        order: { createdAt: 'ASC' },
       },
     );
 
