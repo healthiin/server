@@ -4,6 +4,7 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -20,14 +21,21 @@ export class Comment implements CommentProperties {
   @Column()
   content!: string;
 
-  @ManyToOne(() => Post, ({ comments }) => comments)
+  @ManyToOne(() => Post, ({ comments }) => comments, {
+    eager: true,
+  })
   post!: Post;
 
-  @ManyToOne(() => User, ({ comments }) => comments)
+  @ManyToOne(() => User, ({ comments }) => comments, {
+    eager: true,
+  })
   author!: User;
 
-  @ManyToOne(() => Comment, ({ replyTo }) => replyTo)
-  replyTo!: Comment | null;
+  @ManyToOne(() => Comment, (category) => category.childComment)
+  parentComment: Comment;
+
+  @OneToMany(() => Comment, (category) => category.parentComment)
+  childComment: Comment[] | null;
 
   @CreateDateColumn()
   createdAt!: Date;

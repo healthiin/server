@@ -25,3 +25,5 @@ export type CommentUpdateCommand = CommentQuery &
   Pick<CommentProperties, 'content'>;
 
 export type CommentDeleteCommand = CommentQuery;
+
+export type cT = Omit<CommentProperties, 'replies'> & { replies: any[] };
