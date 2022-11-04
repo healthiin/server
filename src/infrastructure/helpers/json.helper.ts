@@ -1,4 +1,4 @@
-export class JsonbTransformer<T> {
+export class JsonTransformer<T> {
   to(data: T): string {
     return JSON.stringify(data);
   }

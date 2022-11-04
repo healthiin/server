@@ -9,7 +9,7 @@ import {
 
 import { MealNutrients, MealProperties, MealType } from '@domain/meal/meal';
 import { User } from '@domain/user/user.entity';
-import { JsonbTransformer } from '@infrastructure/helpers/jsonb.helper';
+import { JsonTransformer } from '@infrastructure/helpers/json.helper';
 
 @Entity('meals')
 export class Meal implements MealProperties {
@@ -28,7 +28,7 @@ export class Meal implements MealProperties {
   @Column({ type: 'uuid' })
   photoId!: string;
 
-  @Column({ type: String, transformer: new JsonbTransformer<MealNutrients>() })
+  @Column({ type: String, transformer: new JsonTransformer<MealNutrients>() })
   nutrients!: MealNutrients;
 
   @CreateDateColumn()
