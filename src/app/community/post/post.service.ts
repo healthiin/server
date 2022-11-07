@@ -49,7 +49,7 @@ export class PostService {
         where: {
           board: { id: data.boardId },
         },
-        relations: ['author', 'images', 'board'],
+        relations: ['author', 'board'],
         order: { createdAt: 'DESC' },
       },
     );
@@ -69,7 +69,7 @@ export class PostService {
         id: data.postId,
         board: { id: data.boardId },
       },
-      relations: ['author', 'images', 'board'],
+      relations: ['author', 'board'],
     });
 
     if (!post) {
@@ -149,7 +149,7 @@ export class PostService {
         id: postId,
       },
       select,
-      relations: ['author', 'images', 'board'],
+      relations: ['author', 'board'],
     });
   }
 
