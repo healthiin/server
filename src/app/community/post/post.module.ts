@@ -7,13 +7,12 @@ import { PostController } from '@app/community/post/post.controller';
 import { PostService } from '@app/community/post/post.service';
 import { PostPhotoClient } from '@app/community/post/utils/post-photo.client';
 import { UserModule } from '@app/user/user.module';
-import { PostImage } from '@domain/community/post-image.entity';
 import { PostLike } from '@domain/community/post-like.entity';
 import { Post } from '@domain/community/post.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Post, PostImage, PostLike]),
+    TypeOrmModule.forFeature([Post, PostLike]),
     AuthorizationModule,
     BoardModule,
     UserModule,

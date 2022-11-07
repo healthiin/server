@@ -12,12 +12,12 @@ import {
   Query,
   Req,
   UploadedFile,
-  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiConsumes,
   ApiCreatedResponse,
   ApiNotFoundResponse,
@@ -25,7 +25,10 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { FilesFastifyInterceptor, MulterFile } from 'fastify-file-interceptor';
+import {
+  FileFastifyInterceptor,
+  FilesFastifyInterceptor,
+} from 'fastify-file-interceptor';
 import { memoryStorage } from 'multer';
 
 import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
@@ -37,6 +40,7 @@ import { PostPreviewResponse } from '@app/community/post/dtos/post-preview.respo
 import { PostProfileResponse } from '@app/community/post/dtos/post-profile.response';
 import { PostUpdateRequest } from '@app/community/post/dtos/post-update.request';
 import { PostService } from '@app/community/post/post.service';
+import { MealInspectRequest } from '@app/meal/dtos/meal-inspect.request';
 import { Post as PostEntity } from '@domain/community/post.entity';
 import { COMMUNITY_ERRORS } from '@domain/errors/community.errors';
 import { Pagination } from '@infrastructure/types/pagination.types';
@@ -71,15 +75,20 @@ export class PostController {
     return new PostProfileResponse(post);
   }
 
-  @Post('upload')
-  @UseInterceptors(
-    FilesFastifyInterceptor('files', 10, {
-      storage: memoryStorage(),
-    }),
-  )
+  @Post('image-upload')
+  @UseInterceptors(FileFastifyInterceptor('file', { storage: memoryStorage() }))
   @ApiConsumes('multipart/form-data')
-  uploadFile(@UploadedFiles() files: MulterFile[]) {
-    console.log(files[0].filename);
+  @ApiOperation({
+    summary: '이미지를 업로드 합니다.',
+    description: '이미지를 업로드하고 이미지 ID를 제공받습니다.',
+  })
+  @ApiBody({
+    type: MealInspectRequest,
+  })
+  async uploadImage(
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<string> {
+    return this.postService.uploadImage(file.buffer);
   }
 
   @Post()
@@ -96,16 +105,11 @@ export class PostController {
     files: Array<Express.Multer.File>,
     @Req() { user }: Request,
   ): Promise<PostProfileResponse> {
-    let i;
-    for (i = 0; i < 10; i++) {
-      console.log(files[i]);
-      console.log(files[i].filename);
-    }
     const post = await this.postService.createPost({
       ...data,
       userId: user.id,
       boardId,
-      photos: files.map((file) => file.buffer),
+      images: data.images,
     });
     return new PostProfileResponse(post);
   }
@@ -127,7 +131,6 @@ export class PostController {
       postId,
       userId: user.id,
       ...data,
-      // images: ['updated1', 'updated2'],
     });
     return new PostProfileResponse(post);
   }
