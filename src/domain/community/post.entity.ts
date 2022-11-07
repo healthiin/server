@@ -12,7 +12,6 @@ import {
 import { Board } from '@domain/community/board.entity';
 import { Comment } from '@domain/community/comment.entity';
 import { PostProperties } from '@domain/community/post';
-import { PostImage } from '@domain/community/post-image.entity';
 import { PostLike } from '@domain/community/post-like.entity';
 import { User } from '@domain/user/user.entity';
 
@@ -48,8 +47,8 @@ export class Post implements PostProperties {
   @Column({ type: 'int', default: 0 })
   commentsCount!: number;
 
-  @OneToMany(() => PostImage, ({ post }) => post)
-  images!: PostImage[] | null;
+  @Column({ type: 'text', array: true, default: [] })
+  images!: string[];
 
   @CreateDateColumn()
   createdAt!: Date;

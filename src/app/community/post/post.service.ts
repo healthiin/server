@@ -15,7 +15,6 @@ import {
 } from '@app/community/post/post.command';
 import { PhotoClient } from '@app/meal/types/photo.client';
 import { UserService } from '@app/user/user.service';
-import { PostImage } from '@domain/community/post-image.entity';
 import { PostLike } from '@domain/community/post-like.entity';
 import { Post } from '@domain/community/post.entity';
 import { PostNotFoundException } from '@domain/errors/community.errors';
@@ -26,8 +25,6 @@ export class PostService {
   constructor(
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
-    @InjectRepository(PostImage)
-    private readonly postImageRepository: Repository<PostImage>,
     @InjectRepository(PostLike)
     private readonly postLikeRepository: Repository<PostLike>,
     @Inject('PostPhotoClient')
@@ -87,26 +84,24 @@ export class PostService {
    * 새 게시글을 작성합니다.
    */
   async createPost(data: PostCreateCommand): Promise<Post> {
-    const resizedPhotos = await Promise.all(
-      data.photos.map((photo) => this.postPhotoClient.resizePhoto(photo)),
-    );
-    const photoIds = await Promise.all(
-      resizedPhotos.map((photo) => this.postPhotoClient.uploadPhoto(photo)),
-    );
-
     const board = await this.boardService.getBoardById(data.boardId);
     const user = await this.userService.findById(data.userId);
-    const images = await this.postImageRepository.save(
-      photoIds.map((photo) => this.postImageRepository.create({ url: photo })),
-    );
 
     return this.postRepository.save({
       title: data.title,
       content: data.content,
       board: { id: board.id },
       author: { id: user.id },
-      images,
+      images: data.images,
     });
+  }
+
+  /**
+   * 이미지를 업로드합니다.
+   */
+  async uploadImage(photo: Buffer): Promise<string> {
+    const resizedPhoto = await this.postPhotoClient.resizePhoto(photo);
+    return await this.postPhotoClient.uploadPhoto(resizedPhoto);
   }
 
   /**
@@ -121,15 +116,13 @@ export class PostService {
 
     const user = await this.userService.findById(data.userId);
 
-    // const newImages = await this.postImageRepository.save();
-
     return this.postRepository.save({
       ...post,
       title: data.title,
       content: data.content,
       board: { id: boardId },
       author: { id: user.id },
-      // photos: updatedPhotos,
+      images: data.images,
     });
   }
 
@@ -160,6 +153,9 @@ export class PostService {
     });
   }
 
+  /**
+   * 게시글에 좋아요를 누릅니다.
+   */
   async hitLike(data: {
     boardId: string;
     userId: string;

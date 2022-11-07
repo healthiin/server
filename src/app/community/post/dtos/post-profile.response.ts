@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { PostProperties } from '@domain/community/post';
-import { PostImage } from '@domain/community/post-image.entity';
 
 export class PostProfileResponse
   implements
@@ -20,7 +19,7 @@ export class PostProfileResponse
   author!: string;
 
   @ApiProperty({ description: '게시글 이미지' })
-  images!: PostImage[] | null;
+  images!: string[];
 
   @ApiProperty({ description: '게시글 좋아요 수' })
   likesCount!: number;

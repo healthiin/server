@@ -3,7 +3,7 @@ import { PostProperties } from '@domain/community/post';
 type BoardInfo = { boardId: string };
 type PostInfo = { postId: string };
 type UserInfo = { userId: string };
-type ImagesInfo = { photos: Buffer[] };
+type ImagesInfo = { images: string[] };
 
 export type PostQuery = BoardInfo & PostInfo;
 
