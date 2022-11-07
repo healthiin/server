@@ -92,7 +92,7 @@ export class RoutineLogService {
   ): Promise<RoutineLog> {
     const { userId, ...profile } = data;
 
-    const log = await this.getLog(userId, logId);
+    const log = await this.getLog(logId, userId);
 
     return this.routineLogRepository.save({
       ...log,

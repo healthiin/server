@@ -7,7 +7,8 @@ export type CommentProperties = {
   content: string;
   author: User;
   post: Post;
-  replyTo: Comment | null;
+  parentComment: Comment;
+  childComment: Comment[] | null;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

@@ -40,7 +40,10 @@ export class CommentService {
       where: {
         post: { id: post.id },
       },
-      relations: ['author', 'post', 'replyTo'],
+      order: {
+        createdAt: 'ASC',
+      },
+      relations: ['author', 'post', 'childComment'],
     });
 
     return comments.map(

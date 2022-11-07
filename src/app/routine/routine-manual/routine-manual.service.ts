@@ -10,10 +10,7 @@ import {
   RoutineManualUpdateCommand,
 } from '@app/routine/routine-manual/routine-manual.command';
 import { ManualNotFoundException } from '@domain/equipment/manual.errors';
-import {
-  RoutineManualNotFoundException,
-  RoutineNotFoundException,
-} from '@domain/errors/routine.errors';
+import { RoutineManualNotFoundException } from '@domain/errors/routine.errors';
 import { RoutineManual } from '@domain/routine/routine-manual.entity';
 import { Routine } from '@domain/routine/routine.entity';
 
@@ -64,36 +61,35 @@ export class RoutineManualService {
     const { routine, manual, ...originData } = await this.findById(
       updateData.routineManualId,
     );
-    let routineManual = await this.routineManualRepository.save({
+    const routineManual = await this.routineManualRepository.save({
       ...originData,
       ...updateData,
     });
-
-    if (updateData.routineId) {
-      const routine = await this.routineRepository.findOne({
-        where: { id: updateData.routineId },
-      });
-      if (!routine) throw new RoutineNotFoundException();
-
-      routineManual = await this.routineManualRepository.save({
-        ...routineManual,
-        routine: { id: routine.id },
-      });
-    }
 
     if (updateData.manualId) {
       const manual = await this.manualService.getManualById(
         updateData.manualId,
       );
       if (!manual) throw new ManualNotFoundException();
-      routineManual = await this.routineManualRepository.save({
+      await this.routineManualRepository.save({
         ...routineManual,
         manual: { id: manual.id },
       });
     }
 
+    const fullRoutineManuals = await this.routineManualRepository.findOne({
+      where: { id: routineManual.id },
+      relations: ['manual'],
+    });
     return new RoutineManualProfileResponse({
-      ...routineManual,
+      id: fullRoutineManuals.id,
+      manual: fullRoutineManuals.manual,
+      targetNumber: fullRoutineManuals.targetNumber,
+      setNumber: fullRoutineManuals.setNumber,
+      weight: fullRoutineManuals.weight,
+      speed: fullRoutineManuals.speed,
+      playMinute: fullRoutineManuals.playMinute,
+      order: fullRoutineManuals.order,
     });
   }
 
