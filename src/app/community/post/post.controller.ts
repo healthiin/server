@@ -11,16 +11,21 @@ import {
   Post,
   Query,
   Req,
+  UploadedFile,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiCreatedResponse,
+  ApiConsumes,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { FilesFastifyInterceptor, MulterFile } from 'fastify-file-interceptor';
+import { memoryStorage } from 'multer';
 
 import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
 import { CheckPolicies } from '@app/auth/authorization/policy.decorator';
@@ -38,8 +43,8 @@ import { Request } from '@infrastructure/types/request.types';
 
 @Controller('boards/:boardId/posts')
 @UseGuards(JwtAuthGuard)
-@ApiTags('[커뮤니티] 게시글')
 @ApiBearerAuth()
+@ApiTags('[커뮤니티] 게시글')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
@@ -65,19 +70,41 @@ export class PostController {
     return new PostProfileResponse(post);
   }
 
+  @Post('upload')
+  @UseInterceptors(
+    FilesFastifyInterceptor('files', 10, {
+      storage: memoryStorage(),
+    }),
+  )
+  @ApiConsumes('multipart/form-data')
+  uploadFile(@UploadedFiles() files: MulterFile[]) {
+    console.log(files[0].filename);
+  }
+
   @Post()
-  @ApiOperation({ summary: '게시글을 작성합니다' })
-  @ApiCreatedResponse({ type: PostProfileResponse })
+  @UseInterceptors(
+    FilesFastifyInterceptor('files', 10, { storage: memoryStorage() }),
+  )
+  // @ApiConsumes('multipart/form-data')
+  // @ApiOperation({ summary: '게시글을 작성합니다' })
+  // @ApiCreatedResponse({ type: PostProfileResponse })
   async createPost(
-    @Req() { user }: Request,
     @Param('boardId', ParseUUIDPipe) boardId: string,
     @Body() data: PostCreateRequest,
+    @UploadedFile()
+    files: Array<Express.Multer.File>,
+    @Req() { user }: Request,
   ): Promise<PostProfileResponse> {
+    let i;
+    for (i = 0; i < 10; i++) {
+      console.log(files[i]);
+      console.log(files[i].filename);
+    }
     const post = await this.postService.createPost({
+      ...data,
       userId: user.id,
       boardId,
-      ...data,
-      images: ['test1', 'test2'],
+      photos: files.map((file) => file.buffer),
     });
     return new PostProfileResponse(post);
   }
@@ -99,7 +126,7 @@ export class PostController {
       postId,
       userId: user.id,
       ...data,
-      images: ['updated1', 'updated2'],
+      // images: ['updated1', 'updated2'],
     });
     return new PostProfileResponse(post);
   }

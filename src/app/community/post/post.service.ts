@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { paginate } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
@@ -13,6 +13,7 @@ import {
   PostQuery,
   PostUpdateCommand,
 } from '@app/community/post/post.command';
+import { PhotoClient } from '@app/meal/types/photo.client';
 import { UserService } from '@app/user/user.service';
 import { PostImage } from '@domain/community/post-image.entity';
 import { PostLike } from '@domain/community/post-like.entity';
@@ -29,6 +30,8 @@ export class PostService {
     private readonly postImageRepository: Repository<PostImage>,
     @InjectRepository(PostLike)
     private readonly postLikeRepository: Repository<PostLike>,
+    @Inject('PostPhotoClient')
+    private readonly postPhotoClient: PhotoClient,
     private readonly boardService: BoardService,
     private readonly userService: UserService,
   ) {}
@@ -84,12 +87,18 @@ export class PostService {
    * 새 게시글을 작성합니다.
    */
   async createPost(data: PostCreateCommand): Promise<Post> {
+    console.log(data.photos);
+    const resizedPhotos = await Promise.all(
+      data.photos.map((photo) => this.postPhotoClient.resizePhoto(photo)),
+    );
+    const photoIds = await Promise.all(
+      resizedPhotos.map((photo) => this.postPhotoClient.uploadPhoto(photo)),
+    );
+
     const board = await this.boardService.getBoardById(data.boardId);
     const user = await this.userService.findById(data.userId);
     const images = await this.postImageRepository.save(
-      data.images.map((image) =>
-        this.postImageRepository.create({ url: image }),
-      ),
+      photoIds.map((photo) => this.postImageRepository.create({ url: photo })),
     );
 
     return this.postRepository.save({
@@ -113,15 +122,7 @@ export class PostService {
 
     const user = await this.userService.findById(data.userId);
 
-    await this.postImageRepository.delete({
-      post: { id: post.id },
-    });
-
-    const newImages = await this.postImageRepository.save(
-      data.images.map((image) =>
-        this.postImageRepository.create({ url: image }),
-      ),
-    );
+    // const newImages = await this.postImageRepository.save();
 
     return this.postRepository.save({
       ...post,
@@ -129,7 +130,7 @@ export class PostService {
       content: data.content,
       board: { id: boardId },
       author: { id: user.id },
-      images: newImages,
+      // photos: updatedPhotos,
     });
   }
 
