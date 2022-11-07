@@ -49,6 +49,10 @@ export class AuthenticationService {
 
   async nativeLogin(data: NativeLoginRequest, res): Promise<TokenResponse> {
     const user = await this.userService.findByUsername(data.username);
+    console.log(
+      data.password,
+      await this.userService.hashPassword(data.password),
+    );
 
     const logined = await this.isValidPassword(data.password, user.password);
     if (!logined) {
