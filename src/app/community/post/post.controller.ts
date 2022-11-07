@@ -19,6 +19,7 @@ import {
 import {
   ApiBearerAuth,
   ApiConsumes,
+  ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -85,9 +86,9 @@ export class PostController {
   @UseInterceptors(
     FilesFastifyInterceptor('files', 10, { storage: memoryStorage() }),
   )
-  // @ApiConsumes('multipart/form-data')
-  // @ApiOperation({ summary: '게시글을 작성합니다' })
-  // @ApiCreatedResponse({ type: PostProfileResponse })
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: '게시글을 작성합니다' })
+  @ApiCreatedResponse({ type: PostProfileResponse })
   async createPost(
     @Param('boardId', ParseUUIDPipe) boardId: string,
     @Body() data: PostCreateRequest,

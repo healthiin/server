@@ -87,7 +87,6 @@ export class PostService {
    * 새 게시글을 작성합니다.
    */
   async createPost(data: PostCreateCommand): Promise<Post> {
-    console.log(data.photos);
     const resizedPhotos = await Promise.all(
       data.photos.map((photo) => this.postPhotoClient.resizePhoto(photo)),
     );
