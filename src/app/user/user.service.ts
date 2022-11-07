@@ -120,7 +120,7 @@ export class UserService {
     if (count > 0) throw new DuplicatedNicknameException();
   }
 
-  protected async hashPassword(password: string): Promise<string> {
+  async hashPassword(password: string): Promise<string> {
     const secret = Buffer.from(
       this.configService.get<string>('APP_SECRET', ''),
     );
