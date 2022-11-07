@@ -5,6 +5,7 @@ import { AuthorizationModule } from '@app/auth/authorization/authorization.modul
 import { BoardModule } from '@app/community/board/board.module';
 import { PostController } from '@app/community/post/post.controller';
 import { PostService } from '@app/community/post/post.service';
+import { PostPhotoClient } from '@app/community/post/utils/post-photo.client';
 import { UserModule } from '@app/user/user.module';
 import { PostImage } from '@domain/community/post-image.entity';
 import { PostLike } from '@domain/community/post-like.entity';
@@ -18,7 +19,13 @@ import { Post } from '@domain/community/post.entity';
     UserModule,
   ],
   controllers: [PostController],
-  providers: [PostService],
+  providers: [
+    PostService,
+    {
+      provide: 'PostPhotoClient',
+      useClass: PostPhotoClient,
+    },
+  ],
   exports: [PostService],
 })
 export class PostModule {}
