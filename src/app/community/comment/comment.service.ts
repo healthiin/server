@@ -95,16 +95,15 @@ export class CommentService {
       boardId: data.boardId,
     });
 
-    const { id: replyId } = await this.getCommentById({
-      commentId: data.replyId,
-      postId: data.postId,
-      boardId: data.boardId,
+    const parentComment = await this.commentRepository.findOneBy({
+      id: data.replyId,
+      post: { id: postId },
     });
 
-    return this.commentRepository.save({
+    return await this.commentRepository.save({
       ...data,
+      parentComment: { id: parentComment.id },
       post: { id: postId },
-      replyTo: { id: replyId },
       author: { id: userId },
     });
   }
