@@ -9,6 +9,9 @@ export class RoutineLogProfileResponse {
   @ApiProperty({ description: '루틴 이름' })
   routineTitle!: string;
 
+  @ApiProperty({ description: '루틴 아이디' })
+  routineId!: string;
+
   @ApiProperty({ description: '목표 횟수' })
   targetNumber: number;
 
@@ -39,6 +42,7 @@ export class RoutineLogProfileResponse {
   constructor(data: RoutineLog) {
     this.id = data.id;
     this.routineTitle = data.routine.title;
+    this.routineId = data.routine.id;
     this.targetNumber =
       Number(data.targetNumber) || Number(data.manual.targetNumber);
     this.setNumber = Number(data.setNumber) || Number(data.manual.setNumber);
