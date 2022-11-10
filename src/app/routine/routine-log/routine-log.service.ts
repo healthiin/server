@@ -52,6 +52,23 @@ export class RoutineLogService {
       .getMany();
   }
 
+  async getLogsByMonth(userId: string, date: string): Promise<RoutineLog[][]> {
+    const createdDate = parse(date, 'yyyy-MM-dd', new Date());
+    const lastDay = new Date(
+      createdDate.getFullYear(),
+      createdDate.getMonth() + 1,
+      0,
+    );
+    const logsByMonth = [];
+    for (let i = 0; i < lastDay.getDate(); i++) {
+      const day = i < 9 ? `0${i + 1}` : `${i + 1}`;
+      const newDate = date.replace(/\d{2}$/, day);
+      const logs = await this.getLogsByDate(userId, newDate);
+      logsByMonth.push(logs);
+    }
+    return logsByMonth;
+  }
+
   async getLog(logId: string, userId?: string): Promise<RoutineLog> {
     const log = await this.routineLogRepository.findOne({
       where: {
