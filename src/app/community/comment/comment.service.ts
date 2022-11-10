@@ -30,7 +30,7 @@ export class CommentService {
   async getCommentsByPostId(data: {
     boardId: string;
     postId: string;
-  }): Promise<any[]> {
+  }): Promise<CommentProfileResponse[]> {
     const { id: postId } = await this.postService.getPostById({
       boardId: data.boardId,
       postId: data.postId,
