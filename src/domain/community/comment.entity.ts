@@ -31,10 +31,10 @@ export class Comment implements CommentProperties {
   })
   author!: User;
 
-  @ManyToOne(() => Comment, (category) => category.childComment)
+  @ManyToOne(() => Comment, (comment) => comment.childComment)
   parentComment: Comment;
 
-  @OneToMany(() => Comment, (category) => category.parentComment)
+  @OneToMany(() => Comment, (comment) => comment.parentComment)
   childComment: Comment[] | null;
 
   @CreateDateColumn()

@@ -30,21 +30,21 @@ export class CommentService {
   async getCommentsByPostId(data: {
     boardId: string;
     postId: string;
-  }): Promise<CommentProfileResponse[]> {
-    const post = await this.postService.getPostById({
+  }): Promise<any[]> {
+    const { id: postId } = await this.postService.getPostById({
       boardId: data.boardId,
       postId: data.postId,
     });
 
-    const comments = await this.commentRepository.find({
-      where: {
-        post: { id: post.id },
-      },
-      order: {
-        createdAt: 'ASC',
-      },
-      relations: ['author', 'post', 'childComment'],
-    });
+    const comments = await this.commentRepository
+      .createQueryBuilder('comment')
+      .where('comment.post_id = :postId', { postId })
+      .leftJoinAndSelect('comment.author', 'author')
+      .leftJoinAndSelect('comment.post', 'post')
+      .leftJoinAndSelect('comment.childComment', 'childComment')
+      .leftJoinAndSelect('childComment.author', 'childAuthor')
+      .andWhere('comment.parent_comment_id IS NULL')
+      .getMany();
 
     return comments.map(
       (comment) =>
