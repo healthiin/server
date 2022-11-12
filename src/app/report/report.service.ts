@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 
 import { ReportLogResponse } from '@app/report/dtos/report-log.response';
 import { ReportMealResponse } from '@app/report/dtos/report-meal.response';
+import { ReportResponse } from '@app/report/dtos/report.response';
 import { CreateReportCommand, ReportItem } from '@app/report/report.commands';
 import { Meal } from '@domain/meal/meal.entity';
 import { Report } from '@domain/report/report.entity';
@@ -49,7 +50,7 @@ export class ReportService {
     return report;
   }
 
-  async generateReport(reportId: string) {
+  async generateReport(reportId: string): Promise<ReportResponse> {
     const report = await this.getReportInfo(reportId);
 
     // Get Date Range with year and week.
