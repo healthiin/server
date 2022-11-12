@@ -101,6 +101,8 @@ export class ReportService {
     return {
       user: Masker.maskName(report.user.nickname),
       title: report.title,
+      year: report.year,
+      week: report.week,
       result,
     };
   }
