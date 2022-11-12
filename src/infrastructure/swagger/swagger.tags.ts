@@ -2,6 +2,7 @@ export const tags: SwaggerTag[] = [
   // 계정 관련 태그
   { name: '[계정] 인증', description: '계정 관련 기능' },
   { name: '[계정] 프로필', description: '계정 관련 기능' },
+  { name: '[계정] 리포트', description: '리포트 관련 기능' },
   // 커뮤니티 관련 태그
   { name: '[커뮤니티] 게시판', description: '커뮤니티 관련 기능' },
   { name: '[커뮤니티] 게시글', description: '커뮤니티 관련 기능' },

@@ -7146,6 +7146,11 @@ quick-format-unescaped@^4.0.3:
   resolved "https://registry.yarnpkg.com/quick-format-unescaped/-/quick-format-unescaped-4.0.4.tgz#93ef6dd8d3453cbc7970dd614fad4c5954d6b5a7"
   integrity sha512-tYC1Q1hgyRuHgloV/YXs2w15unPVh8qfu/qCTfhTYamaw7fyhumKa2yGpdSo87vY32rIclj+4fWYQXUMs9EHvg==
 
+radash@^9.1.0:
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/radash/-/radash-9.1.0.tgz#96083cc705a26832eab5ba01d2ae9474a5c53a86"
+  integrity sha512-wBVCd7celVvZE5hKU5OXcBNpkM6yw17ao+xWCgviPLqBAJalsh68z6+mbPJ8pjI/YIvOGKyQvBTAl7kJnJbREA==
+
 randombytes@^2.1.0:
   version "2.1.0"
   resolved "https://registry.npmjs.org/randombytes/-/randombytes-2.1.0.tgz"

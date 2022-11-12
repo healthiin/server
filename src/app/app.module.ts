@@ -6,6 +6,7 @@ import { CommunityModule } from '@app/community/community.module';
 import { EquipmentModule } from '@app/equipment/equipment.module';
 import { GymModule } from '@app/gym/gym.module';
 import { MealModule } from '@app/meal/meal.module';
+import { ReportModule } from '@app/report/report.module';
 import { RoutineModule } from '@app/routine/routine.module';
 import { UserModule } from '@app/user/user.module';
 
@@ -18,6 +19,7 @@ import { UserModule } from '@app/user/user.module';
     EquipmentModule,
     RoutineModule,
     MealModule,
+    ReportModule,
   ],
   controllers: [AppController],
 })
