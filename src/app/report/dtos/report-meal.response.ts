@@ -23,6 +23,9 @@ export class ReportMealResponse {
   @ApiProperty({ description: '칼로리' })
   calories: number;
 
+  @ApiProperty({ description: '사진' })
+  photoId: string;
+
   @Exclude()
   day: number;
 
@@ -35,6 +38,7 @@ export class ReportMealResponse {
     this.title = data.title;
     this.calories = data.nutrients.calories;
     this.nutrients = data.nutrients;
+    this.photoId = data.photoId;
     this.day = data.createdAt.getDate();
   }
 }
