@@ -14,6 +14,7 @@ import { Post } from '@domain/community/post.entity';
 import { GymNotice } from '@domain/gym/entities/gym-notice.entity';
 import { GymUser } from '@domain/gym/entities/gym-user.entity';
 import { Meal } from '@domain/meal/meal.entity';
+import { Report } from '@domain/report/report.entity';
 import { RoutineLike } from '@domain/routine/routine-like.entity';
 import { RoutineLog } from '@domain/routine/routine-log.entity';
 import { Routine } from '@domain/routine/routine.entity';
@@ -82,4 +83,7 @@ export class User {
 
   @OneToMany(() => RoutineLog, ({ user }) => user)
   routineLogs: RoutineLog[];
+
+  @OneToMany(() => Report, ({ user }) => user)
+  reports: Report[];
 }
