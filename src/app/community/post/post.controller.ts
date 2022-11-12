@@ -11,16 +11,25 @@ import {
   Post,
   Query,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import {
+  FileFastifyInterceptor,
+  FilesFastifyInterceptor,
+} from 'fastify-file-interceptor';
+import { memoryStorage } from 'multer';
 
 import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
 import { CheckPolicies } from '@app/auth/authorization/policy.decorator';
@@ -31,6 +40,7 @@ import { PostPreviewResponse } from '@app/community/post/dtos/post-preview.respo
 import { PostProfileResponse } from '@app/community/post/dtos/post-profile.response';
 import { PostUpdateRequest } from '@app/community/post/dtos/post-update.request';
 import { PostService } from '@app/community/post/post.service';
+import { MealInspectRequest } from '@app/meal/dtos/meal-inspect.request';
 import { Post as PostEntity } from '@domain/community/post.entity';
 import { COMMUNITY_ERRORS } from '@domain/errors/community.errors';
 import { Pagination } from '@infrastructure/types/pagination.types';
@@ -38,8 +48,8 @@ import { Request } from '@infrastructure/types/request.types';
 
 @Controller('boards/:boardId/posts')
 @UseGuards(JwtAuthGuard)
-@ApiTags('[커뮤니티] 게시글')
 @ApiBearerAuth()
+@ApiTags('[커뮤니티] 게시글')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
@@ -65,19 +75,41 @@ export class PostController {
     return new PostProfileResponse(post);
   }
 
+  @Post('image-upload')
+  @UseInterceptors(FileFastifyInterceptor('file', { storage: memoryStorage() }))
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({
+    summary: '이미지를 업로드 합니다.',
+    description: '이미지를 업로드하고 이미지 ID를 제공받습니다.',
+  })
+  @ApiBody({
+    type: MealInspectRequest,
+  })
+  async uploadImage(
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<string> {
+    return this.postService.uploadImage(file.buffer);
+  }
+
   @Post()
+  @UseInterceptors(
+    FilesFastifyInterceptor('files', 10, { storage: memoryStorage() }),
+  )
+  @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: '게시글을 작성합니다' })
   @ApiCreatedResponse({ type: PostProfileResponse })
   async createPost(
-    @Req() { user }: Request,
     @Param('boardId', ParseUUIDPipe) boardId: string,
     @Body() data: PostCreateRequest,
+    @UploadedFile()
+    files: Array<Express.Multer.File>,
+    @Req() { user }: Request,
   ): Promise<PostProfileResponse> {
     const post = await this.postService.createPost({
+      ...data,
       userId: user.id,
       boardId,
-      ...data,
-      images: ['test1', 'test2'],
+      images: data.images,
     });
     return new PostProfileResponse(post);
   }
@@ -99,7 +131,6 @@ export class PostController {
       postId,
       userId: user.id,
       ...data,
-      images: ['updated1', 'updated2'],
     });
     return new PostProfileResponse(post);
   }

@@ -31,20 +31,20 @@ export class CommentService {
     boardId: string;
     postId: string;
   }): Promise<CommentProfileResponse[]> {
-    const post = await this.postService.getPostById({
+    const { id: postId } = await this.postService.getPostById({
       boardId: data.boardId,
       postId: data.postId,
     });
 
-    const comments = await this.commentRepository.find({
-      where: {
-        post: { id: post.id },
-      },
-      order: {
-        createdAt: 'ASC',
-      },
-      relations: ['author', 'post', 'childComment'],
-    });
+    const comments = await this.commentRepository
+      .createQueryBuilder('comment')
+      .where('comment.post_id = :postId', { postId })
+      .leftJoinAndSelect('comment.author', 'author')
+      .leftJoinAndSelect('comment.post', 'post')
+      .leftJoinAndSelect('comment.childComment', 'childComment')
+      .leftJoinAndSelect('childComment.author', 'childAuthor')
+      .andWhere('comment.parent_comment_id IS NULL')
+      .getMany();
 
     return comments.map(
       (comment) =>
@@ -95,16 +95,15 @@ export class CommentService {
       boardId: data.boardId,
     });
 
-    const { id: replyId } = await this.getCommentById({
-      commentId: data.replyId,
-      postId: data.postId,
-      boardId: data.boardId,
+    const parentComment = await this.commentRepository.findOneBy({
+      id: data.replyId,
+      post: { id: postId },
     });
 
-    return this.commentRepository.save({
+    return await this.commentRepository.save({
       ...data,
+      parentComment: { id: parentComment.id },
       post: { id: postId },
-      replyTo: { id: replyId },
       author: { id: userId },
     });
   }

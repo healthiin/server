@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { paginate } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
@@ -13,8 +13,8 @@ import {
   PostQuery,
   PostUpdateCommand,
 } from '@app/community/post/post.command';
+import { PhotoClient } from '@app/meal/types/photo.client';
 import { UserService } from '@app/user/user.service';
-import { PostImage } from '@domain/community/post-image.entity';
 import { PostLike } from '@domain/community/post-like.entity';
 import { Post } from '@domain/community/post.entity';
 import { PostNotFoundException } from '@domain/errors/community.errors';
@@ -25,10 +25,10 @@ export class PostService {
   constructor(
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
-    @InjectRepository(PostImage)
-    private readonly postImageRepository: Repository<PostImage>,
     @InjectRepository(PostLike)
     private readonly postLikeRepository: Repository<PostLike>,
+    @Inject('PostPhotoClient')
+    private readonly postPhotoClient: PhotoClient,
     private readonly boardService: BoardService,
     private readonly userService: UserService,
   ) {}
@@ -49,8 +49,8 @@ export class PostService {
         where: {
           board: { id: data.boardId },
         },
-        relations: ['author', 'images', 'board'],
-        order: { createdAt: 'ASC' },
+        relations: ['author', 'board'],
+        order: { createdAt: 'DESC' },
       },
     );
 
@@ -69,7 +69,7 @@ export class PostService {
         id: data.postId,
         board: { id: data.boardId },
       },
-      relations: ['author', 'images', 'board'],
+      relations: ['author', 'board'],
     });
 
     if (!post) {
@@ -86,19 +86,22 @@ export class PostService {
   async createPost(data: PostCreateCommand): Promise<Post> {
     const board = await this.boardService.getBoardById(data.boardId);
     const user = await this.userService.findById(data.userId);
-    const images = await this.postImageRepository.save(
-      data.images.map((image) =>
-        this.postImageRepository.create({ url: image }),
-      ),
-    );
 
     return this.postRepository.save({
       title: data.title,
       content: data.content,
       board: { id: board.id },
       author: { id: user.id },
-      images,
+      images: data.images,
     });
+  }
+
+  /**
+   * 이미지를 업로드합니다.
+   */
+  async uploadImage(photo: Buffer): Promise<string> {
+    const resizedPhoto = await this.postPhotoClient.resizePhoto(photo);
+    return await this.postPhotoClient.uploadPhoto(resizedPhoto);
   }
 
   /**
@@ -113,23 +116,13 @@ export class PostService {
 
     const user = await this.userService.findById(data.userId);
 
-    await this.postImageRepository.delete({
-      post: { id: post.id },
-    });
-
-    const newImages = await this.postImageRepository.save(
-      data.images.map((image) =>
-        this.postImageRepository.create({ url: image }),
-      ),
-    );
-
     return this.postRepository.save({
       ...post,
       title: data.title,
       content: data.content,
       board: { id: boardId },
       author: { id: user.id },
-      images: newImages,
+      images: data.images,
     });
   }
 
@@ -156,10 +149,13 @@ export class PostService {
         id: postId,
       },
       select,
-      relations: ['author', 'images', 'board'],
+      relations: ['author', 'board'],
     });
   }
 
+  /**
+   * 게시글에 좋아요를 누릅니다.
+   */
   async hitLike(data: {
     boardId: string;
     userId: string;

@@ -7,10 +7,12 @@ import * as argon2 from 'argon2';
 import { ACCESS_TOKEN_EXPIRE, REFRESH_TOKEN_EXPIRE } from '../../../constants';
 
 import { LoginRequest } from '@app/auth/authentication/commands/login.request';
+import { NativeLoginRequest } from '@app/auth/authentication/dtos/native-login.request';
 import { TokenResponse } from '@app/auth/authentication/dtos/token.response';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
 import { UserService } from '@app/user/user.service';
 import {
+  InvalidPassword,
   InvalidTokenException,
   UnSupportedVendorTypeException,
 } from '@domain/errors/auth.errors';
@@ -43,6 +45,31 @@ export class AuthenticationService {
     });
 
     return new TokenResponse({ accessToken, isFreshman: user.isFreshman });
+  }
+
+  async nativeLogin(data: NativeLoginRequest, res): Promise<TokenResponse> {
+    const user = await this.userService.findByUsername(data.username);
+    console.log(
+      data.password,
+      await this.userService.hashPassword(data.password),
+    );
+
+    const logined = await this.isValidPassword(data.password, user.password);
+    if (!logined) {
+      throw new InvalidPassword();
+    }
+
+    const [accessToken, refreshToken] = await Promise.all([
+      this.generateAccessToken(user.id),
+      this.generateRefreshToken(user.id),
+    ]);
+
+    res.cookie('refresh_token', refreshToken, {
+      path: '/auth',
+      httpOnly: true,
+    });
+
+    return new TokenResponse({ accessToken });
   }
 
   async loginByUserId(userId: string, res): Promise<TokenResponse> {

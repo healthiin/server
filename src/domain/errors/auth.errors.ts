@@ -5,11 +5,18 @@ export const AUTH_ERRORS = {
   UNAUTHORIZED: 'UNAUTHORIZED',
   KAKAO_OAUTH_FAILED: 'KAKAO_OAUTH_FAILED',
   UNSUPPORTED_VENDOR_TYPE: 'UNSUPPORTED_VENDOR_TYPE',
+  WRONG_PASSWORD: 'WRONG_PASSWORD',
 };
 
 export class InvalidTokenException extends BadRequestException {
   constructor() {
     super('인증 정보가 올바르지 않습니다.', AUTH_ERRORS.TOKEN_INVALID);
+  }
+}
+
+export class InvalidPassword extends BadRequestException {
+  constructor() {
+    super('비밀번호가 올바르지 않습니다.', AUTH_ERRORS.UNAUTHORIZED);
   }
 }
 

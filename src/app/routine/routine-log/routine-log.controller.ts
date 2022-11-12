@@ -49,6 +49,21 @@ export class RoutineLogController {
     return result.map((log) => new RoutineLogProfileResponse(log));
   }
 
+  @Get('month/:date')
+  @CheckPolicies((ability) => ability.can(Action.Read, RoutineLog))
+  @ApiOperation({ summary: '월자별 운동 기록을 조회합니다.' })
+  @ApiOkResponse({ type: [RoutineLogProfileResponse] })
+  @ApiParam({ name: 'date', example: 'yyyy-MM-dd' })
+  async getLogsByMonth(
+    @Req() { user }: Request,
+    @Param('date') date: string,
+  ): Promise<RoutineLogProfileResponse[][]> {
+    const results = await this.routineLogService.getLogsByMonth(user.id, date);
+    return results.map((logs) =>
+      logs.map((log) => new RoutineLogProfileResponse(log)),
+    );
+  }
+
   @Post()
   @CheckPolicies((ability) => ability.can(Action.Create, RoutineLog))
   @ApiOperation({ summary: '운동 기록을 추가합니다.' })

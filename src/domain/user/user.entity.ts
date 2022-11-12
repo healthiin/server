@@ -30,6 +30,9 @@ export class User {
   nickname!: string | null;
 
   @Column({ nullable: true })
+  password!: string | null;
+
+  @Column({ nullable: true })
   ageRange!: string | null;
 
   @Column({ nullable: true })

@@ -55,6 +55,7 @@ export class MealController {
     @Req() { user }: Request,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<MealInspectResponse> {
+    console.log(file, file.filename);
     return this.mealService.inspectIngredients(user.id, file.buffer);
   }
 

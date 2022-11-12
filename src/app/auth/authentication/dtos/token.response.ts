@@ -8,6 +8,6 @@ export class TokenResponse {
 
   constructor(data: TokenResponseData) {
     this.accessToken = data.accessToken;
-    this.isFreshman = data.isFreshman;
+    this.isFreshman = data.isFreshman || null;
   }
 }

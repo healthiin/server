@@ -1,5 +1,4 @@
 import { Board } from '@domain/community/board.entity';
-import { PostImage } from '@domain/community/post-image.entity';
 import { User } from '@domain/user/user.entity';
 
 export type PostProperties = {
@@ -10,7 +9,7 @@ export type PostProperties = {
   views: number;
   likesCount: number;
   commentsCount: number;
-  images: PostImage[] | null;
+  images: string[];
   board: Board;
   createdAt: Date;
   updatedAt: Date;

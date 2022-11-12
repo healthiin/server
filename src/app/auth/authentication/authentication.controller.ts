@@ -15,6 +15,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { AuthenticationService } from '@app/auth/authentication/authentication.service';
 import { LoginRequest } from '@app/auth/authentication/dtos/login.request';
+import { NativeLoginRequest } from '@app/auth/authentication/dtos/native-login.request';
 import { TokenResponse } from '@app/auth/authentication/dtos/token.response';
 import { JwtAuthGuard } from '@app/auth/authentication/jwt.guard';
 import { UserProfileResponse } from '@app/user/dtos/user-profile.response';
@@ -32,6 +33,15 @@ export class AuthenticationController {
     @Res({ passthrough: true }) res,
   ): Promise<TokenResponse> {
     return this.authenticationService.login(data, res);
+  }
+
+  @Post('native-login')
+  @ApiOperation({ summary: '액세스 토큰을 발급합니다.' })
+  async nativeLogin(
+    @Body() data: NativeLoginRequest,
+    @Res({ passthrough: true }) res,
+  ): Promise<TokenResponse> {
+    return this.authenticationService.nativeLogin(data, res);
   }
 
   @Post('login/:userId')

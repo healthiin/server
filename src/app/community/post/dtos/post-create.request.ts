@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 import { PostCreateCommand } from '@app/community/post/post.command';
 
@@ -16,4 +16,11 @@ export class PostCreateRequest
   @IsNotEmpty()
   @IsString()
   content: string;
+
+  @ApiProperty({
+    description: '게시글 이미지',
+    nullable: true,
+  })
+  @IsOptional()
+  images!: string[];
 }
