@@ -4,6 +4,12 @@ import {
   ReportMealStatistics,
 } from '@app/report/dtos/report-meal.response';
 
+export type CreateReportCommand = {
+  year: number;
+  week: number;
+  userId: string;
+};
+
 export type ReportSearch = {
   year: number;
   week: number;
