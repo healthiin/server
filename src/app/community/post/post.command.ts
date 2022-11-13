@@ -13,6 +13,11 @@ export type PostListQuery = {
   boardId: string;
 };
 
+export type HotPostListQuery = {
+  page: number;
+  limit: number;
+};
+
 export type PostCreateCommand = UserInfo &
   BoardInfo &
   ImagesInfo &
