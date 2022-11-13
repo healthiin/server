@@ -7,6 +7,7 @@ import { FindOptionsSelect } from 'typeorm/find-options/FindOptionsSelect';
 import { BoardService } from '@app/community/board/board.service';
 import { PostPreviewResponse } from '@app/community/post/dtos/post-preview.response';
 import {
+  HotPostListQuery,
   PostCreateCommand,
   PostDeleteCommand,
   PostListQuery,
@@ -54,6 +55,26 @@ export class PostService {
       },
     );
 
+    return {
+      items: items.map((item) => new PostPreviewResponse({ ...item })),
+      meta,
+    };
+  }
+
+  async getHotPosts(
+    data: HotPostListQuery,
+  ): Promise<Pagination<PostPreviewResponse>> {
+    const { items, meta } = await paginate(
+      this.postRepository,
+      {
+        page: data.page,
+        limit: data.limit,
+      },
+      {
+        order: { likesCount: 'DESC' },
+        relations: ['author', 'board'],
+      },
+    );
     return {
       items: items.map((item) => new PostPreviewResponse({ ...item })),
       meta,

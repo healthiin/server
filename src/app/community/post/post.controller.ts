@@ -64,6 +64,16 @@ export class PostController {
     return this.postService.getPostsByBoardId({ page, limit, boardId });
   }
 
+  @Get('hot')
+  @ApiOperation({ summary: '인기글 목록을 조회합니다' })
+  @ApiOkResponse({ type: [PostPreviewResponse] })
+  async getHotPostsByBoardId(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
+  ): Promise<Pagination<PostPreviewResponse>> {
+    return this.postService.getHotPosts({ page, limit });
+  }
+
   @Get(':postId')
   @ApiOperation({ summary: '게시글 내용을 조회합니다' })
   @ApiOkResponse({ type: PostProfileResponse })
