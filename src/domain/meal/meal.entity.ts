@@ -25,7 +25,7 @@ export class Meal implements MealProperties {
   @Column()
   title!: string;
 
-  @Column({ type: 'uuid' })
+  @Column()
   photoId!: string;
 
   @Column({ type: String, transformer: new JsonTransformer<MealNutrients>() })
