@@ -87,7 +87,6 @@ export class RoutineCoreController {
   @Get('/my-routines/:routineId')
   @ApiOperation({ summary: '내 루틴의 내용을 조회합니다' })
   @ApiOkResponse({ type: MyRoutineProfileResponse })
-  @ApiOperation({ summary: '내 루틴의 내용을 조회합니다' })
   async getMyRoutineProfile(
     @Req() { user }: Request,
     @Param('routineId', ParseUUIDPipe) routineId: string,
