@@ -23,8 +23,14 @@ export class ManualProfileResponse
   @ApiProperty({ description: '운동에 대한 주의사항' })
   precaution!: string | null;
 
-  @ApiProperty({ description: '운동에 대한 주의사항' })
+  @ApiProperty({ description: '운동의 사용 기구 ID' })
   equipmentId!: string;
+
+  @ApiProperty({ description: '운동의 사용 기구 명칭' })
+  equipmentTitle!: string;
+
+  @ApiProperty({ description: '운동의 사용 기구 영어 명칭' })
+  equipmentEnTitle!: string;
 
   @ApiProperty({ description: '운동에 대한 설명 이미지 URL' })
   imageUrl!: string | null;
@@ -44,5 +50,7 @@ export class ManualProfileResponse
   constructor(data: Manual) {
     Object.assign(this, data);
     this.equipmentId = data.equipment.id;
+    this.equipmentTitle = data.equipment.name;
+    this.equipmentEnTitle = data.equipment.enName;
   }
 }
