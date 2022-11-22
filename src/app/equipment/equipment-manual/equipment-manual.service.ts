@@ -23,6 +23,7 @@ export class EquipmentManualService {
   async getAllManuals(): Promise<ManualProfileResponse[]> {
     const manuals = await this.manualRepository.find({
       relations: ['equipment'],
+      order: { imageUrl: 'ASC', enTitle: 'ASC' },
     });
 
     return manuals.map((manual) => new ManualProfileResponse(manual));
