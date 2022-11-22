@@ -106,6 +106,7 @@ export class RoutineCoreService {
     const routines = await this.routineRepository.find({
       where: { owner: { id: user.id } },
       relations: ['routineManuals', 'routineManuals.manual'],
+      order: { routineManuals: { order: 'ASC' } },
     });
 
     return routines.map(
