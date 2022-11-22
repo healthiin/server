@@ -30,6 +30,7 @@ export class UserService {
   async createUser(data: UserCreateData): Promise<UserProfileResponse> {
     await this.validateUsername(data.username);
     if (data.nickname) await this.validateNickname(data.nickname);
+    else data.nickname = `헬신유저${(await this.userRepository.count()) + 1}`;
 
     const user = await this.userRepository.save({
       ...data,
