@@ -85,7 +85,7 @@ export class ReferenceRoutineProfileResponse
     this.description = data.description;
     this.likeCount = data.likeCount;
     this.days = data.days;
-    this.types = data.types;
+    this.types = [...new Set(data.types)];
     this.routineManuals = data.routineManuals;
   }
 }

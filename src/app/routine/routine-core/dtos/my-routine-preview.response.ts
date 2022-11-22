@@ -30,6 +30,6 @@ export class MyRoutinePreviewResponse
     this.id = data.id;
     this.title = data.title;
     this.days = data.days;
-    this.types = data.types;
+    this.types = [...new Set(data.types)];
   }
 }

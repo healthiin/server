@@ -61,7 +61,7 @@ export class MyRoutineProfileResponse
     this.id = data.id;
     this.title = data.title;
     this.routineManuals = data.routineManuals;
-    this.types = data.types;
+    this.types = [...new Set(data.types)];
     this.days = data.days;
   }
 }
